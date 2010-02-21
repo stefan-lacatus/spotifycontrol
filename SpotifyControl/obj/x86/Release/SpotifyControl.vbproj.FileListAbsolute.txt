@@ -1,0 +1,11 @@
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\bin\Release\SpotifyControl.exe
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\bin\Release\SpotifyControl.pdb
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\bin\Release\SpotifyControl.xml
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.SpotifyController.resources
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.Resources.resources
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\GenerateResource.read.1.tlog
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\GenerateResource.write.1.tlog
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.exe
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.xml
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.pdb
