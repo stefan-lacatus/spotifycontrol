@@ -81,6 +81,12 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CaptureKey.Designer.vb">
+      <DependentUpon>CaptureKey.vb</DependentUpon>
+    </Compile>
+    <Compile Include="CaptureKey.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="CheckGroupBox.vb">
       <SubType>Component</SubType>
     </Compile>
@@ -115,6 +121,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CaptureKey.resx">
+      <DependentUpon>CaptureKey.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SettingManager.resx">
       <DependentUpon>SettingManager.vb</DependentUpon>
     </EmbeddedResource>

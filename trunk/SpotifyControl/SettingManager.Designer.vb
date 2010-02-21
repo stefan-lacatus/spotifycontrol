@@ -28,6 +28,8 @@ Partial Class SettingManager
         Me.PlayPauseKey = New System.Windows.Forms.ComboBox()
         Me.CheckGroupBox1 = New SpotifyControl.CheckGroupBox()
         Me.SaveBtn = New System.Windows.Forms.Button()
+        Me.TextBox1 = New System.Windows.Forms.TextBox()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.CheckGroupBox1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -72,6 +74,8 @@ Partial Class SettingManager
         'CheckGroupBox1
         '
         Me.CheckGroupBox1.Checked = False
+        Me.CheckGroupBox1.Controls.Add(Me.Button1)
+        Me.CheckGroupBox1.Controls.Add(Me.TextBox1)
         Me.CheckGroupBox1.Controls.Add(Me.PlayPauseModifier)
         Me.CheckGroupBox1.Controls.Add(Me.PlayPauseKey)
         Me.CheckGroupBox1.Controls.Add(Me.Label1)
@@ -90,6 +94,22 @@ Partial Class SettingManager
         Me.SaveBtn.TabIndex = 4
         Me.SaveBtn.Text = "Save"
         Me.SaveBtn.UseVisualStyleBackColor = True
+        '
+        'TextBox1
+        '
+        Me.TextBox1.Location = New System.Drawing.Point(75, 59)
+        Me.TextBox1.Name = "TextBox1"
+        Me.TextBox1.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox1.TabIndex = 3
+        '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(182, 55)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(75, 23)
+        Me.Button1.TabIndex = 4
+        Me.Button1.Text = "Button1"
+        Me.Button1.UseVisualStyleBackColor = True
         '
         'SettingManager
         '
@@ -113,4 +133,6 @@ Partial Class SettingManager
     Friend WithEvents PlayPauseModifier As System.Windows.Forms.ComboBox
     Friend WithEvents CheckGroupBox1 As SpotifyControl.CheckGroupBox
     Friend WithEvents SaveBtn As System.Windows.Forms.Button
+    Friend WithEvents Button1 As System.Windows.Forms.Button
+    Friend WithEvents TextBox1 As System.Windows.Forms.TextBox
 End Class
