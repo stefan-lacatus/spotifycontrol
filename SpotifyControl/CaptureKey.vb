@@ -45,16 +45,15 @@ Public Class CaptureKey
             SettingManager.HotKeyTbl.Item(1, SettingManager.HotKeyTbl.SelectedRows(0).Index).Value = TextBox1.Text
             Application.DoEvents()
             System.Threading.Thread.Sleep(500) ' this is just for the user to see what keycombination he added, no real purpose
-
             Dim AuxHotKeyManager As New HotKeyManager
             If AltKey = True Then
-                AuxHotKeyManager.MainKeyModifier = Keys.Alt
+                AuxHotKeyManager.MainKeyModifier = 1
             ElseIf ShiftKey = True Then
-                AuxHotKeyManager.MainKeyModifier = Keys.Shift
+                AuxHotKeyManager.MainKeyModifier = 4
             ElseIf ControlKey = True Then
-                AuxHotKeyManager.MainKeyModifier = Keys.Control
+                AuxHotKeyManager.MainKeyModifier = 2
             ElseIf WinKey = True Then
-                AuxHotKeyManager.MainKeyModifier = Keys.LWin
+                AuxHotKeyManager.MainKeyModifier = 8
             End If
             AuxHotKeyManager.MainKey = e.KeyCode
             SettingManager.MyHotKeyManager(SettingManager.HotKeyTbl.SelectedRows(0).Index) = AuxHotKeyManager

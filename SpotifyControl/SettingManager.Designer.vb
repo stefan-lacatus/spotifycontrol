@@ -28,6 +28,7 @@ Partial Class SettingManager
         Me.HotKeyTbl = New System.Windows.Forms.DataGridView()
         Me.Action = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.HotKey = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.CancelBtn = New System.Windows.Forms.Button()
         Me.CheckGroupBox1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -43,7 +44,7 @@ Partial Class SettingManager
         '
         'SaveBtn
         '
-        Me.SaveBtn.Location = New System.Drawing.Point(71, 243)
+        Me.SaveBtn.Location = New System.Drawing.Point(19, 243)
         Me.SaveBtn.Name = "SaveBtn"
         Me.SaveBtn.Size = New System.Drawing.Size(75, 23)
         Me.SaveBtn.TabIndex = 4
@@ -90,11 +91,21 @@ Partial Class SettingManager
         Me.HotKey.Name = "HotKey"
         Me.HotKey.ReadOnly = True
         '
+        'CancelBtn
+        '
+        Me.CancelBtn.Location = New System.Drawing.Point(101, 242)
+        Me.CancelBtn.Name = "CancelBtn"
+        Me.CancelBtn.Size = New System.Drawing.Size(75, 23)
+        Me.CancelBtn.TabIndex = 5
+        Me.CancelBtn.Text = "Cancel"
+        Me.CancelBtn.UseVisualStyleBackColor = True
+        '
         'SettingManager
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(255, 278)
+        Me.Controls.Add(Me.CancelBtn)
         Me.Controls.Add(Me.SaveBtn)
         Me.Controls.Add(Me.CheckGroupBox1)
         Me.Controls.Add(Me.StartSpotifyChkBox)
@@ -111,4 +122,5 @@ Partial Class SettingManager
     Friend WithEvents HotKeyTbl As System.Windows.Forms.DataGridView
     Friend WithEvents Action As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents HotKey As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents CancelBtn As System.Windows.Forms.Button
 End Class
