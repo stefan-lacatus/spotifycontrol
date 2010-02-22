@@ -9,6 +9,5 @@ C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyC
 C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.exe
 C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.xml
 C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.pdb
-C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\bin\Release\DWM.dll
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.CaptureKey.resources
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.SettingManager.resources

@@ -46,6 +46,10 @@ Public Class SpotifyController
         ' TODO: Find a way to get the current volume and not feed this values with shit
         VolumeControl.Value = 10
         LastVolume = 10
+        ' load the hotkey settings from file
+        LoadSettings()
+        ' register the hotkeys
+        RegisterMyHotKeys()
         'Play.Register(1, Shortcut.Modifier.WIN, Keys.O)
         'NextS.Register(2, Shortcut.Modifier.WIN, Keys.OemPeriod)
         'PrevS.Register(3, Shortcut.Modifier.WIN, Keys.Oemcomma)
@@ -54,7 +58,7 @@ Public Class SpotifyController
         'VolUp.Register(6, Shortcut.Modifier.WIN, Keys.PageUp)
         'VolDown.Register(7, Shortcut.Modifier.WIN, Keys.PageDown)
     End Sub
-    Private Sub bringtotop() Handles BringTop.Pressed
+    Private Sub BringToTop() Handles BringTop.Pressed
         MySpotify.BringToTop()
     End Sub
     Private Sub playpause() Handles Play.Pressed, PlayPauseImg.Click
@@ -69,14 +73,14 @@ Public Class SpotifyController
     End Sub
     Private Sub PlayNextBtn_Click() Handles NextImg.Click, NextS.Pressed
         MySpotify.PlayNext()
-        Me.Text = MySpotify.GetNowplaying
-        TextBox1.Text = Me.Text
+        ' Me.Text = MySpotify.GetNowplaying
+        TextBox1.Text = MySpotify.GetNowplaying
     End Sub
 
     Private Sub PlayPrevBtn_Click() Handles PrevImg.Click, PrevS.Pressed
         MySpotify.PlayPrev()
-        Me.Text = MySpotify.GetNowplaying
-        TextBox1.Text = Me.Text
+        '  Me.Text = MySpotify.GetNowplaying
+        TextBox1.Text = MySpotify.GetNowplaying
     End Sub
 
     Private Sub MuteBtn_Click() Handles MuteImg.Click, Mute.Pressed
@@ -123,13 +127,21 @@ Public Class SpotifyController
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SongCheck.Tick
         TextBox1.Text = MySpotify.GetNowplaying
-    End Sub
-
-    Private Sub TextBox1_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs)
-        If e.KeyValue = Keys.Enter Then
-            MySpotify.Search(TextBox1.Text, True)
+        ' check if the spotify stopped Playing or started playing
+        If TextBox1.Text = "Nothing Playing" Then
+            PlayPauseImg.Image = My.Resources.Play1
+            PlayPauseImg.Tag = "Play"
+        ElseIf TextBox1.Text <> "Unknown" Then
+            PlayPauseImg.Image = My.Resources.Pause_PNG
+            PlayPauseImg.Tag = "Pause"
         End If
     End Sub
+
+    'Private Sub TextBox1_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs)
+    'If e.KeyValue = Keys.Enter Then
+    'MySpotify.Search(TextBox1.Text, True)
+    'End If
+    'End Sub
     Private x As Integer = 0
     Private y As Integer = 0
     Private Sub Me_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseDown, TextBox1.MouseDown
@@ -192,23 +204,49 @@ Public Class SpotifyController
         End If
     End Sub
     Private Sub RegisterMyHotKeys()
-        Play.Register(1, SettingManager.MyHotKeyManager(0).MainKeyModifier, SettingManager.MyHotKeyManager(0).MainKey)
-        NextS.Register(2, SettingManager.MyHotKeyManager(1).MainKeyModifier, SettingManager.MyHotKeyManager(1).MainKey)
-        PrevS.Register(3, SettingManager.MyHotKeyManager(2).MainKeyModifier, SettingManager.MyHotKeyManager(2).MainKey)
-        'BringTop.Register(4, SettingManager.MyHotKeyManager(1).MainKeyModifier, SettingManager.MyHotKeyManager(1).MainKey)
-        Mute.Register(5, SettingManager.MyHotKeyManager(3).MainKeyModifier, SettingManager.MyHotKeyManager(3).MainKey)
-        VolUp.Register(6, SettingManager.MyHotKeyManager(4).MainKeyModifier, SettingManager.MyHotKeyManager(4).MainKey)
-        VolDown.Register(7, SettingManager.MyHotKeyManager(5).MainKeyModifier, SettingManager.MyHotKeyManager(5).MainKey)
+        Try
+            Play.Register(1, SettingManager.MyHotKeyManager(0).MainKeyModifier, SettingManager.MyHotKeyManager(0).MainKey)
+            NextS.Register(2, SettingManager.MyHotKeyManager(1).MainKeyModifier, SettingManager.MyHotKeyManager(1).MainKey)
+            PrevS.Register(3, SettingManager.MyHotKeyManager(2).MainKeyModifier, SettingManager.MyHotKeyManager(2).MainKey)
+            BringTop.Register(4, SettingManager.MyHotKeyManager(1).MainKeyModifier, SettingManager.MyHotKeyManager(1).MainKey)
+            Mute.Register(5, SettingManager.MyHotKeyManager(3).MainKeyModifier, SettingManager.MyHotKeyManager(3).MainKey)
+            VolUp.Register(6, SettingManager.MyHotKeyManager(4).MainKeyModifier, SettingManager.MyHotKeyManager(4).MainKey)
+            VolDown.Register(7, SettingManager.MyHotKeyManager(5).MainKeyModifier, SettingManager.MyHotKeyManager(5).MainKey)
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
     End Sub
     Private Sub UnRegisterMyHotKeys()
-        ' UNRegister the hotkeys
-        Play.Unregister(1)
-        NextS.Unregister(2)
-        PrevS.Unregister(3)
-        BringTop.Unregister(4)
-        Mute.Unregister(5)
-        VolUp.Unregister(6)
-        VolDown.Unregister(7)
+        Try
+            ' UNRegister the hotkeys
+            Play.Unregister(1)
+            NextS.Unregister(2)
+            PrevS.Unregister(3)
+            BringTop.Unregister(4)
+            Mute.Unregister(5)
+            VolUp.Unregister(6)
+            VolDown.Unregister(7)
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+    End Sub
+    Private Sub LoadSettings()
+        Try
+            Dim SettingsReader As System.IO.StreamReader
+            SettingsReader = System.IO.File.OpenText(Application.StartupPath & "//Settings.ini")
+            ' read all the global hotkeys values into an auxiliary HotKeyManager
+            Dim AuxHotKeyManager As HotKeyManager
+            For index = 0 To 5
+                AuxHotKeyManager = New HotKeyManager
+                AuxHotKeyManager.MainKey = SettingsReader.ReadLine()
+                AuxHotKeyManager.MainKeyModifier = SettingsReader.ReadLine()
+                ' Add the values to the array that contains all the keys
+                SettingManager.MyHotKeyManager(index) = AuxHotKeyManager
+            Next
+            SettingsReader.Close()
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
     End Sub
 End Class
 NotInheritable Class Shortcut : Inherits NativeWindow
