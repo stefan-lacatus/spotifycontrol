@@ -91,6 +91,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ControllerClass.vb" />
+    <Compile Include="HotKeyManager.vb" />
     <Compile Include="SettingManager.Designer.vb">
       <DependentUpon>SettingManager.vb</DependentUpon>
     </Compile>
