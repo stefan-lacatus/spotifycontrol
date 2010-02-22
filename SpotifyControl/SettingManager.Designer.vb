@@ -24,11 +24,11 @@ Partial Class SettingManager
     Private Sub InitializeComponent()
         Me.StartSpotifyChkBox = New System.Windows.Forms.CheckBox()
         Me.SaveBtn = New System.Windows.Forms.Button()
+        Me.CancelBtn = New System.Windows.Forms.Button()
         Me.CheckGroupBox1 = New SpotifyControl.CheckGroupBox()
         Me.HotKeyTbl = New System.Windows.Forms.DataGridView()
         Me.Action = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.HotKey = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.CancelBtn = New System.Windows.Forms.Button()
         Me.CheckGroupBox1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -44,12 +44,21 @@ Partial Class SettingManager
         '
         'SaveBtn
         '
-        Me.SaveBtn.Location = New System.Drawing.Point(19, 243)
+        Me.SaveBtn.Location = New System.Drawing.Point(19, 275)
         Me.SaveBtn.Name = "SaveBtn"
         Me.SaveBtn.Size = New System.Drawing.Size(75, 23)
         Me.SaveBtn.TabIndex = 4
         Me.SaveBtn.Text = "Save"
         Me.SaveBtn.UseVisualStyleBackColor = True
+        '
+        'CancelBtn
+        '
+        Me.CancelBtn.Location = New System.Drawing.Point(101, 274)
+        Me.CancelBtn.Name = "CancelBtn"
+        Me.CancelBtn.Size = New System.Drawing.Size(75, 23)
+        Me.CancelBtn.TabIndex = 5
+        Me.CancelBtn.Text = "Cancel"
+        Me.CancelBtn.UseVisualStyleBackColor = True
         '
         'CheckGroupBox1
         '
@@ -57,7 +66,7 @@ Partial Class SettingManager
         Me.CheckGroupBox1.Controls.Add(Me.HotKeyTbl)
         Me.CheckGroupBox1.Location = New System.Drawing.Point(13, 53)
         Me.CheckGroupBox1.Name = "CheckGroupBox1"
-        Me.CheckGroupBox1.Size = New System.Drawing.Size(218, 184)
+        Me.CheckGroupBox1.Size = New System.Drawing.Size(228, 207)
         Me.CheckGroupBox1.TabIndex = 3
         Me.CheckGroupBox1.TabStop = False
         Me.CheckGroupBox1.Text = "Global Hotkeys"
@@ -76,7 +85,7 @@ Partial Class SettingManager
         Me.HotKeyTbl.ReadOnly = True
         Me.HotKeyTbl.RowHeadersVisible = False
         Me.HotKeyTbl.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.HotKeyTbl.Size = New System.Drawing.Size(205, 142)
+        Me.HotKeyTbl.Size = New System.Drawing.Size(216, 172)
         Me.HotKeyTbl.TabIndex = 1
         '
         'Action
@@ -91,20 +100,11 @@ Partial Class SettingManager
         Me.HotKey.Name = "HotKey"
         Me.HotKey.ReadOnly = True
         '
-        'CancelBtn
-        '
-        Me.CancelBtn.Location = New System.Drawing.Point(101, 242)
-        Me.CancelBtn.Name = "CancelBtn"
-        Me.CancelBtn.Size = New System.Drawing.Size(75, 23)
-        Me.CancelBtn.TabIndex = 5
-        Me.CancelBtn.Text = "Cancel"
-        Me.CancelBtn.UseVisualStyleBackColor = True
-        '
         'SettingManager
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(255, 278)
+        Me.ClientSize = New System.Drawing.Size(260, 310)
         Me.Controls.Add(Me.CancelBtn)
         Me.Controls.Add(Me.SaveBtn)
         Me.Controls.Add(Me.CheckGroupBox1)
