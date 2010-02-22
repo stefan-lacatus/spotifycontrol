@@ -5,16 +5,26 @@ Public Class SpotifyController
     Dim MySpotify As New ControllerClass
     Dim LastVolume As Integer
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
-
+#Region "For Aero Glass"
+    <Flags()> Public Enum DwmBlurBehindDwFlags As UInteger
+        DWM_BB_ENABLE = &H1
+        DWM_BB_BLURREGION = &H2
+        DWM_BB_TRANSITIONONMAXIMIZED = &H4
+    End Enum
+    <StructLayout(LayoutKind.Sequential)> _
+    Public Structure DWM_BLURBEHIND
+        Public dwFlags As DwmBlurBehindDwFlags
+        Public fEnable As Boolean
+        Public hRgnBlur As IntPtr
+        Public fTransitionOnMaximized As Boolean
+    End Structure
+    <DllImport("dwmapi.dll")> _
+    Private Shared Sub DwmEnableBlurBehindWindow(ByVal hwnd As IntPtr, ByRef blurBehind As DWM_BLURBEHIND)
+    End Sub
+#End Region
     Private Sub SpotifyController_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
-        ' UNRegister the hotkeys
-        Play.Unregister(1)
-        NextS.Unregister(2)
-        PrevS.Unregister(3)
-        BringTop.Unregister(4)
-        Mute.Unregister(5)
-        VolUp.Unregister(6)
-        VolDown.Unregister(7)
+        ' call the function to unregister the hotkeys
+        UnRegisterMyHotKeys()
     End Sub
     Private Sub SpotifyController_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Me.MaximizeBox = False
@@ -25,25 +35,24 @@ Public Class SpotifyController
             On Error Resume Next
             ' black is the color that gets transformed to glass
             Me.BackColor = Color.Black
-            ' make the entire form glassy
-            Dim margins As DWM.Margins = New DWM.Margins
-            margins.left = -1
-            margins.right = -1
-            margins.top = -1
-            margins.bottom = -1
-            DWM.DWMManager.EnableBlurBehind(Me.Handle)
+            ' make the entire form glassy and blurry
+            Dim Aux As DWM_BLURBEHIND
+            Aux.dwFlags = DwmBlurBehindDwFlags.DWM_BB_ENABLE
+            Aux.fEnable = True
+            Aux.hRgnBlur = vbNull
+            DwmEnableBlurBehindWindow(Me.Handle, Aux)
         End If
         TextBox1.Text = MySpotify.GetNowplaying
         ' TODO: Find a way to get the current volume and not feed this values with shit
         VolumeControl.Value = 10
         LastVolume = 10
-        Play.Register(1, Shortcut.Modifier.WIN, Keys.O)
-        NextS.Register(2, Shortcut.Modifier.WIN, Keys.OemPeriod)
-        PrevS.Register(3, Shortcut.Modifier.WIN, Keys.Oemcomma)
-        BringTop.Register(4, Shortcut.Modifier.WIN, Keys.S)
-        Mute.Register(5, Shortcut.Modifier.WIN, Keys.K)
-        VolUp.Register(6, Shortcut.Modifier.WIN, Keys.PageUp)
-        VolDown.Register(7, Shortcut.Modifier.WIN, Keys.PageDown)
+        'Play.Register(1, Shortcut.Modifier.WIN, Keys.O)
+        'NextS.Register(2, Shortcut.Modifier.WIN, Keys.OemPeriod)
+        'PrevS.Register(3, Shortcut.Modifier.WIN, Keys.Oemcomma)
+        'BringTop.Register(4, Shortcut.Modifier.WIN, Keys.S)
+        'Mute.Register(5, Shortcut.Modifier.WIN, Keys.K)
+        'VolUp.Register(6, Shortcut.Modifier.WIN, Keys.PageUp)
+        'VolDown.Register(7, Shortcut.Modifier.WIN, Keys.PageDown)
     End Sub
     Private Sub bringtotop() Handles BringTop.Pressed
         MySpotify.BringToTop()
@@ -175,7 +184,31 @@ Public Class SpotifyController
     End Sub
 
     Private Sub SettingImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SettingImg.Click
-        SettingManager.Show()
+        ' show the setting manager dialog
+        If SettingManager.ShowDialog = Windows.Forms.DialogResult.OK Then
+            ' if changes were made and the user saves them
+            UnRegisterMyHotKeys()
+            RegisterMyHotKeys()
+        End If
+    End Sub
+    Private Sub RegisterMyHotKeys()
+        Play.Register(1, SettingManager.MyHotKeyManager(0).MainKeyModifier, SettingManager.MyHotKeyManager(0).MainKey)
+        NextS.Register(2, SettingManager.MyHotKeyManager(1).MainKeyModifier, SettingManager.MyHotKeyManager(1).MainKey)
+        PrevS.Register(3, SettingManager.MyHotKeyManager(2).MainKeyModifier, SettingManager.MyHotKeyManager(2).MainKey)
+        'BringTop.Register(4, SettingManager.MyHotKeyManager(1).MainKeyModifier, SettingManager.MyHotKeyManager(1).MainKey)
+        Mute.Register(5, SettingManager.MyHotKeyManager(3).MainKeyModifier, SettingManager.MyHotKeyManager(3).MainKey)
+        VolUp.Register(6, SettingManager.MyHotKeyManager(4).MainKeyModifier, SettingManager.MyHotKeyManager(4).MainKey)
+        VolDown.Register(7, SettingManager.MyHotKeyManager(5).MainKeyModifier, SettingManager.MyHotKeyManager(5).MainKey)
+    End Sub
+    Private Sub UnRegisterMyHotKeys()
+        ' UNRegister the hotkeys
+        Play.Unregister(1)
+        NextS.Unregister(2)
+        PrevS.Unregister(3)
+        BringTop.Unregister(4)
+        Mute.Unregister(5)
+        VolUp.Unregister(6)
+        VolDown.Unregister(7)
     End Sub
 End Class
 NotInheritable Class Shortcut : Inherits NativeWindow
