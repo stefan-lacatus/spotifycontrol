@@ -23,6 +23,7 @@ Partial Class CaptureKey
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.TextBox1 = New System.Windows.Forms.TextBox()
+        Me.WinKeyCheck = New System.Windows.Forms.Timer()
         Me.SuspendLayout()
         '
         'TextBox1
@@ -33,11 +34,14 @@ Partial Class CaptureKey
         Me.TextBox1.Size = New System.Drawing.Size(179, 20)
         Me.TextBox1.TabIndex = 0
         '
+        'WinKeyCheck
+        '
+        '
         'CaptureKey
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(229, 36)
+        Me.ClientSize = New System.Drawing.Size(200, 30)
         Me.Controls.Add(Me.TextBox1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.MaximizeBox = False
@@ -51,5 +55,6 @@ Partial Class CaptureKey
 
     End Sub
     Friend WithEvents TextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents WinKeyCheck As System.Windows.Forms.Timer
 
 End Class
