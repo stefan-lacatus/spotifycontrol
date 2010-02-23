@@ -1,18 +1,16 @@
 ﻿Imports System.Xml
 
 Public Class LastFmApi
-    ' Public ApiKey As String
     Public TrackXML As New XmlDocument
-
     Public Sub New(ByVal ArtistName As String, ByVal TrackName As String, ByVal ApiKey As String)
         'this will get the XML of the track
         Dim XmlUrl As String
         XmlUrl = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&api_key=" & ApiKey & "&artist=" & ArtistName & "&track=" & TrackName
-        Dim sw As New Stopwatch
-        sw.Start()
-        TrackXML.Load(XmlUrl)
-        sw.Stop()
-        MsgBox(sw.ElapsedMilliseconds)
+        Debug.Print(XmlUrl)
+        Dim request As System.Net.WebRequest = System.Net.HttpWebRequest.Create(XmlUrl)
+        'request.Method = "REST"
+        TrackXML.Load(request.GetResponse.GetResponseStream)
+        '  Debug.Print(TrackXML.InnerText)
     End Sub
     Public Function GetAlbumOfTrack() As String
         ' find the album name in the XML
@@ -24,7 +22,7 @@ Public Class LastFmApi
         ' Find the album art url in the XML
         Dim a As XmlNodeList
         a = TrackXML.GetElementsByTagName("image")
-        MsgBox(a(1).InnerText)
+        '  MsgBox(a(1).InnerText)
         Return a(1).InnerText
     End Function
 End Class
