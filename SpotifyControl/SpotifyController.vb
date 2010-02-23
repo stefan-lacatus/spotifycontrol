@@ -132,6 +132,10 @@ Public Class SpotifyController
 #Region "Move the window by dragging it with the mouse"
     Private x As Integer = 0
     Private y As Integer = 0
+
+    Private Sub TextBox1_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles TextBox1.DoubleClick
+        TrackInfo.Show()
+    End Sub
     Private Sub Me_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseDown, TextBox1.MouseDown
         'Start to move the form.
         x = e.X
@@ -184,8 +188,9 @@ Public Class SpotifyController
         If TextBox1.Text = "Nothing Playing" Then
             PlayPauseImg.Image = My.Resources.Play1
             PlayPauseImg.Tag = "Play"
-        ElseIf TextBox1.Text <> "Unknown" Then
+        ElseIf TextBox1.Text <> "Unknown" And TextBox1.Text <> vbNullString Then
             PlayPauseImg.Image = My.Resources.Pause_PNG
+            Application.DoEvents()
             TrackInfo.Show()
             PlayPauseImg.Tag = "Pause"
         End If
