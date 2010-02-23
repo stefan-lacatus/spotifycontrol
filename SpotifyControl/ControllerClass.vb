@@ -104,6 +104,22 @@ Public Class ControllerClass
         End If
     End Function
 
+    Public Function GetTrackTitle() As String
+        ' this function returns the track title of the NotPlaying Song
+        Dim ArtistTrack As String = GetNowplaying()
+        Dim Track As String
+        Track = ArtistTrack.Substring(InStr(ArtistTrack, " – ") + 2, ArtistTrack.Count - InStr(ArtistTrack, " – ") - 2)
+        Return Track
+    End Function
+
+    Public Function GetTrackArtist() As String
+        ' this function retuns the artist of the NowPlaying Song
+        Dim ArtistTrack As String = GetNowplaying()
+        Dim Artist As String
+        Artist = ArtistTrack.Substring(0, InStr(ArtistTrack, " – ") - 1)
+        Return Artist
+    End Function
+
     Public Function Search(ByVal s As String, ByVal AndPlay As Boolean) As Boolean
         SetForegroundWindow(w)
         keybd_event(Keys.ControlKey, &H1D, 0, 0)

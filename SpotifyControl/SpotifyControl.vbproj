@@ -88,6 +88,7 @@
     </Compile>
     <Compile Include="ControllerClass.vb" />
     <Compile Include="HotKeyManager.vb" />
+    <Compile Include="LastFmApi.vb" />
     <Compile Include="SettingManager.Designer.vb">
       <DependentUpon>SettingManager.vb</DependentUpon>
     </Compile>
@@ -116,6 +117,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="TrackInfo.Designer.vb">
+      <DependentUpon>TrackInfo.vb</DependentUpon>
+    </Compile>
+    <Compile Include="TrackInfo.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CaptureKey.resx">
@@ -132,6 +139,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TrackInfo.resx">
+      <DependentUpon>TrackInfo.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
