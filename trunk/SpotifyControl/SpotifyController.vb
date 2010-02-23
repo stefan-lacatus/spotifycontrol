@@ -2,7 +2,7 @@
 
 
 Public Class SpotifyController
-    Dim MySpotify As New ControllerClass
+    Public MySpotify As New ControllerClass
     Dim LastVolume As Integer
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
 #Region "For Aero Glass"
@@ -127,21 +127,9 @@ Public Class SpotifyController
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SongCheck.Tick
         TextBox1.Text = MySpotify.GetNowplaying
-        ' check if the spotify stopped Playing or started playing
-        If TextBox1.Text = "Nothing Playing" Then
-            PlayPauseImg.Image = My.Resources.Play1
-            PlayPauseImg.Tag = "Play"
-        ElseIf TextBox1.Text <> "Unknown" Then
-            PlayPauseImg.Image = My.Resources.Pause_PNG
-            PlayPauseImg.Tag = "Pause"
-        End If
     End Sub
 
-    'Private Sub TextBox1_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs)
-    'If e.KeyValue = Keys.Enter Then
-    'MySpotify.Search(TextBox1.Text, True)
-    'End If
-    'End Sub
+#Region "Move the window by dragging it with the mouse"
     Private x As Integer = 0
     Private y As Integer = 0
     Private Sub Me_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseDown, TextBox1.MouseDown
@@ -163,6 +151,7 @@ Public Class SpotifyController
         x = 0
         y = 0
     End Sub
+#End Region
 
     Friend Function GetAeroSupport() As String
         Dim strVersion As String = "No aero"
@@ -185,10 +174,21 @@ Public Class SpotifyController
     Private Sub TextBox1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles TextBox1.TextChanged
         Dim g As Graphics = TextBox1.CreateGraphics
         Dim textSize As SizeF
+        ' measure the text so we can resize the window to fit the text and to look nice
+        'TOTO: Doesn't work quite well, also we should make sure it doesn't go off-screan
         textSize = g.MeasureString(TextBox1.Text, TextBox1.Font)
         Me.Width = TextBox1.Location.X + textSize.Width + 61
         SettingImg.Location = New Point(TextBox1.Location.X + textSize.Width + 1, SettingImg.Location.Y)
         CloseImg.Location = New Point(TextBox1.Location.X + textSize.Width + 27, CloseImg.Location.Y)
+        ' check if the spotify stopped Playing or started playing
+        If TextBox1.Text = "Nothing Playing" Then
+            PlayPauseImg.Image = My.Resources.Play1
+            PlayPauseImg.Tag = "Play"
+        ElseIf TextBox1.Text <> "Unknown" Then
+            PlayPauseImg.Image = My.Resources.Pause_PNG
+            TrackInfo.Show()
+            PlayPauseImg.Tag = "Pause"
+        End If
     End Sub
 
     Private Sub CloseImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CloseImg.Click
