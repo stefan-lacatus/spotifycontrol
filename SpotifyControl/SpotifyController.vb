@@ -50,6 +50,8 @@ Public Class SpotifyController
         LoadSettings()
         ' register the hotkeys
         RegisterMyHotKeys()
+        TrackInfo.Show()
+        TrackInfo.Hide()
         'Play.Register(1, Shortcut.Modifier.WIN, Keys.O)
         'NextS.Register(2, Shortcut.Modifier.WIN, Keys.OemPeriod)
         'PrevS.Register(3, Shortcut.Modifier.WIN, Keys.Oemcomma)
@@ -134,7 +136,7 @@ Public Class SpotifyController
     Private y As Integer = 0
 
     Private Sub TextBox1_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles TextBox1.DoubleClick
-        TrackInfo.Show()
+        TrackInfo.LoadMe()
     End Sub
     Private Sub Me_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseDown, TextBox1.MouseDown
         'Start to move the form.
@@ -191,7 +193,7 @@ Public Class SpotifyController
         ElseIf TextBox1.Text <> "Unknown" And TextBox1.Text <> vbNullString Then
             PlayPauseImg.Image = My.Resources.Pause_PNG
             Application.DoEvents()
-            TrackInfo.Show()
+            TrackInfo.LoadMe()
             PlayPauseImg.Tag = "Pause"
         End If
     End Sub
@@ -205,6 +207,7 @@ Public Class SpotifyController
         If SettingManager.ShowDialog = Windows.Forms.DialogResult.OK Then
             ' if changes were made and the user saves them
             UnRegisterMyHotKeys()
+            Application.DoEvents()
             RegisterMyHotKeys()
         End If
     End Sub
