@@ -49,8 +49,6 @@ Public Class SpotifyController
         LastVolume = 10
         ' load the hotkey settings from file
         LoadSettings()
-        ' register the hotkeys
-        RegisterMyHotKeys()
         TrackInfo.Show()
         TrackInfo.Hide()
     End Sub
@@ -219,7 +217,7 @@ Public Class SpotifyController
             VolUp.Register(6, SettingManager.MyHotKeyManager(4).MainKeyModifier, SettingManager.MyHotKeyManager(4).MainKey)
             VolDown.Register(7, SettingManager.MyHotKeyManager(5).MainKeyModifier, SettingManager.MyHotKeyManager(5).MainKey)
         Catch ex As Exception
-            MsgBox(ex.Message)
+            'MsgBox(ex.Message)
         End Try
     End Sub
     Private Sub UnRegisterMyHotKeys()
@@ -239,7 +237,12 @@ Public Class SpotifyController
     Private Sub LoadSettings()
         Try
             Dim SettingsReader As System.IO.StreamReader
-            SettingsReader = System.IO.File.OpenText(Application.StartupPath & "//Settings.ini")
+            If IO.File.Exists(Application.StartupPath & "//Settings.ini") Then
+                SettingsReader = System.IO.File.OpenText(Application.StartupPath & "//Settings.ini")
+            Else
+                Throw New ApplicationException("File Not Found")
+            End If
+
             ' read all the global hotkeys values into an auxiliary HotKeyManager
             Dim AuxHotKeyManager As HotKeyManager
             For index = 0 To 5
@@ -250,8 +253,9 @@ Public Class SpotifyController
                 SettingManager.MyHotKeyManager(index) = AuxHotKeyManager
             Next
             SettingsReader.Close()
+            RegisterMyHotKeys()
         Catch ex As Exception
-            MsgBox(ex.Message)
+            Debug.Print(ex.Message)
         End Try
     End Sub
     ' Loops for a specificied period of time (milliseconds)
