@@ -25,6 +25,9 @@ Public Class ControllerClass
     Private w As Integer
 
     Public Sub New()
+        FindSpotiyWindow()
+    End Sub
+    Public Sub FindSpotiyWindow()
         ' get the spotify window
         w = FindWindow("SpotifyMainWindow", vbNullString)
     End Sub

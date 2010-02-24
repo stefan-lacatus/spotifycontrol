@@ -9,6 +9,7 @@ Public Class LastFmApi
         Debug.Print(XmlUrl)
         Dim request As System.Net.WebRequest = System.Net.HttpWebRequest.Create(XmlUrl)
         'request.Method = "REST"
+        request.ContentType = "text/xml"
         TrackXML.Load(request.GetResponse.GetResponseStream)
         '  Debug.Print(TrackXML.InnerText)
     End Sub
