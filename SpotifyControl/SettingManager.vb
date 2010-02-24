@@ -7,22 +7,25 @@
         For index = 0 To 5
             HotKeyTbl.Item(0, index).Value = DefaultValues(index)
         Next
-        ' the second comumn should be loaded from file. 
-        For index = 0 To 5
-            Select Case MyHotKeyManager(index).MainKeyModifier
-                Case 1
-                    HotKeyTbl.Item(1, index).Value = "Alt + " & MyHotKeyManager(index).MainKey.ToString
-                Case 2
-                    HotKeyTbl.Item(1, index).Value = "Ctrl + " & MyHotKeyManager(index).MainKey.ToString
-                Case 4
-                    HotKeyTbl.Item(1, index).Value = "Shift + " & MyHotKeyManager(index).MainKey.ToString
-                Case 8
-                    HotKeyTbl.Item(1, index).Value = "Win + " & MyHotKeyManager(index).MainKey.ToString
-                Case vbNull
-                    HotKeyTbl.Item(1, index).Value = "None"
-            End Select
+        Try
+            ' the second comumn should be loaded from file. 
+            For index = 0 To 5
+                Select Case MyHotKeyManager(index).MainKeyModifier
+                    Case 1
+                        HotKeyTbl.Item(1, index).Value = "Alt + " & MyHotKeyManager(index).MainKey.ToString
+                    Case 2
+                        HotKeyTbl.Item(1, index).Value = "Ctrl + " & MyHotKeyManager(index).MainKey.ToString
+                    Case 4
+                        HotKeyTbl.Item(1, index).Value = "Shift + " & MyHotKeyManager(index).MainKey.ToString
+                    Case 8
+                        HotKeyTbl.Item(1, index).Value = "Win + " & MyHotKeyManager(index).MainKey.ToString
+                    Case vbNull
+                        HotKeyTbl.Item(1, index).Value = "None"
+                End Select
 
-        Next
+            Next
+        Catch
+        End Try
     End Sub
     Private Sub DataGridView1_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles HotKeyTbl.DoubleClick
         ' show the capturekey dialog
@@ -40,8 +43,9 @@
         Me.Close()
     End Sub
     Private Sub SaveSettings()
+        Dim SettingWriter As System.IO.StreamWriter
         Try
-            Dim SettingWriter As System.IO.StreamWriter
+
             ' if the file exists display a msgbox with options
             If System.IO.File.Exists(Application.StartupPath & "//Settings.ini") Then
                 If MsgBox("A settings file already exists. Overwrite?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
@@ -56,9 +60,11 @@
                 SettingWriter.WriteLine(MyHotKeyManager(index).MainKey)
                 SettingWriter.WriteLine(MyHotKeyManager(index).MainKeyModifier)
             Next
-            SettingWriter.Close()
+
         Catch ex As Exception
-            MsgBox(ex.Message)
+            ' MsgBox(ex.Message)
+        Finally
+            SettingWriter.Close()
         End Try
     End Sub
 End Class

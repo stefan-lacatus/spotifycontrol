@@ -12,3 +12,7 @@ C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyC
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.CaptureKey.resources
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.SettingManager.resources
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.TrackInfo.resources
+C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\bin\Release\SpotifyControl.exe.manifest
+C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\bin\Release\SpotifyControl.application
+C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.exe.manifest
+C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.application
