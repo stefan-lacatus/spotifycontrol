@@ -4,6 +4,7 @@
 Public Class SpotifyController
     Public MySpotify As New ControllerClass
     Dim LastVolume As Integer
+    Dim TrackChangeIndex As Integer
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
 #Region "For Aero Glass"
     <Flags()> Public Enum DwmBlurBehindDwFlags As UInteger
@@ -52,13 +53,6 @@ Public Class SpotifyController
         RegisterMyHotKeys()
         TrackInfo.Show()
         TrackInfo.Hide()
-        'Play.Register(1, Shortcut.Modifier.WIN, Keys.O)
-        'NextS.Register(2, Shortcut.Modifier.WIN, Keys.OemPeriod)
-        'PrevS.Register(3, Shortcut.Modifier.WIN, Keys.Oemcomma)
-        'BringTop.Register(4, Shortcut.Modifier.WIN, Keys.S)
-        'Mute.Register(5, Shortcut.Modifier.WIN, Keys.K)
-        'VolUp.Register(6, Shortcut.Modifier.WIN, Keys.PageUp)
-        'VolDown.Register(7, Shortcut.Modifier.WIN, Keys.PageDown)
     End Sub
     Private Sub BringToTop() Handles BringTop.Pressed
         MySpotify.BringToTop()
@@ -98,7 +92,6 @@ Public Class SpotifyController
 
     Private Sub VolumeControl_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VolumeControl.Scroll
         While VolumeControl.Value <> LastVolume
-
             If VolumeControl.Value < LastVolume Then
                 LastVolume = LastVolume - 1
                 MySpotify.VolumeDown()
@@ -178,6 +171,7 @@ Public Class SpotifyController
     End Function
 
     Private Sub TextBox1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles TextBox1.TextChanged
+        TrackChangeIndex = TrackChangeIndex + 1
         Dim g As Graphics = TextBox1.CreateGraphics
         Dim textSize As SizeF
         ' measure the text so we can resize the window to fit the text and to look nice
@@ -193,7 +187,11 @@ Public Class SpotifyController
         ElseIf TextBox1.Text <> "Unknown" And TextBox1.Text <> vbNullString Then
             PlayPauseImg.Image = My.Resources.Pause_PNG
             Application.DoEvents()
-            TrackInfo.LoadMe()
+            If TrackChangeIndex <> 2 Then
+                TrackInfo.LoadMe()
+            End If
+        ElseIf TextBox1.Text = "Unknown" Then
+            MySpotify.FindSpotiyWindow()
             PlayPauseImg.Tag = "Pause"
         End If
     End Sub
@@ -255,6 +253,16 @@ Public Class SpotifyController
         Catch ex As Exception
             MsgBox(ex.Message)
         End Try
+    End Sub
+    ' Loops for a specificied period of time (milliseconds)
+    Private Sub wait(ByVal interval As Integer)
+        Dim sw As New Stopwatch
+        sw.Start()
+        Do While sw.ElapsedMilliseconds < interval
+            ' Allows UI to remain responsive
+            Application.DoEvents()
+        Loop
+        sw.Stop()
     End Sub
 End Class
 NotInheritable Class Shortcut : Inherits NativeWindow
