@@ -51,7 +51,7 @@
                 If MsgBox("A settings file already exists. Overwrite?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
                     System.IO.File.Delete(Application.StartupPath & "//Settings.ini")
                 Else
-                    Exit Sub
+                    Exit Try
                 End If
             End If
             SettingWriter = System.IO.File.CreateText(Application.StartupPath & "//Settings.ini")
@@ -60,11 +60,11 @@
                 SettingWriter.WriteLine(MyHotKeyManager(index).MainKey)
                 SettingWriter.WriteLine(MyHotKeyManager(index).MainKeyModifier)
             Next
-
+            'SettingWriter.Close()
         Catch ex As Exception
+
             ' MsgBox(ex.Message)
-        Finally
-            SettingWriter.Close()
         End Try
+        SettingWriter.Close()
     End Sub
 End Class
