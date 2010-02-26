@@ -16,3 +16,6 @@ C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyC
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\bin\Release\SpotifyControl.application
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.exe.manifest
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.application
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\ResGen.read.1.tlog
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\ResGen.write.1.tlog
+C:\Users\CyberWolf\documents\visual studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Release\SpotifyControl.ScrollingMarquee.resources

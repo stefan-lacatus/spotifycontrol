@@ -22,17 +22,27 @@ Partial Class SpotifyController
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.VolumeControl = New System.Windows.Forms.TrackBar()
-        Me.SongCheck = New System.Windows.Forms.Timer()
-        Me.TextBox1 = New System.Windows.Forms.Label()
-        Me.SettingImg = New System.Windows.Forms.PictureBox()
+        Me.SongCheck = New System.Windows.Forms.Timer(Me.components)
         Me.CloseImg = New System.Windows.Forms.PictureBox()
+        Me.SettingImg = New System.Windows.Forms.PictureBox()
         Me.MuteImg = New System.Windows.Forms.PictureBox()
         Me.NextImg = New System.Windows.Forms.PictureBox()
         Me.VolUpImg = New System.Windows.Forms.PictureBox()
         Me.VolDownImg = New System.Windows.Forms.PictureBox()
         Me.PlayPauseImg = New System.Windows.Forms.PictureBox()
         Me.PrevImg = New System.Windows.Forms.PictureBox()
+        Me.NowPlayingBox = New SpotifyControl.ScrollingMarquee()
+        CType(Me.VolumeControl, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.CloseImg, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.SettingImg, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.MuteImg, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NextImg, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.VolUpImg, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.VolDownImg, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.PlayPauseImg, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.PrevImg, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'VolumeControl
@@ -48,37 +58,27 @@ Partial Class SpotifyController
         Me.SongCheck.Enabled = True
         Me.SongCheck.Interval = 2000
         '
-        'TextBox1
-        '
-        Me.TextBox1.AutoSize = True
-        Me.TextBox1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox1.Location = New System.Drawing.Point(231, 6)
-        Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(57, 20)
-        Me.TextBox1.TabIndex = 11
-        Me.TextBox1.Text = "Label1"
-        '
-        'SettingImg
-        '
-        Me.SettingImg.BackColor = System.Drawing.Color.Transparent
-        Me.SettingImg.Image = Global.SpotifyControl.My.Resources.Resources._527830478
-        Me.SettingImg.Location = New System.Drawing.Point(496, 3)
-        Me.SettingImg.Name = "SettingImg"
-        Me.SettingImg.Size = New System.Drawing.Size(32, 26)
-        Me.SettingImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        Me.SettingImg.TabIndex = 16
-        Me.SettingImg.TabStop = False
-        '
         'CloseImg
         '
         Me.CloseImg.Anchor = System.Windows.Forms.AnchorStyles.Top
         Me.CloseImg.Image = Global.SpotifyControl.My.Resources.Resources.Capture
-        Me.CloseImg.Location = New System.Drawing.Point(534, 6)
+        Me.CloseImg.Location = New System.Drawing.Point(443, 6)
         Me.CloseImg.Name = "CloseImg"
         Me.CloseImg.Size = New System.Drawing.Size(31, 19)
         Me.CloseImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
         Me.CloseImg.TabIndex = 15
         Me.CloseImg.TabStop = False
+        '
+        'SettingImg
+        '
+        Me.SettingImg.BackColor = System.Drawing.Color.Transparent
+        Me.SettingImg.Image = Global.SpotifyControl.My.Resources.Resources._527830478
+        Me.SettingImg.Location = New System.Drawing.Point(405, 3)
+        Me.SettingImg.Name = "SettingImg"
+        Me.SettingImg.Size = New System.Drawing.Size(32, 26)
+        Me.SettingImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.SettingImg.TabIndex = 16
+        Me.SettingImg.TabStop = False
         '
         'MuteImg
         '
@@ -126,7 +126,6 @@ Partial Class SpotifyController
         'PlayPauseImg
         '
         Me.PlayPauseImg.BackColor = System.Drawing.Color.Transparent
-        Me.PlayPauseImg.Image = Global.SpotifyControl.My.Resources.Resources.Play1
         Me.PlayPauseImg.Location = New System.Drawing.Point(26, -2)
         Me.PlayPauseImg.Name = "PlayPauseImg"
         Me.PlayPauseImg.Size = New System.Drawing.Size(34, 35)
@@ -141,31 +140,54 @@ Partial Class SpotifyController
         Me.PrevImg.Location = New System.Drawing.Point(1, 1)
         Me.PrevImg.Name = "PrevImg"
         Me.PrevImg.Size = New System.Drawing.Size(29, 32)
+        Me.PrevImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
         Me.PrevImg.TabIndex = 9
         Me.PrevImg.TabStop = False
+        '
+        'NowPlayingBox
+        '
+        Me.NowPlayingBox.Font = New System.Drawing.Font("Trebuchet MS", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.NowPlayingBox.Location = New System.Drawing.Point(231, 6)
+        Me.NowPlayingBox.Name = "NowPlayingBox"
+        Me.NowPlayingBox.ScrollLeftToRight = SpotifyControl.ScrollingMarquee.Direction.Left
+        Me.NowPlayingBox.ScrollSpeed = 4
+        Me.NowPlayingBox.ShadowColor = System.Drawing.Color.Transparent
+        Me.NowPlayingBox.Size = New System.Drawing.Size(168, 23)
+        Me.NowPlayingBox.TabIndex = 17
+        Me.NowPlayingBox.TimeBeforStart = 1500
         '
         'SpotifyController
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Window
-        Me.ClientSize = New System.Drawing.Size(566, 33)
+        Me.ClientSize = New System.Drawing.Size(480, 33)
+        Me.Controls.Add(Me.NowPlayingBox)
         Me.Controls.Add(Me.CloseImg)
         Me.Controls.Add(Me.SettingImg)
         Me.Controls.Add(Me.MuteImg)
         Me.Controls.Add(Me.NextImg)
         Me.Controls.Add(Me.VolUpImg)
         Me.Controls.Add(Me.VolDownImg)
-        Me.Controls.Add(Me.TextBox1)
         Me.Controls.Add(Me.PlayPauseImg)
         Me.Controls.Add(Me.PrevImg)
         Me.Controls.Add(Me.VolumeControl)
+        Me.DoubleBuffered = True
         Me.Name = "SpotifyController"
         Me.ShowInTaskbar = False
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
         Me.Text = "SpotifyController"
         Me.TopMost = True
+        CType(Me.VolumeControl, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.CloseImg, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SettingImg, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.MuteImg, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NextImg, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.VolUpImg, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.VolDownImg, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.PlayPauseImg, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.PrevImg, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -175,11 +197,11 @@ Partial Class SpotifyController
     Friend WithEvents PlayPauseImg As System.Windows.Forms.PictureBox
     Friend WithEvents PrevImg As System.Windows.Forms.PictureBox
     Friend WithEvents NextImg As System.Windows.Forms.PictureBox
-    Friend WithEvents TextBox1 As System.Windows.Forms.Label
     Friend WithEvents VolDownImg As System.Windows.Forms.PictureBox
     Friend WithEvents VolUpImg As System.Windows.Forms.PictureBox
     Friend WithEvents MuteImg As System.Windows.Forms.PictureBox
     Friend WithEvents CloseImg As System.Windows.Forms.PictureBox
     Friend WithEvents SettingImg As System.Windows.Forms.PictureBox
+    Friend WithEvents NowPlayingBox As SpotifyControl.ScrollingMarquee
 
 End Class

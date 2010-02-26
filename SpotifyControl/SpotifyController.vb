@@ -1,6 +1,5 @@
 ﻿Imports System.Runtime.InteropServices
 
-
 Public Class SpotifyController
     Public MySpotify As New ControllerClass
     Dim LastVolume As Integer
@@ -43,7 +42,7 @@ Public Class SpotifyController
             Aux.hRgnBlur = vbNull
             DwmEnableBlurBehindWindow(Me.Handle, Aux)
         End If
-        TextBox1.Text = MySpotify.GetNowplaying
+        NowPlayingBox.Text = MySpotify.GetNowplaying
         ' TODO: Find a way to get the current volume and not feed this values with shit
         VolumeControl.Value = 10
         LastVolume = 10
@@ -58,7 +57,7 @@ Public Class SpotifyController
     Private Sub playpause() Handles Play.Pressed, PlayPauseImg.Click
         MySpotify.PlayPause()
         If PlayPauseImg.Tag = "Pause" Then
-            PlayPauseImg.Image = My.Resources.Play1
+            PlayPauseImg.Image = My.Resources.Play
             PlayPauseImg.Tag = "Play"
         Else
             PlayPauseImg.Image = My.Resources.Pause_PNG
@@ -68,13 +67,13 @@ Public Class SpotifyController
     Private Sub PlayNextBtn_Click() Handles NextImg.Click, NextS.Pressed
         MySpotify.PlayNext()
         ' Me.Text = MySpotify.GetNowplaying
-        TextBox1.Text = MySpotify.GetNowplaying
+        NowPlayingBox.Text = MySpotify.GetNowplaying
     End Sub
 
     Private Sub PlayPrevBtn_Click() Handles PrevImg.Click, PrevS.Pressed
         MySpotify.PlayPrev()
         '  Me.Text = MySpotify.GetNowplaying
-        TextBox1.Text = MySpotify.GetNowplaying
+        NowPlayingBox.Text = MySpotify.GetNowplaying
     End Sub
 
     Private Sub MuteBtn_Click() Handles MuteImg.Click, Mute.Pressed
@@ -119,23 +118,26 @@ Public Class SpotifyController
     End Sub
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SongCheck.Tick
-        TextBox1.Text = MySpotify.GetNowplaying
+        NowPlayingBox.Text = MySpotify.GetNowplaying
     End Sub
-
+    Private Sub TextBox1_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.DoubleClick
+        If NowPlayingBox.Text <> "Unknown" And NowPlayingBox.Text <> "Nothing Playing" Then
+            Application.DoEvents()
+            TrackInfo.LoadMe()
+        End If
+    End Sub
 #Region "Move the window by dragging it with the mouse"
     Private x As Integer = 0
     Private y As Integer = 0
 
-    Private Sub TextBox1_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles TextBox1.DoubleClick
-        TrackInfo.LoadMe()
-    End Sub
-    Private Sub Me_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseDown, TextBox1.MouseDown
+
+    Private Sub Me_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseDown
         'Start to move the form.
         x = e.X
         y = e.Y
     End Sub
 
-    Private Sub Me_MouseMove(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseMove, TextBox1.MouseMove
+    Private Sub Me_MouseMove(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseMove
         'Move and refresh.
         If (x <> 0 And y <> 0) Then
             Me.Location = New Point(Me.Left + e.X - x, Me.Top + e.Y - y)
@@ -143,7 +145,7 @@ Public Class SpotifyController
         End If
     End Sub
 
-    Private Sub Me_MouseUp(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseUp, TextBox1.MouseUp
+    Private Sub Me_MouseUp(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseUp
         'Reset the mouse point.
         x = 0
         y = 0
@@ -168,27 +170,19 @@ Public Class SpotifyController
         Return strVersion
     End Function
 
-    Private Sub TextBox1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles TextBox1.TextChanged
+    Private Sub TextBox1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.TextChanged
         TrackChangeIndex = TrackChangeIndex + 1
-        Dim g As Graphics = TextBox1.CreateGraphics
-        Dim textSize As SizeF
-        ' measure the text so we can resize the window to fit the text and to look nice
-        'TOTO: Doesn't work quite well, also we should make sure it doesn't go off-screan
-        textSize = g.MeasureString(TextBox1.Text, TextBox1.Font)
-        Me.Width = TextBox1.Location.X + textSize.Width + 61
-        SettingImg.Location = New Point(TextBox1.Location.X + textSize.Width + 1, SettingImg.Location.Y)
-        CloseImg.Location = New Point(TextBox1.Location.X + textSize.Width + 27, CloseImg.Location.Y)
-        ' check if the spotify stopped Playing or started playing
-        If TextBox1.Text = "Nothing Playing" Then
-            PlayPauseImg.Image = My.Resources.Play1
+
+        If NowPlayingBox.Text = "Nothing Playing" Then
+            PlayPauseImg.Image = My.Resources.Play
             PlayPauseImg.Tag = "Play"
-        ElseIf TextBox1.Text <> "Unknown" And TextBox1.Text <> vbNullString Then
+        ElseIf NowPlayingBox.Text <> "Unknown" And NowPlayingBox.Text <> vbNullString Then
             PlayPauseImg.Image = My.Resources.Pause_PNG
             Application.DoEvents()
-            If TrackChangeIndex <> 2 Then
+            If TrackChangeIndex <> 1 Then
                 TrackInfo.LoadMe()
             End If
-        ElseIf TextBox1.Text = "Unknown" Then
+        ElseIf NowPlayingBox.Text = "Unknown" Then
             MySpotify.FindSpotiyWindow()
             PlayPauseImg.Tag = "Pause"
         End If
@@ -280,7 +274,7 @@ NotInheritable Class Shortcut : Inherits NativeWindow
     Sub Register(ByVal ID As Integer, ByVal Modifier As Modifier, ByVal Key As Keys)
         Dim result As Integer = RegisterHotKey(Handle, ID, Modifier, Key)
         If result = 0 Then
-            MsgBox("Cannot Register " & Modifier.ToString & "+" & Key.ToString & ". Already used by other application.")
+            'MsgBox("Cannot Register " & Modifier.ToString & "+" & Key.ToString & ". Already used by other application.")
         End If
     End Sub
     Sub Unregister(ByVal ID As Integer)

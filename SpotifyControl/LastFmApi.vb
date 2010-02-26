@@ -1,5 +1,6 @@
 ﻿Imports System.Xml
 
+
 Public Class LastFmApi
     Public TrackXML As New XmlDocument
     Public Sub New(ByVal ArtistName As String, ByVal TrackName As String, ByVal ApiKey As String)
@@ -7,7 +8,7 @@ Public Class LastFmApi
         Dim XmlUrl As String
         XmlUrl = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&api_key=" & ApiKey & "&artist=" & ArtistName & "&track=" & TrackName
         Debug.Print(XmlUrl)
-        Dim request As System.Net.WebRequest = System.Net.HttpWebRequest.Create(XmlUrl)
+        Dim request As Net.WebRequest = Net.HttpWebRequest.Create(XmlUrl)
         'request.Method = "REST"
         request.ContentType = "text/xml"
         TrackXML.Load(request.GetResponse.GetResponseStream)
