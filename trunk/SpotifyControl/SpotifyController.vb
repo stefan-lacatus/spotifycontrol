@@ -28,10 +28,10 @@ Public Class SpotifyController
     End Sub
     Private Sub SpotifyController_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Me.MaximizeBox = False
-        ' make the borders dissapear
+        ' make the borders disappear
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
         ' if on Win7 or Vista give aero feel to the form
-        If GetAeroSupport() = "Supports aero" Then
+        If GetAeroSupport() = "Supports a1ero" Then
             On Error Resume Next
             ' black is the color that gets transformed to glass
             Me.BackColor = Color.Black
@@ -41,6 +41,9 @@ Public Class SpotifyController
             Aux.fEnable = True
             Aux.hRgnBlur = vbNull
             DwmEnableBlurBehindWindow(Me.Handle, Aux)
+        Else
+            Me.BackColor = Color.Gray
+            Me.Opacity = 80 / 100
         End If
         NowPlayingBox.Text = MySpotify.GetNowplaying
         ' TODO: Find a way to get the current volume and not feed this values with shit
