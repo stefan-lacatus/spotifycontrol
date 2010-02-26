@@ -4,7 +4,7 @@ Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
 
 Public Class ScrollingMarquee
-    Inherits System.Windows.Forms.Label
+    Inherits System.Windows.Forms.UserControl
 
     Friend WithEvents tmrMain, tmrBefore As System.Windows.Forms.Timer
 
@@ -55,7 +55,7 @@ Public Class ScrollingMarquee
     End Property
 
     <Category("Marquee")> _
-    <Description("Gets/Sets the time before the text start scrolling(in miliseconds)")> _
+    <Description("Gets/Sets the time before the text start scrolling(in milliseconds)")> _
     Public Property TimeBeforStart() As Integer
         Get
             Return _TimeBefore
@@ -125,7 +125,7 @@ Public Class ScrollingMarquee
     Private Sub ScrollingMarquee_TextChanged() Handles MyBase.TextChanged
         ' reset the text position so it can be fully visible again
         startPosition = 0
-        ' leave the text static for _TimeBefore miliseconds
+        ' leave the text static for _TimeBefore milliseconds
         tmrMain.Enabled = False
         tmrBefore.Enabled = True
     End Sub

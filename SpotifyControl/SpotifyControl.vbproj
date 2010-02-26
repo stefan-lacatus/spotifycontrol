@@ -18,8 +18,7 @@
     <OptionCompare>Binary</OptionCompare>
     <OptionStrict>Off</OptionStrict>
     <OptionInfer>On</OptionInfer>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>WMPws.ico</ApplicationIcon>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <ManifestCertificateThumbprint>9F51187261E58FEC1F95BC8F7E28D2F79A68B651</ManifestCertificateThumbprint>
@@ -36,7 +35,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -100,7 +99,7 @@
       <DependentUpon>ScrollingMarquee.vb</DependentUpon>
     </Compile>
     <Compile Include="ScrollingMarquee.vb">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SettingManager.Designer.vb">
       <DependentUpon>SettingManager.vb</DependentUpon>
@@ -199,7 +198,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="WMPws.ico" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Next2.png" />
   </ItemGroup>

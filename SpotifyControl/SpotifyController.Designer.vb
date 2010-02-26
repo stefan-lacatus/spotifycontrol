@@ -146,7 +146,7 @@ Partial Class SpotifyController
         '
         'NowPlayingBox
         '
-        Me.NowPlayingBox.Font = New System.Drawing.Font("Trebuchet MS", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.NowPlayingBox.Font = New System.Drawing.Font("Trebuchet MS", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.NowPlayingBox.Location = New System.Drawing.Point(231, 6)
         Me.NowPlayingBox.Name = "NowPlayingBox"
         Me.NowPlayingBox.ScrollLeftToRight = SpotifyControl.ScrollingMarquee.Direction.Left
