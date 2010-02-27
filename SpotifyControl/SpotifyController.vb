@@ -5,6 +5,8 @@ Public Class SpotifyController
     Dim LastVolume As Integer
     Dim TrackChangeIndex As Integer
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
+    ' used for possible workaround the 26-second problem
+    Dim WithEvents WorkAround As New System.ComponentModel.BackgroundWorker
 #Region "For Aero Glass"
     <Flags()> Public Enum DwmBlurBehindDwFlags As UInteger
         DWM_BB_ENABLE = &H1
@@ -22,16 +24,22 @@ Public Class SpotifyController
     Private Shared Sub DwmEnableBlurBehindWindow(ByVal hwnd As IntPtr, ByRef blurBehind As DWM_BLURBEHIND)
     End Sub
 #End Region
+    Private Sub DownloadSomething() Handles WorkAround.DoWork
+        ' this will download something and reduce the 26 second timeout
+        Dim Downloader As Net.WebRequest = Net.HttpWebRequest.Create("http://example.com")
+        Downloader.GetResponse()
+    End Sub
     Private Sub SpotifyController_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
         ' call the function to unregister the hotkeys
         UnRegisterMyHotKeys()
     End Sub
     Private Sub SpotifyController_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        WorkAround.RunWorkerAsync()
         Me.MaximizeBox = False
         ' make the borders disappear
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
         ' if on Win7 or Vista give aero feel to the form
-        If GetAeroSupport() = "Supports a1ero" Then
+        If GetAeroSupport() = "Supports aero" Then
             On Error Resume Next
             ' black is the color that gets transformed to glass
             Me.BackColor = Color.Black
@@ -134,13 +142,13 @@ Public Class SpotifyController
     Private y As Integer = 0
 
 
-    Private Sub Me_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseDown
+    Private Sub Me_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseDown, NowPlayingBox.MouseDown
         'Start to move the form.
         x = e.X
         y = e.Y
     End Sub
 
-    Private Sub Me_MouseMove(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseMove
+    Private Sub Me_MouseMove(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseMove, NowPlayingBox.MouseMove
         'Move and refresh.
         If (x <> 0 And y <> 0) Then
             Me.Location = New Point(Me.Left + e.X - x, Me.Top + e.Y - y)
@@ -148,7 +156,7 @@ Public Class SpotifyController
         End If
     End Sub
 
-    Private Sub Me_MouseUp(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseUp
+    Private Sub Me_MouseUp(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseUp, NowPlayingBox.MouseUp
         'Reset the mouse point.
         x = 0
         y = 0
@@ -264,6 +272,9 @@ Public Class SpotifyController
             Application.DoEvents()
         Loop
         sw.Stop()
+    End Sub
+    Private Sub LyricImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LyricImg.Click
+        LyricsForm.Show()
     End Sub
 End Class
 NotInheritable Class Shortcut : Inherits NativeWindow
