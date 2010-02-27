@@ -9,10 +9,10 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("SpotifyControl")> 
-<Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("Microsoft")> 
+<Assembly: AssemblyDescription("Control Spotify without opening the main window")> 
+<Assembly: AssemblyCompany("YottaSoft")> 
 <Assembly: AssemblyProduct("SpotifyControl")> 
-<Assembly: AssemblyCopyright("Copyright © Microsoft 2010")> 
+<Assembly: AssemblyCopyright("Copyright © YottaSoft 2010")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>
@@ -31,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("1.0.0.0")> 
-<Assembly: AssemblyFileVersion("1.0.0.0")> 
+<Assembly: AssemblyVersion("0.0.4.5")> 
+<Assembly: AssemblyFileVersion("0.0.4.5")> 

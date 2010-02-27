@@ -83,6 +83,7 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoUpdate.vb" />
     <Compile Include="CaptureKey.Designer.vb">
       <DependentUpon>CaptureKey.vb</DependentUpon>
     </Compile>

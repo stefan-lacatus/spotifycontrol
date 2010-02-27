@@ -29,13 +29,15 @@ Partial Class SettingManager
         Me.HotKeyTbl = New System.Windows.Forms.DataGridView()
         Me.Action = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.HotKey = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.UpdateBtn = New System.Windows.Forms.Button()
         Me.CheckGroupBox1.SuspendLayout()
+        CType(Me.HotKeyTbl, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'StartSpotifyChkBox
         '
         Me.StartSpotifyChkBox.AutoSize = True
-        Me.StartSpotifyChkBox.Location = New System.Drawing.Point(13, 13)
+        Me.StartSpotifyChkBox.Location = New System.Drawing.Point(13, 5)
         Me.StartSpotifyChkBox.Name = "StartSpotifyChkBox"
         Me.StartSpotifyChkBox.Size = New System.Drawing.Size(187, 17)
         Me.StartSpotifyChkBox.TabIndex = 0
@@ -100,11 +102,21 @@ Partial Class SettingManager
         Me.HotKey.Name = "HotKey"
         Me.HotKey.ReadOnly = True
         '
+        'UpdateBtn
+        '
+        Me.UpdateBtn.Location = New System.Drawing.Point(12, 28)
+        Me.UpdateBtn.Name = "UpdateBtn"
+        Me.UpdateBtn.Size = New System.Drawing.Size(109, 19)
+        Me.UpdateBtn.TabIndex = 6
+        Me.UpdateBtn.Text = "Check for updates"
+        Me.UpdateBtn.UseVisualStyleBackColor = True
+        '
         'SettingManager
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(260, 310)
+        Me.ClientSize = New System.Drawing.Size(248, 306)
+        Me.Controls.Add(Me.UpdateBtn)
         Me.Controls.Add(Me.CancelBtn)
         Me.Controls.Add(Me.SaveBtn)
         Me.Controls.Add(Me.CheckGroupBox1)
@@ -112,6 +124,7 @@ Partial Class SettingManager
         Me.Name = "SettingManager"
         Me.Text = "SettingManager"
         Me.CheckGroupBox1.ResumeLayout(False)
+        CType(Me.HotKeyTbl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -123,4 +136,5 @@ Partial Class SettingManager
     Friend WithEvents Action As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents HotKey As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents CancelBtn As System.Windows.Forms.Button
+    Friend WithEvents UpdateBtn As System.Windows.Forms.Button
 End Class
