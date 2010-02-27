@@ -6,7 +6,7 @@ Public Class SpotifyController
     Dim TrackChangeIndex As Integer
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
     ' used for possible workaround the 26-second problem
-    Dim WithEvents WorkAround As New System.ComponentModel.BackgroundWorker
+    Dim WithEvents ApplicationUpdate As New System.ComponentModel.BackgroundWorker
 #Region "For Aero Glass"
     <Flags()> Public Enum DwmBlurBehindDwFlags As UInteger
         DWM_BB_ENABLE = &H1
@@ -24,17 +24,20 @@ Public Class SpotifyController
     Private Shared Sub DwmEnableBlurBehindWindow(ByVal hwnd As IntPtr, ByRef blurBehind As DWM_BLURBEHIND)
     End Sub
 #End Region
-    Private Sub DownloadSomething() Handles WorkAround.DoWork
-        ' this will download something and reduce the 26 second timeout
-        Dim Downloader As Net.WebRequest = Net.HttpWebRequest.Create("http://example.com")
-        Downloader.GetResponse()
+    Private Sub DownloadSomething() Handles ApplicationUpdate.DoWork
+        Dim MyAutoUpdate As New AutoUpdate
+        ' where the updates are downloaded from
+        Dim RemotePath As String = "http://dl.dropbox.com/u/329033/SpotifyController/"
+        If MyAutoUpdate.AutoUpdate(vbNullString, RemotePath) Then
+            Application.Exit()
+        End If
     End Sub
     Private Sub SpotifyController_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
         ' call the function to unregister the hotkeys
         UnRegisterMyHotKeys()
     End Sub
     Private Sub SpotifyController_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        WorkAround.RunWorkerAsync()
+        ApplicationUpdate.RunWorkerAsync()
         Me.MaximizeBox = False
         ' make the borders disappear
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None

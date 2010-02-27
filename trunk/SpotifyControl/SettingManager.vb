@@ -1,6 +1,7 @@
 ﻿Public Class SettingManager
     Public MyHotKeyManager(5) As HotKeyManager
     Private Sub SettingManager_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        Me.FormBorderStyle = Windows.Forms.FormBorderStyle.FixedToolWindow
         CheckGroupBox1.Checked = True
         Dim DefaultValues() As String = New String() {"Play/Pause", "Next", "Previous", "Mute", "Volume Up", "Volume Down"}
         HotKeyTbl.RowCount = 6
@@ -66,5 +67,15 @@
             ' MsgBox(ex.Message)
         End Try
         SettingWriter.Close()
+    End Sub
+
+    Private Sub UpdateBtn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UpdateBtn.Click
+        Dim MyAutoUpdate As New AutoUpdate
+        ' where the updates are downloaded from
+        Dim RemotePath As String = "http://dl.dropbox.com/u/329033/SpotifyController/"
+        If MyAutoUpdate.AutoUpdate(vbNullString, RemotePath) Then
+            Dispose()
+            Application.Exit()
+        End If
     End Sub
 End Class
