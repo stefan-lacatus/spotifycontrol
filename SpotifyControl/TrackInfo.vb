@@ -2,6 +2,7 @@
     Dim increaseOpacity As Boolean ' this will remember if the form is going visible or invisible
     Dim MaxOpacity, TimeVisible As Integer
     Private MyLastFmApi As LastFmApi
+    Private MyMetaDataApi As MetadataAPI
 
     Public Sub LoadMe()
         Try
@@ -19,9 +20,12 @@
             increaseOpacity = True
             TrackTitleLbl.Text = SpotifyController.MySpotify.GetTrackTitle
             ArtistLbl.Text = SpotifyController.MySpotify.GetTrackArtist
-            MyLastFmApi = New LastFmApi(ArtistLbl.Text, TrackTitleLbl.Text, "12bd97e8e4d2b71db9edc62d7a7b65cd")
-            AlbumLbl.Text = MyLastFmApi.GetAlbumOfTrack
-            LoadWebImageToPictureBox(AlbumArtBox, MyLastFmApi.GetAlbumArt)
+            ' MyLastFmApi = New LastFmApi(ArtistLbl.Text, TrackTitleLbl.Text, "12bd97e8e4d2b71db9edc62d7a7b65cd")
+            'LoadWebImageToPictureBox(AlbumArtBox, MyLastFmApi.GetAlbumArt)
+            MyMetaDataApi = New MetadataAPI(ArtistLbl.Text, TrackTitleLbl.Text)
+            AlbumLbl.Text = MyMetaDataApi.GetAlbumName
+            TrackTitleLbl.Text = TrackTitleLbl.Text & " (" & MyMetaDataApi.GetTrackLength & ")"
+
         Catch
         Finally
             ' measure the text so we can resize the window to fit the text and to look nice

@@ -35,7 +35,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>4</ApplicationRevision>
+    <ApplicationRevision>5</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -104,6 +104,7 @@
     <Compile Include="LyricsForm.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MetadataAPI.vb" />
     <Compile Include="ScrollingMarquee.designer.vb">
       <DependentUpon>ScrollingMarquee.vb</DependentUpon>
     </Compile>

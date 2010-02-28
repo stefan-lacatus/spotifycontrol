@@ -39,6 +39,15 @@ Public Class SpotifyController
     Private Sub SpotifyController_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         ApplicationUpdate.RunWorkerAsync()
         Me.MaximizeBox = False
+        TrackInfo.Show()
+        TrackInfo.Hide()
+        ' declare some tooltips to associate to the controls on the main window
+        Dim CloseToolTip, PlayPauseToolTip, PrevToolTip, NextToolTip, LyricToolTip As New Windows.Forms.ToolTip
+        CloseToolTip.SetToolTip(CloseImg, "Close SpotifyControl")
+        PlayPauseToolTip.SetToolTip(PlayPauseImg, "Play/Pause the current song")
+        PrevToolTip.SetToolTip(PrevImg, "Plays the previous song")
+        NextToolTip.SetToolTip(NextImg, "Plays the next song")
+        LyricToolTip.SetToolTip(LyricImg, "Find the lyrics for the current song")
         ' make the borders disappear
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
         ' if on Win7 or Vista give aero feel to the form
@@ -62,8 +71,7 @@ Public Class SpotifyController
         LastVolume = 10
         ' load the hotkey settings from file
         LoadSettings()
-        TrackInfo.Show()
-        TrackInfo.Hide()
+        
     End Sub
     Private Sub BringToTop() Handles BringTop.Pressed
         MySpotify.BringToTop()

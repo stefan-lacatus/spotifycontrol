@@ -22,12 +22,14 @@ Partial Class TrackInfo
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.AlbumArtBox = New System.Windows.Forms.PictureBox()
-        Me.OpacityTimer = New System.Windows.Forms.Timer()
+        Me.OpacityTimer = New System.Windows.Forms.Timer(Me.components)
         Me.TrackTitleLbl = New System.Windows.Forms.Label()
         Me.AlbumLbl = New System.Windows.Forms.Label()
         Me.ArtistLbl = New System.Windows.Forms.Label()
-        Me.TimeVisibleTimer = New System.Windows.Forms.Timer()
+        Me.TimeVisibleTimer = New System.Windows.Forms.Timer(Me.components)
+        CType(Me.AlbumArtBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'AlbumArtBox
@@ -90,6 +92,7 @@ Partial Class TrackInfo
         Me.ShowInTaskbar = False
         Me.Text = "TrackInfo"
         Me.TopMost = True
+        CType(Me.AlbumArtBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
