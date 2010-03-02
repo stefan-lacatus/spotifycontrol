@@ -57,11 +57,11 @@ Partial Class LyricsForm
         '
         'LyricBox
         '
-        Me.LyricBox.Location = New System.Drawing.Point(3, 37)
+        Me.LyricBox.Location = New System.Drawing.Point(3, 28)
         Me.LyricBox.Multiline = True
         Me.LyricBox.Name = "LyricBox"
         Me.LyricBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.LyricBox.Size = New System.Drawing.Size(259, 272)
+        Me.LyricBox.Size = New System.Drawing.Size(259, 281)
         Me.LyricBox.TabIndex = 3
         '
         'LyricsForm
