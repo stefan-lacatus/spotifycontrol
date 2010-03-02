@@ -60,7 +60,7 @@ Public Class MetadataAPI
             Seconds = TotalTime Mod 60
             Return Minutes & ":" & Seconds
         Catch ex As Exception
-            Return "Track Name Not Found"
+            Return "0:00"
         End Try
     End Function
 End Class

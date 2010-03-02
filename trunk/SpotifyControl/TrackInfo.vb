@@ -3,31 +3,31 @@
     Dim MaxOpacity, TimeVisible As Integer
     Private MyLastFmApi As LastFmApi
     Private MyMetaDataApi As MetadataAPI
-
-    Public Sub LoadMe()
+    Private AlbumName, TrackName As String
+    Private CoverArt As Image
+    Dim WithEvents Downloader As New System.ComponentModel.BackgroundWorker
+    Private Sub Download() Handles Downloader.DoWork
+        MyLastFmApi = New LastFmApi(ArtistLbl.Text, TrackTitleLbl.Text, "12bd97e8e4d2b71db9edc62d7a7b65cd")
+        MyMetaDataApi = New MetadataAPI(ArtistLbl.Text, TrackTitleLbl.Text)
+        AlbumName = MyMetaDataApi.GetAlbumName
+        ' if the metadata API fails, try LastFM
+        If AlbumName = "Album Name Not Found" Then
+            AlbumName = MyLastFmApi.GetAlbumOfTrack
+        End If
+        TrackName = TrackTitleLbl.Text & " (" & MyMetaDataApi.GetTrackLength & ")"
+        Dim objwebClient As New Net.WebClient
+        Dim ImageStream As New IO.MemoryStream(objwebClient.DownloadData(MyLastFmApi.GetAlbumArt))
+        CoverArt = Image.FromStream(ImageStream)
+    End Sub
+    Private Sub DownloadFinished() Handles Downloader.RunWorkerCompleted
         Try
-            TimeVisible = 4000
-            MaxOpacity = 100
-            TimeVisibleTimer.Interval = TimeVisible
-            Me.Show()
-            ResetControls()
-            ' set the opacity to 0. This will make the form invisible
-            Me.Opacity = 0
-            ' make the window borderless. Looks better this way
-            Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
-            ' Activate the timer that will make the opacity vary
-            OpacityTimer.Enabled = True
-            increaseOpacity = True
-            TrackTitleLbl.Text = SpotifyController.MySpotify.GetTrackTitle
-            ArtistLbl.Text = SpotifyController.MySpotify.GetTrackArtist
-            ' MyLastFmApi = New LastFmApi(ArtistLbl.Text, TrackTitleLbl.Text, "12bd97e8e4d2b71db9edc62d7a7b65cd")
-            'LoadWebImageToPictureBox(AlbumArtBox, MyLastFmApi.GetAlbumArt)
-            MyMetaDataApi = New MetadataAPI(ArtistLbl.Text, TrackTitleLbl.Text)
-            AlbumLbl.Text = MyMetaDataApi.GetAlbumName
-            TrackTitleLbl.Text = TrackTitleLbl.Text & " (" & MyMetaDataApi.GetTrackLength & ")"
-
-        Catch
+            AlbumLbl.Text = AlbumName
+            TrackTitleLbl.Text = TrackName
+            AlbumArtBox.Image = CoverArt
+        Catch ex As Exception
         Finally
+            Me.Show()
+            OpacityTimer.Enabled = True
             ' measure the text so we can resize the window to fit the text and to look nice
             'TOTO: Doesn't work quite well, also we should make sure it doesn't go off-screan
             Dim g As Graphics = Me.CreateGraphics
@@ -43,6 +43,25 @@
             Dim x As Integer = working_area.Left + working_area.Width - Me.Width
             Dim y As Integer = working_area.Top + working_area.Height - Me.Height
             Me.Location = New Point(x, y)
+        End Try
+    End Sub
+    Public Sub LoadMe()
+        Try
+            TimeVisible = 4000
+            MaxOpacity = 100
+            TimeVisibleTimer.Interval = TimeVisible
+            ResetControls()
+            ' set the opacity to 0. This will make the form invisible
+            Me.Opacity = 0
+            ' make the window borderless. Looks better this way
+            Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
+            ' Activate the timer that will make the opacity vary
+            increaseOpacity = True
+            TrackTitleLbl.Text = SpotifyController.MySpotify.GetTrackTitle
+            ArtistLbl.Text = SpotifyController.MySpotify.GetTrackArtist
+            Downloader.RunWorkerAsync()
+        Catch
+        
         End Try
     End Sub
     Private Sub ResetControls()
@@ -92,19 +111,4 @@
         TimeVisibleTimer.Interval = 1000
         TimeVisibleTimer.Enabled = True
     End Sub
-    Public Function LoadWebImageToPictureBox(ByVal pb As PictureBox, ByVal ImageURL As String) As Boolean
-        Dim objImage As IO.MemoryStream
-        Dim objwebClient As Net.WebClient
-        Dim sURL As String = Trim(ImageURL)
-        Dim bAns As Boolean
-        Try
-            objwebClient = New Net.WebClient
-            objImage = New IO.MemoryStream(objwebClient.DownloadData(sURL))
-            pb.Image = Image.FromStream(objImage)
-            bAns = True
-        Catch ex As Exception
-            bAns = False
-        End Try
-        Return bAns
-    End Function
 End Class

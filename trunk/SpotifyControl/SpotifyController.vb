@@ -141,6 +141,10 @@ Public Class SpotifyController
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SongCheck.Tick
         NowPlayingBox.Text = MySpotify.GetNowplaying
+        ' if spotify has been closed then wait for it to be opened again
+        If NowPlayingBox.Text = "Unknown" Then
+            MySpotify.FindSpotiyWindow()
+        End If
     End Sub
     Private Sub TextBox1_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.DoubleClick
         If NowPlayingBox.Text <> "Unknown" And NowPlayingBox.Text <> "Nothing Playing" Then
@@ -204,8 +208,11 @@ Public Class SpotifyController
             If TrackChangeIndex <> 1 Then
                 TrackInfo.LoadMe()
             End If
+            If LyricsForm.IsVisible = True Then
+                ' refresh the lyrics form
+                LyricsForm.LoadMe()
+            End If
         ElseIf NowPlayingBox.Text = "Unknown" Then
-            MySpotify.FindSpotiyWindow()
             PlayPauseImg.Tag = "Pause"
         End If
     End Sub
@@ -285,7 +292,8 @@ Public Class SpotifyController
         sw.Stop()
     End Sub
     Private Sub LyricImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LyricImg.Click
-        LyricsForm.Show()
+        'LyricsForm.Show()
+        LyricsForm.LoadMe()
     End Sub
 End Class
 NotInheritable Class Shortcut : Inherits NativeWindow
