@@ -7,43 +7,47 @@
     Private CoverArt As Image
     Dim WithEvents Downloader As New System.ComponentModel.BackgroundWorker
     Private Sub Download() Handles Downloader.DoWork
-        MyLastFmApi = New LastFmApi(ArtistLbl.Text, TrackTitleLbl.Text, "12bd97e8e4d2b71db9edc62d7a7b65cd")
-        MyMetaDataApi = New MetadataAPI(ArtistLbl.Text, TrackTitleLbl.Text)
-        AlbumName = MyMetaDataApi.GetAlbumName
-        ' if the metadata API fails, try LastFM
-        If AlbumName = "Album Name Not Found" Then
-            AlbumName = MyLastFmApi.GetAlbumOfTrack
-        End If
-        TrackName = TrackTitleLbl.Text & " (" & MyMetaDataApi.GetTrackLength & ")"
-        Dim objwebClient As New Net.WebClient
-        Dim ImageStream As New IO.MemoryStream(objwebClient.DownloadData(MyLastFmApi.GetAlbumArt))
-        CoverArt = Image.FromStream(ImageStream)
+        Try
+            MyLastFmApi = New LastFmApi(ArtistLbl.Text, TrackTitleLbl.Text, "12bd97e8e4d2b71db9edc62d7a7b65cd")
+            MyMetaDataApi = New MetadataAPI(ArtistLbl.Text, TrackTitleLbl.Text)
+            AlbumName = MyMetaDataApi.GetAlbumName
+            ' if the metadata API fails, try LastFM
+            If AlbumName = "Album Name Not Found" Then
+                AlbumName = MyLastFmApi.GetAlbumOfTrack
+            End If
+            TrackName = TrackTitleLbl.Text & " (" & MyMetaDataApi.GetTrackLength & ")"
+            Dim objwebClient As New Net.WebClient
+            Dim ImageStream As New IO.MemoryStream(objwebClient.DownloadData(MyLastFmApi.GetAlbumArt))
+            CoverArt = Image.FromStream(ImageStream)
+        Catch
+            TrackName = SpotifyController.MySpotify.GetTrackTitle
+            AlbumName = SpotifyController.MySpotify.GetTrackArtist
+        End Try
     End Sub
     Private Sub DownloadFinished() Handles Downloader.RunWorkerCompleted
-        Try
-            AlbumLbl.Text = AlbumName
-            TrackTitleLbl.Text = TrackName
-            AlbumArtBox.Image = CoverArt
-        Catch ex As Exception
-        Finally
-            Me.Show()
-            OpacityTimer.Enabled = True
-            ' measure the text so we can resize the window to fit the text and to look nice
-            'TOTO: Doesn't work quite well, also we should make sure it doesn't go off-screan
-            Dim g As Graphics = Me.CreateGraphics
-            Dim textSize1, textSize2, textSize3 As SizeF
-            ' measure the text
-            textSize1 = g.MeasureString(ArtistLbl.Text, ArtistLbl.Font)
-            textSize2 = g.MeasureString(TrackTitleLbl.Text, TrackTitleLbl.Font)
-            textSize3 = g.MeasureString(AlbumLbl.Text, AlbumLbl.Font)
-            ' get the maximum text size value and set the width of the form 
-            Me.Width = ArtistLbl.Location.X + Math.Max(Math.Max(textSize1.Width, textSize2.Width), textSize3.Width) + 5
-            ' this will position the form in the lower right area of the desktop
-            Dim working_area As Rectangle = SystemInformation.WorkingArea
-            Dim x As Integer = working_area.Left + working_area.Width - Me.Width
-            Dim y As Integer = working_area.Top + working_area.Height - Me.Height
-            Me.Location = New Point(x, y)
-        End Try
+
+        AlbumLbl.Text = AlbumName
+        TrackTitleLbl.Text = TrackName
+        AlbumArtBox.Image = CoverArt
+
+        Me.Show()
+        OpacityTimer.Enabled = True
+        ' measure the text so we can resize the window to fit the text and to look nice
+        'TOTO: Doesn't work quite well, also we should make sure it doesn't go off-screan
+        Dim g As Graphics = Me.CreateGraphics
+        Dim textSize1, textSize2, textSize3 As SizeF
+        ' measure the text
+        textSize1 = g.MeasureString(ArtistLbl.Text, ArtistLbl.Font)
+        textSize2 = g.MeasureString(TrackTitleLbl.Text, TrackTitleLbl.Font)
+        textSize3 = g.MeasureString(AlbumLbl.Text, AlbumLbl.Font)
+        ' get the maximum text size value and set the width of the form 
+        Me.Width = ArtistLbl.Location.X + Math.Max(Math.Max(textSize1.Width, textSize2.Width), textSize3.Width) + 5
+        ' this will position the form in the lower right area of the desktop
+        Dim working_area As Rectangle = SystemInformation.WorkingArea
+        Dim x As Integer = working_area.Left + working_area.Width - Me.Width
+        Dim y As Integer = working_area.Top + working_area.Height - Me.Height
+        Me.Location = New Point(x, y)
+
     End Sub
     Public Sub LoadMe()
         Try
@@ -66,6 +70,9 @@
     End Sub
     Private Sub ResetControls()
         ' this will reset all the controls in this form to the initials state
+        CoverArt = Nothing
+        TrackName = vbNullString
+        AlbumName = vbNullString
         TimeVisibleTimer.Enabled = False
         OpacityTimer.Enabled = False
         AlbumLbl.Text = "Album Not Found"

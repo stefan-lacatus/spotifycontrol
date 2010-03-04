@@ -1,103 +1,120 @@
-﻿' based on someone's else work(80% of it). Don't remember where got it from, but credit goes to the original author
-
+﻿Imports System.Runtime.InteropServices
 
 Public Class ControllerClass
+#Region "Function Imports"
+    <DllImport("user32.dll")> _
+    Friend Shared Function PostMessage(ByVal hWnd As IntPtr, ByVal Msg As UInteger, ByVal wParam As IntPtr, ByVal lParam As IntPtr) As Integer
+    End Function
+    <DllImport("user32.dll")> _
+    Friend Shared Function SetFocus(ByVal hWnd As IntPtr)
+    End Function
+    <DllImport("user32.dll")> _
+    Friend Shared Function ShowWindow(ByVal hWnd As IntPtr, ByVal nCmdShow As Integer) As Boolean
+    End Function
+    <DllImport("user32.dll")> _
+    Friend Shared Function SetForegroundWindow(ByVal hWnd As IntPtr) As Boolean
+    End Function
+    <DllImport("user32", CharSet:=CharSet.Auto, SetLastError:=True)> _
+    Friend Shared Function GetWindowText(ByVal hWnd As IntPtr, <Out(), MarshalAs(UnmanagedType.LPTStr)> ByVal lpString As String, ByVal nMaxCount As Integer) As Integer
+    End Function
+    <DllImport("user32.dll", SetLastError:=True)> _
+    Private Shared Function keybd_event(ByVal bVk As Byte, ByVal bScan As Byte, ByVal dwFlags As Integer, ByVal dwExtraInfo As Integer) As Boolean
+    End Function
+#End Region
 
-    ' import all the needed shit in here
-    Private Declare Auto Function FindWindow Lib "user32" (ByVal lpClassName As String, ByVal lpWindowName As String) As IntPtr
-    Private Declare Auto Function SendMessage Lib "user32" (ByVal hWnd As IntPtr, ByVal Msg As UInteger, ByVal wParam As IntPtr, ByVal lParam As IntPtr) As IntPtr
-    Private Declare Auto Function SetForegroundWindow Lib "user32" (ByVal hWnd As IntPtr) As Boolean
-    Private Declare Auto Function keybd_event Lib "user32" (ByVal bVk As Byte, ByVal bScan As Byte, ByVal dwFlags As Integer, ByVal dwExtraInfo As Integer) As Boolean
-    Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-    Private Declare Auto Function GetWindowText Lib "user32" (ByVal hwnd As IntPtr, ByVal lpString As String, ByVal cch As IntPtr) As IntPtr
-    Private Declare Auto Function SetWindowText Lib "user32" (ByVal hwnd As IntPtr, ByVal lpString As String) As Boolean
-    Private Declare Auto Function EnumChildWindows Lib "user32" (ByVal hWndParent As Long, ByVal lpEnumFunc As Long, ByVal lParam As Long) As Long
-    Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As System.IntPtr, ByVal nCmdShow As Long) As Long
 
-    ' declare the global hotkeys
-    Private Const WM_KEYDOWN = &H100
-    Private Const WM_KEYUP = &H101
-    Private Const WM_MOUSEACTIVATE = &H21
-    Private Const KEYEVENTF_EXTENDEDKEY As Integer = &H1S
-    Private Const KEYEVENTF_KEYUP As Integer = &H2S
-
-
-    Private w As Integer
-
+    Private SpotifyProcess As New Process
+    Private SpotifyHandle As IntPtr = IntPtr.Zero
+    Private _SpotifyState As String = "Closed"
+    Public Property SpotifyState() As String
+        Get
+            Return _SpotifyState
+        End Get
+        Set(ByVal value As String)
+            _SpotifyState = value
+        End Set
+    End Property
     Public Sub New()
-        FindSpotiyWindow()
+        LoadMe()
     End Sub
-    Public Sub FindSpotiyWindow()
-        ' get the spotify window
-        w = FindWindow("SpotifyMainWindow", vbNullString)
+    Public Sub LoadMe()
+        Dim auxProcess() As Process = Process.GetProcessesByName("spotify")
+        If auxProcess.Length > 0 Then
+            SpotifyProcess = auxProcess(0)
+            Me.SpotifyState = "Running"
+            SpotifyHandle = SpotifyProcess.MainWindowHandle
+        End If
     End Sub
-    Public Function BringToTop() As Boolean
-        ShowWindow(w, 9)
-        Return 0
-    End Function
-    Public Function PlayPause() As Boolean
-        SendMessage(w, WM_KEYDOWN, Keys.Space, 0)
-        SendMessage(w, WM_KEYUP, Keys.Space, 0)
-        Return 0
-    End Function
-
-    Public Function PlayPrev() As Boolean
-        SetForegroundWindow(w)
-        keybd_event(Keys.ControlKey, &H1D, 0, 0)
-        keybd_event(Keys.Left, &H45S, KEYEVENTF_EXTENDEDKEY Or 0, 0)
-        keybd_event(Keys.Left, &H45S, KEYEVENTF_EXTENDEDKEY Or KEYEVENTF_KEYUP, 0)
-        Sleep(100)
-        keybd_event(Keys.ControlKey, &H1D, KEYEVENTF_KEYUP, 0)
-        Return 0
-    End Function
-
-    Public Function PlayNext() As Boolean
-        SetForegroundWindow(w)
-        keybd_event(Keys.ControlKey, &H1D, 0, 0)
-        keybd_event(Keys.Right, &H45S, KEYEVENTF_EXTENDEDKEY Or 0, 0)
-        keybd_event(Keys.Right, &H45S, KEYEVENTF_EXTENDEDKEY Or KEYEVENTF_KEYUP, 0)
-        Sleep(100)
-        keybd_event(Keys.ControlKey, &H1D, KEYEVENTF_KEYUP, 0)
-        Return 0
-    End Function
-
-    Public Function VolumeUp() As Boolean
-        SetForegroundWindow(w)
-        keybd_event(Keys.ControlKey, &H1D, 0, 0)
-        keybd_event(Keys.Up, &H45S, KEYEVENTF_EXTENDEDKEY Or 0, 0)
-        keybd_event(Keys.Up, &H45S, KEYEVENTF_EXTENDEDKEY Or KEYEVENTF_KEYUP, 0)
-        Sleep(100)
-        keybd_event(Keys.ControlKey, &H1D, KEYEVENTF_KEYUP, 0)
-        Return 0
-    End Function
-
-    Public Function Mute() As Boolean
-        SetForegroundWindow(w)
-        keybd_event(Keys.ControlKey, &H1D, 0, 0)
-        keybd_event(Keys.ShiftKey, &H1D, 0, 0)
-        keybd_event(Keys.Down, &H45S, KEYEVENTF_EXTENDEDKEY Or 0, 0)
-        keybd_event(Keys.Down, &H45S, KEYEVENTF_EXTENDEDKEY Or KEYEVENTF_KEYUP, 0)
-        Sleep(100)
-        keybd_event(Keys.ShiftKey, &H1D, KEYEVENTF_KEYUP, 0)
-        keybd_event(Keys.ControlKey, &H1D, KEYEVENTF_KEYUP, 0)
-        Return 0
-    End Function
-
-    Public Function VolumeDown() As Boolean
-        SetForegroundWindow(w)
-        keybd_event(Keys.ControlKey, &H1D, 0, 0)
-        keybd_event(Keys.Down, &H45S, KEYEVENTF_EXTENDEDKEY Or 0, 0)
-        keybd_event(Keys.Down, &H45S, KEYEVENTF_EXTENDEDKEY Or KEYEVENTF_KEYUP, 0)
-        Sleep(100)
-        keybd_event(Keys.ControlKey, &H1D, KEYEVENTF_KEYUP, 0)
-        Return 0
-    End Function
-
+    Public Sub Mute()
+        If Me.SpotifyState = "Running" Then
+            ' this will press the ctrl key and the shift key then send a the KeyDown to the spotifyHandle
+            keybd_event(Keys.ControlKey, &H1D, 0, 0)
+            keybd_event(Keys.ShiftKey, &H1D, 0, 0)
+            PostMessage(SpotifyHandle, &H100, Keys.Down, 0)
+            ' wait a little
+            Threading.Thread.Sleep(100)
+            ' release the ctrlkey and shift key
+            keybd_event(Keys.ControlKey, &H1D, &H2S, 0)
+            keybd_event(Keys.ShiftKey, &H1D, &H2S, 0)
+        End If
+    End Sub
+    Public Sub PlayPause()
+        If Me.SpotifyState = "Running" Then
+            PostMessage(SpotifyHandle, &H319, IntPtr.Zero, New IntPtr(&HE0000L))
+        End If
+    End Sub
+    Public Sub PlayPrev()
+        If Me.SpotifyState = "Running" Then
+            PostMessage(SpotifyHandle, &H319, IntPtr.Zero, New IntPtr(&HC0000L))
+        End If
+    End Sub
+    Public Sub PlayNext()
+        If Me.SpotifyState = "Running" Then
+            PostMessage(SpotifyHandle, &H319, IntPtr.Zero, New IntPtr(&HB0000L))
+        End If
+    End Sub
+    Public Sub VolumeUp()
+        If Me.SpotifyState = "Running" Then
+            ' this will press the ctrl key then send a the KeyUP to the spotifyHandle
+            keybd_event(Keys.ControlKey, &H1D, 0, 0)
+            PostMessage(SpotifyHandle, &H100, Keys.Up, 0)
+            ' wait a little
+            Threading.Thread.Sleep(100)
+            ' release the ctrlkey
+            keybd_event(Keys.ControlKey, &H1D, &H2S, 0)
+        End If
+    End Sub
+    Public Sub VolumeDown()
+        If Me.SpotifyState = "Running" Then
+            ' this will press the ctrl key then send a the KeyDown to the spotifyHandle
+            keybd_event(Keys.ControlKey, &H1D, 0, 0)
+            PostMessage(SpotifyHandle, &H100, Keys.Down, 0)
+            ' wait a little
+            Threading.Thread.Sleep(100)
+            ' release the ctrlkey
+            keybd_event(Keys.ControlKey, &H1D, &H2S, 0)
+        End If
+    End Sub
+    Public Sub BringToTop()
+        If Me.SpotifyState = "Running" Then
+            ShowWindow(SpotifyHandle, 1)
+            SetForegroundWindow(SpotifyHandle)
+            SetFocus(SpotifyHandle)
+        End If
+    End Sub
     Public Function GetNowplaying() As String
         Dim lpText As String
         lpText = New String(Chr(0), 100)
-        Dim intLength As Integer = GetWindowText(w, lpText, lpText.Length)
-        If (intLength <= 0) OrElse (intLength > lpText.Length) Then Return "Unknown"
+        Dim intLength As Integer = GetWindowText(SpotifyHandle, lpText, lpText.Length)
+        If (intLength <= 0) OrElse (intLength > lpText.Length) Then
+            If SpotifyProcess IsNot Nothing Then
+                SpotifyProcess = Nothing
+                SpotifyHandle = Nothing
+                _SpotifyState = "Closed"
+            End If
+            Return "Spotify Closed"
+        End If
+
         Dim strTitle As String = lpText.Substring(0, intLength)
         strTitle = Mid(strTitle, 11)
         If strTitle.Length > 0 Then
@@ -122,20 +139,4 @@ Public Class ControllerClass
         Artist = ArtistTrack.Substring(0, InStr(ArtistTrack, " – ") - 1)
         Return Artist
     End Function
-
-    Public Function Search(ByVal s As String, ByVal AndPlay As Boolean) As Boolean
-        SetForegroundWindow(w)
-        keybd_event(Keys.ControlKey, &H1D, 0, 0)
-        keybd_event(Keys.L, &H45S, KEYEVENTF_EXTENDEDKEY Or 0, 0)
-        keybd_event(Keys.L, &H45S, KEYEVENTF_EXTENDEDKEY Or KEYEVENTF_KEYUP, 0)
-        Sleep(100)
-        keybd_event(Keys.ControlKey, &H1D, KEYEVENTF_KEYUP, 0)
-        SendKeys.SendWait(s & Chr(13))
-        If AndPlay Then
-            Sleep(100)
-            SendKeys.SendWait(Chr(9) & Chr(9) & Chr(13))
-        End If
-        Return 0
-    End Function
 End Class
-
