@@ -141,13 +141,14 @@ Public Class SpotifyController
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SongCheck.Tick
         NowPlayingBox.Text = MySpotify.GetNowplaying
-        ' if spotify has been closed then wait for it to be opened again
-        If NowPlayingBox.Text = "Unknown" Then
-            MySpotify.FindSpotiyWindow()
+        'if spotify has been closed then wait for it to be opened again
+        Debug.Print(MySpotify.SpotifyState)
+        If MySpotify.SpotifyState = "Closed" Then
+            MySpotify.LoadMe()
         End If
     End Sub
     Private Sub TextBox1_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.DoubleClick
-        If NowPlayingBox.Text <> "Unknown" And NowPlayingBox.Text <> "Nothing Playing" Then
+        If MySpotify.SpotifyState <> "Closed" And NowPlayingBox.Text <> "Nothing Playing" Then
             Application.DoEvents()
             TrackInfo.LoadMe()
         End If
@@ -198,11 +199,10 @@ Public Class SpotifyController
 
     Private Sub TextBox1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.TextChanged
         TrackChangeIndex = TrackChangeIndex + 1
-
         If NowPlayingBox.Text = "Nothing Playing" Then
             PlayPauseImg.Image = My.Resources.Play
             PlayPauseImg.Tag = "Play"
-        ElseIf NowPlayingBox.Text <> "Unknown" And NowPlayingBox.Text <> vbNullString Then
+        ElseIf MySpotify.SpotifyState <> "Closed" And NowPlayingBox.Text <> vbNullString Then
             PlayPauseImg.Image = My.Resources.Pause_PNG
             Application.DoEvents()
             If TrackChangeIndex <> 1 Then
@@ -212,8 +212,9 @@ Public Class SpotifyController
                 ' refresh the lyrics form
                 LyricsForm.LoadMe()
             End If
-        ElseIf NowPlayingBox.Text = "Unknown" Then
+        ElseIf MySpotify.SpotifyState = "Closed" Then
             PlayPauseImg.Tag = "Pause"
+            PlayPauseImg.Image = My.Resources.Play
         End If
     End Sub
 
@@ -292,8 +293,9 @@ Public Class SpotifyController
         sw.Stop()
     End Sub
     Private Sub LyricImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LyricImg.Click
-        'LyricsForm.Show()
-        LyricsForm.LoadMe()
+        If MySpotify.SpotifyState <> "Closed" And NowPlayingBox.Text <> vbNullString Then
+            LyricsForm.LoadMe()
+        End If
     End Sub
 End Class
 NotInheritable Class Shortcut : Inherits NativeWindow

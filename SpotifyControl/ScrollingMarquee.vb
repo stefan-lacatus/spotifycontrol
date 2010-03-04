@@ -128,6 +128,7 @@ Public Class ScrollingMarquee
         ' leave the text static for _TimeBefore milliseconds
         tmrMain.Enabled = False
         tmrBefore.Enabled = True
+        Invalidate()
     End Sub
 
     Private Overloads Sub OnPaint(ByVal sender As Object, ByVal e As PaintEventArgs)
