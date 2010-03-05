@@ -57,14 +57,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SpotifyControl.exe" size="372224">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SpotifyControl.exe" size="371712">
       <assemblyIdentity name="SpotifyControl" version="0.0.4.5" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>8iHKQLoYp4jniBNUQytB2xH7m5E=</dsig:DigestValue>
+        <dsig:DigestValue>eN4pzj+Yyfh13ufHRj0JqMXsLPg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

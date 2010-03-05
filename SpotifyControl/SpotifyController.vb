@@ -8,21 +8,24 @@ Public Class SpotifyController
     ' used for possible workaround the 26-second problem
     Dim WithEvents ApplicationUpdate As New System.ComponentModel.BackgroundWorker
 #Region "For Aero Glass"
-    <Flags()> Public Enum DwmBlurBehindDwFlags As UInteger
+    <Flags()> Friend Enum DwmBlurBehindDwFlags As UInteger
         DWM_BB_ENABLE = &H1
         DWM_BB_BLURREGION = &H2
         DWM_BB_TRANSITIONONMAXIMIZED = &H4
     End Enum
     <StructLayout(LayoutKind.Sequential)> _
-    Public Structure DWM_BLURBEHIND
+    Friend Structure DWM_BLURBEHIND
         Public dwFlags As DwmBlurBehindDwFlags
         Public fEnable As Boolean
         Public hRgnBlur As IntPtr
         Public fTransitionOnMaximized As Boolean
     End Structure
     <DllImport("dwmapi.dll")> _
-    Private Shared Sub DwmEnableBlurBehindWindow(ByVal hwnd As IntPtr, ByRef blurBehind As DWM_BLURBEHIND)
+    Friend Shared Sub DwmEnableBlurBehindWindow(ByVal hwnd As IntPtr, ByRef blurBehind As DWM_BLURBEHIND)
     End Sub
+    <DllImport("dwmapi.dll", EntryPoint:="DwmIsCompositionEnabled")> _
+    Friend Shared Function DwmIsCompositionEnabled(ByRef enabled As Boolean) As Integer
+    End Function
 #End Region
     Private Sub DownloadSomething() Handles ApplicationUpdate.DoWork
         Dim MyAutoUpdate As New AutoUpdate
@@ -52,15 +55,7 @@ Public Class SpotifyController
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
         ' if on Win7 or Vista give aero feel to the form
         If GetAeroSupport() = "Supports aero" Then
-            On Error Resume Next
-            ' black is the color that gets transformed to glass
-            Me.BackColor = Color.Black
-            ' make the entire form glassy and blurry
-            Dim Aux As DWM_BLURBEHIND
-            Aux.dwFlags = DwmBlurBehindDwFlags.DWM_BB_ENABLE
-            Aux.fEnable = True
-            Aux.hRgnBlur = vbNull
-            DwmEnableBlurBehindWindow(Me.Handle, Aux)
+            MakeAero()
         Else
             Me.BackColor = Color.Gray
             Me.Opacity = 80 / 100
@@ -71,7 +66,27 @@ Public Class SpotifyController
         LastVolume = 10
         ' load the hotkey settings from file
         LoadSettings()
-        
+
+    End Sub
+    Friend Sub MakeAero()
+        ' check if aero is enabled
+        Dim aeroEnabled As Boolean
+        SpotifyController.DwmIsCompositionEnabled(aeroEnabled)
+        If aeroEnabled Then
+            ' On Error Resume Next
+            ' black is the color that gets transformed to glass
+            Me.BackColor = Color.Black
+            Me.Opacity = 1
+            ' make the entire form glassy and blurry
+            Dim Aux As SpotifyController.DWM_BLURBEHIND
+            Aux.dwFlags = SpotifyController.DwmBlurBehindDwFlags.DWM_BB_ENABLE
+            Aux.fEnable = True
+            Aux.hRgnBlur = vbNull
+            SpotifyController.DwmEnableBlurBehindWindow(Me.Handle, Aux)
+        Else
+            Me.BackColor = Color.Gray
+            Me.Opacity = 80 / 100
+        End If
     End Sub
     Private Sub BringToTop() Handles BringTop.Pressed
         MySpotify.BringToTop()
@@ -316,7 +331,14 @@ NotInheritable Class Shortcut : Inherits NativeWindow
         UnregisterHotKey(Handle, ID)
     End Sub
     Protected Overrides Sub WndProc(ByRef M As Message)
-        If M.Msg = 786 Then RaiseEvent Pressed(M.WParam.ToInt32)
+        If M.Msg = 786 Then
+            ' raise the hotkey event
+            RaiseEvent Pressed(M.WParam.ToInt32)
+        ElseIf M.Msg = &H31E Then
+            ' the aero state has been changed
+            ' repaint the main window
+            SpotifyController.MakeAero()
+        End If
         MyBase.WndProc(M)
     End Sub
 End Class
