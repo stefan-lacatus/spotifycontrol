@@ -8,6 +8,7 @@
     Private Sub LyricsForm_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
         IsVisible = False
         Me.Hide()
+        e.Cancel = True
     End Sub
     Private Sub LyricsForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 

@@ -3,7 +3,7 @@
     Dim MaxOpacity, TimeVisible As Integer
     Private MyLastFmApi As LastFmApi
     Private MyMetaDataApi As MetadataAPI
-    Private AlbumName, TrackName As String
+    Private AlbumName, TrackName, CoverURL As String
     Private CoverArt As Image
     Dim WithEvents Downloader As New System.ComponentModel.BackgroundWorker
     Private Sub Download() Handles Downloader.DoWork
@@ -17,7 +17,8 @@
             End If
             TrackName = TrackTitleLbl.Text & " (" & MyMetaDataApi.GetTrackLength & ")"
             Dim objwebClient As New Net.WebClient
-            Dim ImageStream As New IO.MemoryStream(objwebClient.DownloadData(MyLastFmApi.GetAlbumArt))
+            CoverURL = MyLastFmApi.GetAlbumArt
+            Dim ImageStream As New IO.MemoryStream(objwebClient.DownloadData(CoverURL))
             CoverArt = Image.FromStream(ImageStream)
         Catch
             TrackName = SpotifyController.MySpotify.GetTrackTitle
@@ -29,7 +30,9 @@
         AlbumLbl.Text = AlbumName
         TrackTitleLbl.Text = TrackName
         AlbumArtBox.Image = CoverArt
-
+        SpotifyController.CurrentTrack.CoverURL = CoverURL
+        SpotifyController.CurrentTrack.AlbumName = AlbumName
+        '  MsgBox(SpotifyController.CurrentTrack.TrackName & SpotifyController.CurrentTrack.ArtistName & SpotifyController.CurrentTrack.AlbumName)
         Me.Show()
         OpacityTimer.Enabled = True
         ' measure the text so we can resize the window to fit the text and to look nice
@@ -55,14 +58,18 @@
             MaxOpacity = 100
             TimeVisibleTimer.Interval = TimeVisible
             ResetControls()
+            SpotifyController.CurrentTrack.TrackName = SpotifyController.MySpotify.GetTrackTitle
+            SpotifyController.CurrentTrack.ArtistName = SpotifyController.MySpotify.GetTrackArtist
+            SpotifyController.CurrentTrack.CoverURL = vbNullString
+            SpotifyController.CurrentTrack.AlbumName = vbNullString
             ' set the opacity to 0. This will make the form invisible
             Me.Opacity = 0
             ' make the window borderless. Looks better this way
             Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
             ' Activate the timer that will make the opacity vary
             increaseOpacity = True
-            TrackTitleLbl.Text = SpotifyController.MySpotify.GetTrackTitle
-            ArtistLbl.Text = SpotifyController.MySpotify.GetTrackArtist
+            TrackTitleLbl.Text = SpotifyController.CurrentTrack.TrackName
+            ArtistLbl.Text = SpotifyController.CurrentTrack.ArtistName
             Downloader.RunWorkerAsync()
         Catch
         
