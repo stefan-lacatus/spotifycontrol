@@ -29,12 +29,12 @@ Partial Class SettingManager
         Me.HotKey = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.UpdateBtn = New System.Windows.Forms.Button()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
-        Me.TextBox1 = New System.Windows.Forms.TextBox()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.StartSrvBox = New System.Windows.Forms.Button()
-        Me.StopServerBox = New System.Windows.Forms.Button()
         Me.TestSrvBox = New System.Windows.Forms.Button()
+        Me.StopServerBox = New System.Windows.Forms.Button()
+        Me.StartSrvBox = New System.Windows.Forms.Button()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.PassBox = New System.Windows.Forms.TextBox()
+        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
         CType(Me.HotKeyTbl, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -102,57 +102,13 @@ Partial Class SettingManager
         Me.GroupBox1.Controls.Add(Me.StopServerBox)
         Me.GroupBox1.Controls.Add(Me.StartSrvBox)
         Me.GroupBox1.Controls.Add(Me.Label1)
-        Me.GroupBox1.Controls.Add(Me.TextBox1)
+        Me.GroupBox1.Controls.Add(Me.PassBox)
         Me.GroupBox1.Location = New System.Drawing.Point(8, 252)
         Me.GroupBox1.Name = "GroupBox1"
         Me.GroupBox1.Size = New System.Drawing.Size(228, 90)
         Me.GroupBox1.TabIndex = 7
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "WebControl"
-        '
-        'GroupBox2
-        '
-        Me.GroupBox2.Controls.Add(Me.HotKeyTbl)
-        Me.GroupBox2.Location = New System.Drawing.Point(13, 38)
-        Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(223, 208)
-        Me.GroupBox2.TabIndex = 8
-        Me.GroupBox2.TabStop = False
-        Me.GroupBox2.Text = "GlobalHotkeys"
-        '
-        'TextBox1
-        '
-        Me.TextBox1.Location = New System.Drawing.Point(101, 19)
-        Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(116, 20)
-        Me.TextBox1.TabIndex = 0
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(8, 22)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(87, 13)
-        Me.Label1.TabIndex = 1
-        Me.Label1.Text = "Server Password"
-        '
-        'StartSrvBox
-        '
-        Me.StartSrvBox.Location = New System.Drawing.Point(11, 48)
-        Me.StartSrvBox.Name = "StartSrvBox"
-        Me.StartSrvBox.Size = New System.Drawing.Size(56, 23)
-        Me.StartSrvBox.TabIndex = 2
-        Me.StartSrvBox.Text = "Start"
-        Me.StartSrvBox.UseVisualStyleBackColor = True
-        '
-        'StopServerBox
-        '
-        Me.StopServerBox.Location = New System.Drawing.Point(163, 48)
-        Me.StopServerBox.Name = "StopServerBox"
-        Me.StopServerBox.Size = New System.Drawing.Size(54, 23)
-        Me.StopServerBox.TabIndex = 3
-        Me.StopServerBox.Text = "Stop"
-        Me.StopServerBox.UseVisualStyleBackColor = True
         '
         'TestSrvBox
         '
@@ -163,6 +119,50 @@ Partial Class SettingManager
         Me.TestSrvBox.TabIndex = 4
         Me.TestSrvBox.Text = "Test"
         Me.TestSrvBox.UseVisualStyleBackColor = True
+        '
+        'StopServerBox
+        '
+        Me.StopServerBox.Location = New System.Drawing.Point(163, 48)
+        Me.StopServerBox.Name = "StopServerBox"
+        Me.StopServerBox.Size = New System.Drawing.Size(54, 23)
+        Me.StopServerBox.TabIndex = 3
+        Me.StopServerBox.Text = "Stop"
+        Me.StopServerBox.UseVisualStyleBackColor = True
+        '
+        'StartSrvBox
+        '
+        Me.StartSrvBox.Location = New System.Drawing.Point(11, 48)
+        Me.StartSrvBox.Name = "StartSrvBox"
+        Me.StartSrvBox.Size = New System.Drawing.Size(56, 23)
+        Me.StartSrvBox.TabIndex = 2
+        Me.StartSrvBox.Text = "Start"
+        Me.StartSrvBox.UseVisualStyleBackColor = True
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(8, 22)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(87, 13)
+        Me.Label1.TabIndex = 1
+        Me.Label1.Text = "Server Password"
+        '
+        'PassBox
+        '
+        Me.PassBox.Location = New System.Drawing.Point(101, 19)
+        Me.PassBox.Name = "PassBox"
+        Me.PassBox.Size = New System.Drawing.Size(116, 20)
+        Me.PassBox.TabIndex = 0
+        '
+        'GroupBox2
+        '
+        Me.GroupBox2.Controls.Add(Me.HotKeyTbl)
+        Me.GroupBox2.Location = New System.Drawing.Point(13, 38)
+        Me.GroupBox2.Name = "GroupBox2"
+        Me.GroupBox2.Size = New System.Drawing.Size(223, 208)
+        Me.GroupBox2.TabIndex = 8
+        Me.GroupBox2.TabStop = False
+        Me.GroupBox2.Text = "GlobalHotkeys"
         '
         'SettingManager
         '
@@ -195,5 +195,5 @@ Partial Class SettingManager
     Friend WithEvents StopServerBox As System.Windows.Forms.Button
     Friend WithEvents StartSrvBox As System.Windows.Forms.Button
     Friend WithEvents Label1 As System.Windows.Forms.Label
-    Friend WithEvents TextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents PassBox As System.Windows.Forms.TextBox
 End Class

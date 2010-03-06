@@ -242,12 +242,12 @@ Public Class SpotifyController
 
     Private Sub SettingImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SettingImg.Click
         ' show the setting manager dialog
-        SettingManager.Show() '= Windows.Forms.DialogResult.OK Then
-        ' if changes were made and the user saves them
-        UnRegisterMyHotKeys()
-        Application.DoEvents()
-        RegisterMyHotKeys()
-        '   End If
+        If SettingManager.ShowDialog = Windows.Forms.DialogResult.OK Then
+            ' if changes were made and the user saves them
+            UnRegisterMyHotKeys()
+            Application.DoEvents()
+            RegisterMyHotKeys()
+        End If
     End Sub
     Private Sub RegisterMyHotKeys()
         Try
@@ -294,6 +294,7 @@ Public Class SpotifyController
                 ' Add the values to the array that contains all the keys
                 SettingManager.MyHotKeyManager(index) = AuxHotKeyManager
             Next
+            SettingManager.Password = SettingsReader.ReadLine
             SettingsReader.Close()
             RegisterMyHotKeys()
         Catch ex As Exception

@@ -1,7 +1,7 @@
 ﻿Public Class SettingManager
     Public MyHotKeyManager(5) As HotKeyManager
     Public WithEvents cHTTPServer As HTTPServer
-
+    Public Password As String
     Private Sub SettingManager_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
         Me.Hide()
         e.Cancel = True
@@ -65,6 +65,7 @@
                 SettingWriter.WriteLine(MyHotKeyManager(index).MainKey)
                 SettingWriter.WriteLine(MyHotKeyManager(index).MainKeyModifier)
             Next
+            SettingWriter.WriteLine(Password)
             SettingWriter.Close()
         Catch ex As Exception
             SettingWriter.Close()
@@ -93,7 +94,16 @@
         cHTTPServer.HandledRequestList(4) = New String("/voldown")
         cHTTPServer.HandledRequestList(5) = New String("/volup")
         cHTTPServer.HandledRequestList(6) = New String("/mute")
-        cHTTPServer.StartFile = Application.StartupPath & "/html/test.html"
+        If PassBox.Text <> vbNullString Then
+            If Password <> vbNullString Then
+                My.Computer.FileSystem.RenameFile(Application.StartupPath & "/html/" & getMD5Hash(Password) & ".html", getMD5Hash(PassBox.Text) & ".html")
+            Else
+                My.Computer.FileSystem.RenameFile(Application.StartupPath & "/html/test.html", getMD5Hash(PassBox.Text) & ".html")
+            End If
+        End If
+        Password = PassBox.Text
+        cHTTPServer.HandledRequestList(7) = New String("/" & Password)
+        cHTTPServer.StartFile = Application.StartupPath & "/html/index.html"
         cHTTPServer.RootDirectory = Application.StartupPath & "/html"
         TestSrvBox.Enabled = True
         StartSrvBox.Enabled = False
@@ -147,6 +157,10 @@
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case Else
+                If Data.Request_Filename = "/" & Password Then
+                    Threading.Thread.Sleep(300)
+                    cHTTPServer.SendHTTPResponse(sender, Data, "True|||" & getMD5Hash(Password) & ".html")
+                End If
 
         End Select
     End Sub
@@ -159,4 +173,18 @@
             StartSrvBox.Enabled = True
         End If
     End Sub
+    Function getMD5Hash(ByVal strToHash As String) As String
+        Dim md5Obj As New Security.Cryptography.MD5CryptoServiceProvider
+        Dim bytesToHash() As Byte = System.Text.Encoding.ASCII.GetBytes(strToHash)
+
+        bytesToHash = md5Obj.ComputeHash(bytesToHash)
+
+        Dim strResult As String = ""
+
+        For Each b As Byte In bytesToHash
+            strResult += b.ToString("x2")
+        Next
+
+        Return strResult
+    End Function
 End Class
