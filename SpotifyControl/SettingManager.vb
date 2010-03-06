@@ -1,15 +1,20 @@
 ﻿Public Class SettingManager
     Public MyHotKeyManager(5) As HotKeyManager
+    Public WithEvents cHTTPServer As HTTPServer
+
+    Private Sub SettingManager_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
+        Me.Hide()
+        e.Cancel = True
+    End Sub
     Private Sub SettingManager_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.FixedToolWindow
-        CheckGroupBox1.Checked = True
         Dim DefaultValues() As String = New String() {"Play/Pause", "Next", "Previous", "Mute", "Volume Up", "Volume Down"}
         HotKeyTbl.RowCount = 6
         For index = 0 To 5
             HotKeyTbl.Item(0, index).Value = DefaultValues(index)
         Next
         Try
-            ' the second comumn should be loaded from file. 
+            ' the second column should be loaded from file. 
             For index = 0 To 5
                 Select Case MyHotKeyManager(index).MainKeyModifier
                     Case 1
@@ -46,7 +51,6 @@
     Private Sub SaveSettings()
         Dim SettingWriter As System.IO.StreamWriter
         Try
-
             ' if the file exists display a msgbox with options
             If System.IO.File.Exists(Application.StartupPath & "//Settings.ini") Then
                 If MsgBox("A settings file already exists. Overwrite?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
@@ -61,12 +65,12 @@
                 SettingWriter.WriteLine(MyHotKeyManager(index).MainKey)
                 SettingWriter.WriteLine(MyHotKeyManager(index).MainKeyModifier)
             Next
-            'SettingWriter.Close()
+            SettingWriter.Close()
         Catch ex As Exception
-
+            SettingWriter.Close()
             ' MsgBox(ex.Message)
         End Try
-        SettingWriter.Close()
+
     End Sub
 
     Private Sub UpdateBtn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UpdateBtn.Click
@@ -76,6 +80,83 @@
         If MyAutoUpdate.AutoUpdate(vbNullString, RemotePath) Then
             Dispose()
             Application.Exit()
+        End If
+    End Sub
+
+    Private Sub StartSrvBox_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StartSrvBox.Click
+        cHTTPServer = New HTTPServer()
+        ReDim cHTTPServer.HandledRequestList(7)
+        cHTTPServer.HandledRequestList(0) = New String("/getnowplaying")
+        cHTTPServer.HandledRequestList(1) = New String("/next")
+        cHTTPServer.HandledRequestList(2) = New String("/prev")
+        cHTTPServer.HandledRequestList(3) = New String("/playpause")
+        cHTTPServer.HandledRequestList(4) = New String("/voldown")
+        cHTTPServer.HandledRequestList(5) = New String("/volup")
+        cHTTPServer.HandledRequestList(6) = New String("/mute")
+        cHTTPServer.StartFile = Application.StartupPath & "/html/test.html"
+        cHTTPServer.RootDirectory = Application.StartupPath & "/html"
+        TestSrvBox.Enabled = True
+        StartSrvBox.Enabled = False
+        cHTTPServer.StartServer()
+
+    End Sub
+
+    Private Sub StopServerBox_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StopServerBox.Click
+        CloseServer()
+    End Sub
+
+    Private Sub TestSrvBox_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TestSrvBox.Click
+        Process.Start("http://127.0.0.1/test.html")
+    End Sub
+
+    Private Sub cHTTPServer_ON_HTTP_GET(ByVal sender As UserConnection, ByVal Data As HTTPServer.HTTPConnection) Handles cHTTPServer.ON_HTTP_GET
+        'use the Data variable to see all the information attached to the connection
+        'Like... Data.Request_Referer or Data.Request_Useragent 
+        Select Case Data.Request_Filename
+            Case "/getnowplaying"
+                Threading.Thread.Sleep(300)
+                Dim Response As String = "Track Name ||| Artist Name ||| Album Name ||| AlbumArt"
+                Try
+                    Response = SpotifyController.CurrentTrack.TrackName & "|||" & SpotifyController.CurrentTrack.ArtistName & _
+                        "|||" & SpotifyController.CurrentTrack.AlbumName & "|||" & SpotifyController.CurrentTrack.CoverURL
+                Catch
+                End Try
+                cHTTPServer.SendHTTPResponse(sender, Data, Response)
+            Case "/next"
+                SpotifyController.MySpotify.PlayNext()
+                Threading.Thread.Sleep(300)
+                cHTTPServer.SendHTTPResponse(sender, Data, "OK")
+            Case "/prev"
+                SpotifyController.MySpotify.PlayPrev()
+                Threading.Thread.Sleep(300)
+                cHTTPServer.SendHTTPResponse(sender, Data, "OK")
+            Case "/playpause"
+                SpotifyController.MySpotify.PlayPause()
+                Threading.Thread.Sleep(300)
+                cHTTPServer.SendHTTPResponse(sender, Data, "OK")
+            Case "/mute"
+                SpotifyController.MySpotify.Mute()
+                Threading.Thread.Sleep(300)
+                cHTTPServer.SendHTTPResponse(sender, Data, "OK")
+            Case "/voldown"
+                SpotifyController.MySpotify.VolumeDown()
+                Threading.Thread.Sleep(300)
+                cHTTPServer.SendHTTPResponse(sender, Data, "OK")
+            Case "/volup"
+                SpotifyController.MySpotify.VolumeUp()
+                Threading.Thread.Sleep(300)
+                cHTTPServer.SendHTTPResponse(sender, Data, "OK")
+            Case Else
+
+        End Select
+    End Sub
+    Public Sub CloseServer()
+        If cHTTPServer Is Nothing Then
+        Else
+            cHTTPServer.StopServer()
+            cHTTPServer = Nothing
+            TestSrvBox.Enabled = False
+            StartSrvBox.Enabled = True
         End If
     End Sub
 End Class

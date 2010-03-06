@@ -2,6 +2,7 @@
 
 Public Class SpotifyController
     Public MySpotify As New ControllerClass
+    Public Shared CurrentTrack As New Track
     Dim LastVolume As Integer
     Dim TrackChangeIndex As Integer
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
@@ -38,6 +39,7 @@ Public Class SpotifyController
     Private Sub SpotifyController_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
         ' call the function to unregister the hotkeys
         UnRegisterMyHotKeys()
+        SettingManager.CloseServer()
     End Sub
     Private Sub SpotifyController_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         ApplicationUpdate.RunWorkerAsync()
@@ -157,7 +159,8 @@ Public Class SpotifyController
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SongCheck.Tick
         NowPlayingBox.Text = MySpotify.GetNowplaying
         'if spotify has been closed then wait for it to be opened again
-        Debug.Print(MySpotify.SpotifyState)
+        '   Debug.Print(MySpotify.SpotifyState)
+        'MsgBox(CurrentTrack.TrackName & CurrentTrack.ArtistName & CurrentTrack.AlbumName)
         If MySpotify.SpotifyState = "Closed" Then
             MySpotify.LoadMe()
         End If
@@ -239,12 +242,12 @@ Public Class SpotifyController
 
     Private Sub SettingImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SettingImg.Click
         ' show the setting manager dialog
-        If SettingManager.ShowDialog = Windows.Forms.DialogResult.OK Then
-            ' if changes were made and the user saves them
-            UnRegisterMyHotKeys()
-            Application.DoEvents()
-            RegisterMyHotKeys()
-        End If
+        SettingManager.Show() '= Windows.Forms.DialogResult.OK Then
+        ' if changes were made and the user saves them
+        UnRegisterMyHotKeys()
+        Application.DoEvents()
+        RegisterMyHotKeys()
+        '   End If
     End Sub
     Private Sub RegisterMyHotKeys()
         Try
@@ -297,18 +300,8 @@ Public Class SpotifyController
             Debug.Print(ex.Message)
         End Try
     End Sub
-    ' Loops for a specificied period of time (milliseconds)
-    Private Sub wait(ByVal interval As Integer)
-        Dim sw As New Stopwatch
-        sw.Start()
-        Do While sw.ElapsedMilliseconds < interval
-            ' Allows UI to remain responsive
-            Application.DoEvents()
-        Loop
-        sw.Stop()
-    End Sub
     Private Sub LyricImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LyricImg.Click
-        If MySpotify.SpotifyState <> "Closed" And NowPlayingBox.Text <> vbNullString Then
+        If MySpotify.SpotifyState <> "Closed" And NowPlayingBox.Text <> vbNullString And NowPlayingBox.Text <> "Nothing Playing" Then
             LyricsForm.LoadMe()
         End If
     End Sub
