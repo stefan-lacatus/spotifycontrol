@@ -29,8 +29,10 @@
 
         AlbumLbl.Text = AlbumName
         TrackTitleLbl.Text = TrackName
-        AlbumArtBox.Image = CoverArt
-        SpotifyController.CurrentTrack.CoverURL = CoverURL
+        If CoverURL <> vbNullString Then
+            AlbumArtBox.Image = CoverArt
+            SpotifyController.CurrentTrack.CoverURL = CoverURL
+        End If
         SpotifyController.CurrentTrack.AlbumName = AlbumName
         '  MsgBox(SpotifyController.CurrentTrack.TrackName & SpotifyController.CurrentTrack.ArtistName & SpotifyController.CurrentTrack.AlbumName)
         Me.Show()
@@ -50,6 +52,18 @@
         Dim x As Integer = working_area.Left + working_area.Width - Me.Width
         Dim y As Integer = working_area.Top + working_area.Height - Me.Height
         Me.Location = New Point(x, y)
+        ' add some round edges to the form
+        Dim p As New Drawing2D.GraphicsPath()
+        p.StartFigure()
+        p.AddArc(New Rectangle(0, 0, 20, 20), 180, 90)
+        p.AddLine(20, 0, Me.Width - 20, 0)
+        p.AddArc(New Rectangle(Me.Width - 20, 0, 20, 20), -90, 90)
+        p.AddLine(Me.Width, 20, Me.Width, Me.Height - 20)
+        p.AddArc(New Rectangle(Me.Width - 20, Me.Height - 20, 20, 20), 0, 90)
+        p.AddLine(Me.Width - 20, Me.Height, 20, Me.Height)
+        p.AddArc(New Rectangle(0, Me.Height - 20, 20, 20), 90, 90)
+        p.CloseFigure()
+        Me.Region = New Region(p)
 
     End Sub
     Public Sub LoadMe()
@@ -78,6 +92,7 @@
     Private Sub ResetControls()
         ' this will reset all the controls in this form to the initials state
         CoverArt = Nothing
+        CoverURL = vbNullString
         TrackName = vbNullString
         AlbumName = vbNullString
         TimeVisibleTimer.Enabled = False
@@ -125,4 +140,5 @@
         TimeVisibleTimer.Interval = 1000
         TimeVisibleTimer.Enabled = True
     End Sub
+
 End Class
