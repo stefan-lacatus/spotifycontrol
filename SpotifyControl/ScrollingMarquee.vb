@@ -14,6 +14,7 @@ Public Class ScrollingMarquee
     Private _ScrollSpeed As Integer = 5
     Private _ShadowColor As Color = Color.White
     Private _TimeBefore As Integer = 1000
+    Private _HaloText As Boolean = True
 
     Private Structure tSize
         Dim X As Long
@@ -99,6 +100,16 @@ Public Class ScrollingMarquee
         End Set
     End Property
 
+    <Category("Marquee")> _
+    <Description("Gets/Sets if you want text halo or not")> _
+    Public Property HaloText() As Boolean
+        Get
+            Return _HaloText
+        End Get
+        Set(ByVal value As Boolean)
+            _HaloText = value
+        End Set
+    End Property
 
     Private Sub ScrollingMarquee_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.HandleCreated
         SetStyle(ControlStyles.AllPaintingInWmPaint Or ControlStyles.DoubleBuffer Or ControlStyles.ResizeRedraw Or ControlStyles.UserPaint, True)
@@ -132,8 +143,11 @@ Public Class ScrollingMarquee
     End Sub
 
     Private Overloads Sub OnPaint(ByVal sender As Object, ByVal e As PaintEventArgs)
-        Dim str As String = Me.Text
         Dim g As Graphics = e.Graphics
+
+        ' draw the text the normal way
+        Dim str As String = Me.Text
+
         Dim szf As SizeF
 
         g.SmoothingMode = SmoothingMode.HighQuality
@@ -152,9 +166,48 @@ Public Class ScrollingMarquee
                 startPosition -= 1
             End If
         End If
-        Debug.WriteLine(startPosition)
-        g.DrawString(Me.Text, Me.Font, New SolidBrush(Me.ForeColor), startPosition, 0 + (Me.Height / 2) - (szf.Height / 2))
+        If _HaloText = False Then
+            g.DrawString(Me.Text, Me.Font, New SolidBrush(Me.ForeColor), startPosition, 0 + (Me.Height / 2) - (szf.Height / 2))
+        Else
+            Dim AuxImg = GetHaloText(Me.Text, Me.Font, Color.White, Color.Black, 2)
+            g.DrawImage(AuxImg, startPosition, Me.Location.Y)
+        End If
     End Sub
+    Private Function GetHaloText(ByVal displayText As String, ByVal fnt As Font, ByVal haloColor As Color, ByVal textColor As Color, ByVal blurAmount As Integer) As Image
+        Dim bmpOut As Bitmap = Nothing
+        Using g As Graphics = Graphics.FromHwnd(IntPtr.Zero)
+            Dim sz As SizeF = g.MeasureString(displayText, fnt)
+            Using bmp As New Bitmap(CInt(sz.Width), CInt(sz.Height))
+                Using gBmp As Graphics = Graphics.FromImage(bmp)
+                    Using brBack As New SolidBrush(haloColor)
+                        Using brFore As New SolidBrush(textColor)
+                            With gBmp
+                                .SmoothingMode = SmoothingMode.AntiAlias
+                                .InterpolationMode = InterpolationMode.HighQualityBicubic
+                                .TextRenderingHint = Drawing.Text.TextRenderingHint.AntiAliasGridFit
+                                .DrawString(displayText, fnt, brBack, 0, 0)
+                            End With
+                            bmpOut = New Bitmap(bmp.Width + blurAmount, bmp.Height + blurAmount)
+                            Using gBmpOut As Graphics = Graphics.FromImage(bmpOut)
+                                With gBmpOut
+                                    .SmoothingMode = SmoothingMode.AntiAlias
+                                    .InterpolationMode = InterpolationMode.HighQualityBicubic
+                                    .TextRenderingHint = Drawing.Text.TextRenderingHint.AntiAliasGridFit
+                                End With
+                                For x As Integer = 0 To blurAmount
+                                    For y As Integer = 0 To blurAmount
+                                        gBmpOut.DrawImageUnscaled(bmp, x, y)
+                                    Next
+                                Next
+                                gBmpOut.DrawString(displayText, fnt, brFore, blurAmount / 2, blurAmount / 2)
+                            End Using
+                        End Using
+                    End Using
+                End Using
+            End Using
+        End Using
+        Return bmpOut
+    End Function
 
     Protected Overloads Overrides Sub Dispose(ByVal disposing As Boolean)
         If disposing Then

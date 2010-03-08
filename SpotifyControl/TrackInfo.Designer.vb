@@ -34,7 +34,7 @@ Partial Class TrackInfo
         '
         'AlbumArtBox
         '
-        Me.AlbumArtBox.Location = New System.Drawing.Point(12, 12)
+        Me.AlbumArtBox.Location = New System.Drawing.Point(12, 6)
         Me.AlbumArtBox.Name = "AlbumArtBox"
         Me.AlbumArtBox.Size = New System.Drawing.Size(90, 90)
         Me.AlbumArtBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
@@ -48,7 +48,7 @@ Partial Class TrackInfo
         '
         Me.TrackTitleLbl.AutoSize = True
         Me.TrackTitleLbl.Font = New System.Drawing.Font("Segoe Script", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TrackTitleLbl.Location = New System.Drawing.Point(106, 22)
+        Me.TrackTitleLbl.Location = New System.Drawing.Point(108, 12)
         Me.TrackTitleLbl.Name = "TrackTitleLbl"
         Me.TrackTitleLbl.Size = New System.Drawing.Size(59, 22)
         Me.TrackTitleLbl.TabIndex = 1
@@ -58,7 +58,7 @@ Partial Class TrackInfo
         '
         Me.AlbumLbl.AutoSize = True
         Me.AlbumLbl.Font = New System.Drawing.Font("Segoe Script", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.AlbumLbl.Location = New System.Drawing.Point(106, 50)
+        Me.AlbumLbl.Location = New System.Drawing.Point(108, 40)
         Me.AlbumLbl.Name = "AlbumLbl"
         Me.AlbumLbl.Size = New System.Drawing.Size(126, 20)
         Me.AlbumLbl.TabIndex = 2
@@ -68,7 +68,7 @@ Partial Class TrackInfo
         '
         Me.ArtistLbl.AutoSize = True
         Me.ArtistLbl.Font = New System.Drawing.Font("Segoe Script", 9.5!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ArtistLbl.Location = New System.Drawing.Point(106, 77)
+        Me.ArtistLbl.Location = New System.Drawing.Point(108, 67)
         Me.ArtistLbl.Name = "ArtistLbl"
         Me.ArtistLbl.Size = New System.Drawing.Size(56, 20)
         Me.ArtistLbl.TabIndex = 3
@@ -83,7 +83,7 @@ Partial Class TrackInfo
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.DimGray
-        Me.ClientSize = New System.Drawing.Size(270, 114)
+        Me.ClientSize = New System.Drawing.Size(270, 105)
         Me.Controls.Add(Me.ArtistLbl)
         Me.Controls.Add(Me.AlbumLbl)
         Me.Controls.Add(Me.TrackTitleLbl)

@@ -36,6 +36,13 @@ Public Class ControllerClass
     End Property
     Public Sub New()
         LoadMe()
+        If _SpotifyState = "Running" Then
+            ' check if the spotify handle if zero
+            ' this checks if spotify is started but the main window is closed
+            If SpotifyHandle = IntPtr.Zero Then
+                _SpotifyState = "Hidden"
+            End If
+        End If
     End Sub
     Public Sub LoadMe()
         Dim auxProcess() As Process = Process.GetProcessesByName("spotify")

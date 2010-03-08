@@ -46,6 +46,20 @@ Public Class SpotifyController
         Me.MaximizeBox = False
         TrackInfo.Show()
         TrackInfo.Hide()
+        ' make the borders disappear
+        Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
+        ' add some round edges to the form
+        Dim p As New Drawing2D.GraphicsPath()
+        p.StartFigure()
+        p.AddArc(New Rectangle(0, 0, 20, 20), 180, 90)
+        p.AddLine(20, 0, Me.Width - 20, 0)
+        p.AddArc(New Rectangle(Me.Width - 20, 0, 20, 20), -90, 90)
+        p.AddLine(Me.Width, 20, Me.Width, Me.Height - 20)
+        p.AddArc(New Rectangle(Me.Width - 20, Me.Height - 20, 20, 20), 0, 90)
+        p.AddLine(Me.Width - 20, Me.Height, 20, Me.Height)
+        p.AddArc(New Rectangle(0, Me.Height - 20, 20, 20), 90, 90)
+        p.CloseFigure()
+        Me.Region = New Region(p)
         ' declare some tooltips to associate to the controls on the main window
         Dim CloseToolTip, PlayPauseToolTip, PrevToolTip, NextToolTip, LyricToolTip As New Windows.Forms.ToolTip
         CloseToolTip.SetToolTip(CloseImg, "Close SpotifyControl")
@@ -53,14 +67,13 @@ Public Class SpotifyController
         PrevToolTip.SetToolTip(PrevImg, "Plays the previous song")
         NextToolTip.SetToolTip(NextImg, "Plays the next song")
         LyricToolTip.SetToolTip(LyricImg, "Find the lyrics for the current song")
-        ' make the borders disappear
-        Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
         ' if on Win7 or Vista give aero feel to the form
         If GetAeroSupport() = "Supports aero" Then
             MakeAero()
         Else
             Me.BackColor = Color.Gray
             Me.Opacity = 80 / 100
+            NowPlayingBox.HaloText = False
         End If
         NowPlayingBox.Text = MySpotify.GetNowplaying
         ' TODO: Find a way to get the current volume and not feed this values with shit
@@ -68,7 +81,6 @@ Public Class SpotifyController
         LastVolume = 10
         ' load the hotkey settings from file
         LoadSettings()
-
     End Sub
     Friend Sub MakeAero()
         ' check if aero is enabled
@@ -85,9 +97,11 @@ Public Class SpotifyController
             Aux.fEnable = True
             Aux.hRgnBlur = vbNull
             SpotifyController.DwmEnableBlurBehindWindow(Me.Handle, Aux)
+            NowPlayingBox.HaloText = True
         Else
             Me.BackColor = Color.Gray
             Me.Opacity = 80 / 100
+            NowPlayingBox.HaloText = False
         End If
     End Sub
     Private Sub BringToTop() Handles BringTop.Pressed
@@ -174,8 +188,6 @@ Public Class SpotifyController
 #Region "Move the window by dragging it with the mouse"
     Private x As Integer = 0
     Private y As Integer = 0
-
-
     Private Sub Me_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseDown, NowPlayingBox.MouseDown
         'Start to move the form.
         x = e.X
@@ -220,7 +232,13 @@ Public Class SpotifyController
         If NowPlayingBox.Text = "Nothing Playing" Then
             PlayPauseImg.Image = My.Resources.Play
             PlayPauseImg.Tag = "Play"
+            CurrentTrack.ArtistName = "Nothing Playing"
+            CurrentTrack.TrackName = "Nothing Playing"
+            CurrentTrack.AlbumName = "Nothing Playing"
+            CurrentTrack.CoverURL = vbNullString
         ElseIf MySpotify.SpotifyState <> "Closed" And NowPlayingBox.Text <> vbNullString Then
+            CurrentTrack.ArtistName = MySpotify.GetTrackArtist
+            CurrentTrack.TrackName = MySpotify.GetTrackTitle
             PlayPauseImg.Image = My.Resources.Pause_PNG
             Application.DoEvents()
             If TrackChangeIndex <> 1 Then
@@ -233,6 +251,10 @@ Public Class SpotifyController
         ElseIf MySpotify.SpotifyState = "Closed" Then
             PlayPauseImg.Tag = "Pause"
             PlayPauseImg.Image = My.Resources.Play
+            CurrentTrack.ArtistName = "Spotify Closed"
+            CurrentTrack.TrackName = "Spotify Closed"
+            CurrentTrack.AlbumName = "Spotify Closed"
+            CurrentTrack.CoverURL = vbNullString
         End If
     End Sub
 
@@ -302,7 +324,7 @@ Public Class SpotifyController
         End Try
     End Sub
     Private Sub LyricImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LyricImg.Click
-        If MySpotify.SpotifyState <> "Closed" And NowPlayingBox.Text <> vbNullString And NowPlayingBox.Text <> "Nothing Playing" Then
+        If MySpotify.SpotifyState <> "Closed" And MySpotify.SpotifyState <> "Hidden" And NowPlayingBox.Text <> vbNullString And NowPlayingBox.Text <> "Nothing Playing" Then
             LyricsForm.LoadMe()
         End If
     End Sub
