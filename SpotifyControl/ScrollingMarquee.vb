@@ -39,6 +39,7 @@ Public Class ScrollingMarquee
         Me.tmrMain.Enabled = False
         Me.tmrBefore.Enabled = True
         Me.Name = "ScrollingMarquee"
+        Me.Text = vbNullString
         Me.Size = New System.Drawing.Size(120, 13)
     End Sub
 
@@ -171,12 +172,14 @@ Public Class ScrollingMarquee
         Else
             Dim AuxImg = GetHaloText(Me.Text, Me.Font, Color.White, Color.Black, 2)
             g.DrawImage(AuxImg, startPosition, Me.Location.Y)
+            AuxImg.Dispose()
         End If
     End Sub
     Private Function GetHaloText(ByVal displayText As String, ByVal fnt As Font, ByVal haloColor As Color, ByVal textColor As Color, ByVal blurAmount As Integer) As Image
         Dim bmpOut As Bitmap = Nothing
         Using g As Graphics = Graphics.FromHwnd(IntPtr.Zero)
-            Dim sz As SizeF = g.MeasureString(displayText, fnt)
+            Dim sz As SizeF
+            sz = g.MeasureString(displayText, fnt)
             Using bmp As New Bitmap(CInt(sz.Width), CInt(sz.Height))
                 Using gBmp As Graphics = Graphics.FromImage(bmp)
                     Using brBack As New SolidBrush(haloColor)

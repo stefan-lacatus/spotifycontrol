@@ -1,10 +1,13 @@
 ﻿Imports System.Windows.Forms
+Imports System.Runtime.InteropServices
 
 Public Class CaptureKey
     ' WinKey cannot be handled using .NET managed code.
     ' We will need to invoke the GetAsyncKeyState function from user32.dll to capture the WinKey
     Dim WinKey, AltKey, ShiftKey, ControlKey As Boolean ' the variables that check for modifier change
-    Private Declare Function GetAsyncKeyState Lib "user32" (ByVal vkey As Long) As Integer
+    <DllImport("user32.dll")> _
+    Public Shared Function GetAsyncKeyState(ByVal vKey As Int32) As Short
+    End Function
     Private Sub TextBox1_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles TextBox1.KeyDown
         ' get the modifiers. This can be Alt, Ctrl or Shift.
         ' WinKey is handled separately

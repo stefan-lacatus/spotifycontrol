@@ -109,7 +109,8 @@ Partial Class SpotifyController
         Me.NextImg.Image = Global.SpotifyControl.My.Resources.Resources.Next2
         Me.NextImg.Location = New System.Drawing.Point(55, 2)
         Me.NextImg.Name = "NextImg"
-        Me.NextImg.Size = New System.Drawing.Size(28, 31)
+        Me.NextImg.Size = New System.Drawing.Size(28, 28)
+        Me.NextImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.NextImg.TabIndex = 10
         Me.NextImg.TabStop = False
         '
@@ -138,9 +139,10 @@ Partial Class SpotifyController
         'PlayPauseImg
         '
         Me.PlayPauseImg.BackColor = System.Drawing.Color.Transparent
-        Me.PlayPauseImg.Location = New System.Drawing.Point(26, -2)
+        Me.PlayPauseImg.Location = New System.Drawing.Point(26, 1)
         Me.PlayPauseImg.Name = "PlayPauseImg"
-        Me.PlayPauseImg.Size = New System.Drawing.Size(34, 35)
+        Me.PlayPauseImg.Size = New System.Drawing.Size(31, 31)
+        Me.PlayPauseImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.PlayPauseImg.TabIndex = 8
         Me.PlayPauseImg.TabStop = False
         Me.PlayPauseImg.Tag = "Play"
@@ -149,16 +151,17 @@ Partial Class SpotifyController
         '
         Me.PrevImg.BackColor = System.Drawing.Color.Transparent
         Me.PrevImg.Image = Global.SpotifyControl.My.Resources.Resources.Prev2
-        Me.PrevImg.Location = New System.Drawing.Point(1, 1)
+        Me.PrevImg.Location = New System.Drawing.Point(1, 2)
         Me.PrevImg.Name = "PrevImg"
-        Me.PrevImg.Size = New System.Drawing.Size(29, 32)
-        Me.PrevImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
+        Me.PrevImg.Size = New System.Drawing.Size(28, 28)
+        Me.PrevImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.PrevImg.TabIndex = 9
         Me.PrevImg.TabStop = False
         '
         'NowPlayingBox
         '
         Me.NowPlayingBox.Font = New System.Drawing.Font("Trebuchet MS", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.NowPlayingBox.HaloText = True
         Me.NowPlayingBox.Location = New System.Drawing.Point(231, 1)
         Me.NowPlayingBox.Name = "NowPlayingBox"
         Me.NowPlayingBox.ScrollLeftToRight = SpotifyControl.ScrollingMarquee.Direction.Left
