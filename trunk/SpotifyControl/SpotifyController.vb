@@ -60,6 +60,7 @@ Public Class SpotifyController
         p.AddArc(New Rectangle(0, Me.Height - 20, 20, 20), 90, 90)
         p.CloseFigure()
         Me.Region = New Region(p)
+        p.Dispose()
         ' declare some tooltips to associate to the controls on the main window
         Dim CloseToolTip, PlayPauseToolTip, PrevToolTip, NextToolTip, LyricToolTip As New Windows.Forms.ToolTip
         CloseToolTip.SetToolTip(CloseImg, "Close SpotifyControl")

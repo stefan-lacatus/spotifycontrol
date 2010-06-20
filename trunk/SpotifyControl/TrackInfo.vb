@@ -64,7 +64,7 @@
         p.AddArc(New Rectangle(0, Me.Height - 20, 20, 20), 90, 90)
         p.CloseFigure()
         Me.Region = New Region(p)
-
+        p.Dispose()
     End Sub
     Public Sub LoadMe()
         Try
