@@ -8,33 +8,17 @@ Public Class SpotifyController
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
     ' used for possible workaround the 26-second problem
     Dim WithEvents ApplicationUpdate As New System.ComponentModel.BackgroundWorker
-#Region "For Aero Glass"
-    <Flags()> Friend Enum DwmBlurBehindDwFlags As UInteger
-        DWM_BB_ENABLE = &H1
-        DWM_BB_BLURREGION = &H2
-        DWM_BB_TRANSITIONONMAXIMIZED = &H4
-    End Enum
-    <StructLayout(LayoutKind.Sequential)> _
-    Friend Structure DWM_BLURBEHIND
-        Public dwFlags As DwmBlurBehindDwFlags
-        Public fEnable As Boolean
-        Public hRgnBlur As IntPtr
-        Public fTransitionOnMaximized As Boolean
-    End Structure
-    <DllImport("dwmapi.dll")> _
-    Friend Shared Sub DwmEnableBlurBehindWindow(ByVal hwnd As IntPtr, ByRef blurBehind As DWM_BLURBEHIND)
-    End Sub
-    <DllImport("dwmapi.dll", EntryPoint:="DwmIsCompositionEnabled")> _
-    Friend Shared Function DwmIsCompositionEnabled(ByRef enabled As Boolean) As Integer
-    End Function
-#End Region
     Private Sub DownloadSomething() Handles ApplicationUpdate.DoWork
-        Dim MyAutoUpdate As New AutoUpdate
-        ' where the updates are downloaded from
-        Dim RemotePath As String = "http://dl.dropbox.com/u/329033/SpotifyController/"
-        If MyAutoUpdate.AutoUpdate(vbNullString, RemotePath) Then
-            Application.Exit()
-        End If
+        Try
+            Dim MyAutoUpdate As New AutoUpdate
+            ' where the updates are downloaded from
+            Dim RemotePath As String = "http://dl.dropbox.com/u/329033/SpotifyController/"
+            If MyAutoUpdate.AutoUpdate(vbNullString, RemotePath) Then
+                Application.Exit()
+            End If
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
     End Sub
     Private Sub SpotifyController_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
         ' call the function to unregister the hotkeys
@@ -69,13 +53,7 @@ Public Class SpotifyController
         NextToolTip.SetToolTip(NextImg, "Plays the next song")
         LyricToolTip.SetToolTip(LyricImg, "Find the lyrics for the current song")
         ' if on Win7 or Vista give aero feel to the form
-        If GetAeroSupport() = "Supports aero" Then
-            MakeAero()
-        Else
-            Me.BackColor = Color.Gray
-            Me.Opacity = 80 / 100
-            NowPlayingBox.HaloText = False
-        End If
+        Tools.MakeAero(Me)
         NowPlayingBox.Text = MySpotify.GetNowplaying
         ' TODO: Find a way to get the current volume and not feed this values with shit
         VolumeControl.Value = 10
@@ -83,28 +61,7 @@ Public Class SpotifyController
         ' load the hotkey settings from file
         LoadSettings()
     End Sub
-    Friend Sub MakeAero()
-        ' check if aero is enabled
-        Dim aeroEnabled As Boolean
-        SpotifyController.DwmIsCompositionEnabled(aeroEnabled)
-        If aeroEnabled Then
-            ' On Error Resume Next
-            ' black is the color that gets transformed to glass
-            Me.BackColor = Color.Black
-            Me.Opacity = 1
-            ' make the entire form glassy and blurry
-            Dim Aux As SpotifyController.DWM_BLURBEHIND
-            Aux.dwFlags = SpotifyController.DwmBlurBehindDwFlags.DWM_BB_ENABLE
-            Aux.fEnable = True
-            Aux.hRgnBlur = vbNull
-            SpotifyController.DwmEnableBlurBehindWindow(Me.Handle, Aux)
-            NowPlayingBox.HaloText = True
-        Else
-            Me.BackColor = Color.Gray
-            Me.Opacity = 80 / 100
-            NowPlayingBox.HaloText = False
-        End If
-    End Sub
+
     Private Sub BringToTop() Handles BringTop.Pressed
         MySpotify.BringToTop()
     End Sub
@@ -190,44 +147,24 @@ Public Class SpotifyController
     Private x As Integer = 0
     Private y As Integer = 0
     Private Sub Me_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseDown, NowPlayingBox.MouseDown
-        'Start to move the form.
+        'Start to move the form
         x = e.X
         y = e.Y
     End Sub
 
     Private Sub Me_MouseMove(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseMove, NowPlayingBox.MouseMove
-        'Move and refresh.
+        'Move and refresh
         If (x <> 0 And y <> 0) Then
             Me.Location = New Point(Me.Left + e.X - x, Me.Top + e.Y - y)
-            Me.Refresh()
         End If
     End Sub
 
     Private Sub Me_MouseUp(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles MyBase.MouseUp, NowPlayingBox.MouseUp
-        'Reset the mouse point.
+        'Reset the mouse point
         x = 0
         y = 0
     End Sub
 #End Region
-
-    Friend Function GetAeroSupport() As String
-        Dim strVersion As String = "No aero"
-        Select Case Environment.OSVersion.Platform
-            Case PlatformID.Win32NT
-                Select Case Environment.OSVersion.Version.Major
-                    Case 3I
-                        strVersion = "No aero"
-                    Case 4I
-                        strVersion = "No aero"
-                    Case 5I
-                        strVersion = "No aero"
-                    Case 6I
-                        strVersion = "Supports aero"
-                End Select
-        End Select
-        Return strVersion
-    End Function
-
     Private Sub TextBox1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.TextChanged
         TrackChangeIndex = TrackChangeIndex + 1
         If NowPlayingBox.Text = "Nothing Playing" Then
@@ -307,7 +244,6 @@ Public Class SpotifyController
             Else
                 Throw New ApplicationException("File Not Found")
             End If
-
             ' read all the global hotkeys values into an auxiliary HotKeyManager
             Dim AuxHotKeyManager As HotKeyManager
             For index = 0 To 5
@@ -341,7 +277,7 @@ NotInheritable Class Shortcut : Inherits NativeWindow
     Sub Register(ByVal ID As Integer, ByVal Modifier As Modifier, ByVal Key As Keys)
         Dim result As Integer = RegisterHotKey(Handle, ID, Modifier, Key)
         If result = 0 Then
-            'MsgBox("Cannot Register " & Modifier.ToString & "+" & Key.ToString & ". Already used by other application.")
+            MsgBox("Cannot Register " & Modifier.ToString & "+" & Key.ToString & ". Already used by other application.")
         End If
     End Sub
     Sub Unregister(ByVal ID As Integer)
@@ -353,8 +289,9 @@ NotInheritable Class Shortcut : Inherits NativeWindow
             RaiseEvent Pressed(M.WParam.ToInt32)
         ElseIf M.Msg = &H31E Then
             ' the aero state has been changed
-            ' repaint the main window
-            SpotifyController.MakeAero()
+            ' repaint the main and the info window window
+            Tools.MakeAero(SpotifyController)
+            Tools.MakeAero(TrackInfo)
         End If
         MyBase.WndProc(M)
     End Sub

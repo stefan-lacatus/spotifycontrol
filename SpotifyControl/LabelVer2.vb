@@ -3,18 +3,18 @@ Imports System.Drawing
 Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
 
-Public Class ScrollingMarquee
+Public Class LabelVer2
     Inherits System.Windows.Forms.UserControl
 
-    Friend WithEvents tmrMain, tmrBefore As System.Windows.Forms.Timer
+    Friend WithEvents tmrMain As System.Windows.Forms.Timer
 
     Private startPosition As Integer = 0
-    Private _MarqueeText As String = Me.Text
     Private _LeftToRight As Direction = Direction.Right
-    Private _ScrollSpeed As Integer = 5
-    Private _ShadowColor As Color = Color.White
+    Private _ScrollSpeed As Integer = 0
+    Private _HaloColor As Color = Color.White
     Private _TimeBefore As Integer = 1000
     Private _HaloText As Boolean = True
+    Private _Marquee As Boolean = False
 
     Private Structure tSize
         Dim X As Long
@@ -35,10 +35,8 @@ Public Class ScrollingMarquee
     <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
         Me.tmrMain = New System.Windows.Forms.Timer(Me.components)
-        Me.tmrBefore = New System.Windows.Forms.Timer(Me.components)
         Me.tmrMain.Enabled = False
-        Me.tmrBefore.Enabled = True
-        Me.Name = "ScrollingMarquee"
+        Me.Name = "LabelVer2"
         Me.Text = vbNullString
         Me.Size = New System.Drawing.Size(120, 13)
     End Sub
@@ -64,44 +62,50 @@ Public Class ScrollingMarquee
         End Get
         Set(ByVal value As Integer)
             _TimeBefore = value
-            tmrBefore.Interval = value
         End Set
     End Property
 
     <Category("Marquee")> _
     <Description("Gets/Sets the scroll speed of the control. Values can be from 1 to 10.")> _
+    <DefaultValue(0)> _
     Public Property ScrollSpeed() As Integer
         Get
             ScrollSpeed = _ScrollSpeed
         End Get
         Set(ByVal Value As Integer)
 
-            If Value < 1 Then
-                _ScrollSpeed = 1
-            ElseIf Value > 10 Then
-                _ScrollSpeed = 10
+            If Value = 0 Then
+                _ScrollSpeed = 0
+                startPosition = 0
             Else
-                _ScrollSpeed = Value
+                _Marquee = True
+                If Value < 1 Then
+                    _ScrollSpeed = 1
+                ElseIf Value > 10 Then
+                    _ScrollSpeed = 10
+                Else
+                    _ScrollSpeed = Value
+                End If
+                Me.tmrMain.Interval = Value * 10
             End If
 
-            Me.tmrMain.Interval = Value * 10
             Invalidate()
         End Set
     End Property
 
-    <Category("Marquee")> _
+    <Category("Appearance")> _
     <Description("Gets/Sets the color of the shadow text.")> _
-    Public Property ShadowColor() As Color
+    Public Property HaloColor() As Color
         Get
-            ShadowColor = _ShadowColor
+            HaloColor = _HaloColor
         End Get
         Set(ByVal Value As Color)
-            _ShadowColor = Value
+            _HaloColor = Value
             Invalidate()
         End Set
     End Property
 
-    <Category("Marquee")> _
+    <Category("Appearance")> _
     <Description("Gets/Sets if you want text halo or not")> _
     Public Property HaloText() As Boolean
         Get
@@ -112,7 +116,7 @@ Public Class ScrollingMarquee
         End Set
     End Property
 
-    Private Sub ScrollingMarquee_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.HandleCreated
+    Private Sub LabelVer2_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.HandleCreated
         SetStyle(ControlStyles.AllPaintingInWmPaint Or ControlStyles.DoubleBuffer Or ControlStyles.ResizeRedraw Or ControlStyles.UserPaint, True)
     End Sub
 
@@ -121,57 +125,61 @@ Public Class ScrollingMarquee
         Invalidate()
     End Sub
 
-    Private Sub trmBefore_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles tmrBefore.Tick
-        tmrMain.Enabled = True
-        tmrBefore.Enabled = False
-    End Sub
-
-    Private Sub ScrollingMarquee_Resize(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Resize
+    Private Sub LabelVer2_Resize(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Resize
         Invalidate()
     End Sub
 
-    Private Sub ScrollingMarquee_SizeChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.SizeChanged
+    Private Sub LabelVer2_SizeChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.SizeChanged
         Invalidate()
     End Sub
 
-    Private Sub ScrollingMarquee_TextChanged() Handles MyBase.TextChanged
+    Private Sub LabelVer2_TextChanged() Handles MyBase.TextChanged
         ' reset the text position so it can be fully visible again
         startPosition = 0
-        ' leave the text static for _TimeBefore milliseconds
-        tmrMain.Enabled = False
-        tmrBefore.Enabled = True
         Invalidate()
+        If _Marquee Then
+            ' leave the text static for _TimeBefore milliseconds
+            Dim tmrBefore As New Stopwatch
+            tmrMain.Enabled = False
+            tmrBefore.Start()
+            While tmrBefore.ElapsedMilliseconds < _TimeBefore
+                Application.DoEvents()
+            End While
+            tmrBefore.Stop()
+            tmrMain.Enabled = True
+        End If
     End Sub
 
     Private Overloads Sub OnPaint(ByVal sender As Object, ByVal e As PaintEventArgs)
         Dim g As Graphics = e.Graphics
-
-        ' draw the text the normal way
         Dim str As String = Me.Text
-
         Dim szf As SizeF
-
         g.SmoothingMode = SmoothingMode.HighQuality
         szf = g.MeasureString(Me.Text, Me.Font)
-
-        If _LeftToRight = Direction.Right Then
-            If startPosition > Me.Width Then
-                startPosition = -szf.Width
-            Else
-                startPosition += 1
-            End If
-        ElseIf _LeftToRight = Direction.Left Then
-            If startPosition < -szf.Width Then
-                startPosition = szf.Width
-            Else
-                startPosition -= 1
+        If _Marquee Then
+            If _LeftToRight = Direction.Right Then
+                If startPosition > Me.Width Then
+                    startPosition = -szf.Width
+                Else
+                    startPosition += 1
+                End If
+            ElseIf _LeftToRight = Direction.Left Then
+                If startPosition < -szf.Width Then
+                    startPosition = szf.Width
+                Else
+                    startPosition -= 1
+                End If
             End If
         End If
         If _HaloText = False Then
-            g.DrawString(Me.Text, Me.Font, New SolidBrush(Me.ForeColor), startPosition, 0 + (Me.Height / 2) - (szf.Height / 2))
+            g.DrawString(Me.Text, Me.Font, New SolidBrush(Me.ForeColor), startPosition, 0)
         Else
-            Dim AuxImg = GetHaloText(Me.Text, Me.Font, Color.White, Color.Black, 2)
-            g.DrawImage(AuxImg, startPosition, Me.Location.Y)
+            If (Me.Text.Length = 0) Then
+                ' this fixes the problem encountered when the designer tries to draw this controller by giving Me.Text a default value of " "
+                Me.Text = " "
+            End If
+            Dim AuxImg = GetHaloText(Me.Text, Me.Font, _HaloColor, Me.ForeColor, 2)
+            g.DrawImage(AuxImg, startPosition, 0)
             AuxImg.Dispose()
         End If
     End Sub

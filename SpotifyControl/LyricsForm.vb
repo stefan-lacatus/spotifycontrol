@@ -3,7 +3,7 @@
     Dim mylyrDB As LyrDB_Api
     Dim ArtistName, TrackName, AuxString As String
     Public IsVisible As Boolean
-    Dim Source As Integer
+    Dim Source As String
     Dim WithEvents Downloader As New System.ComponentModel.BackgroundWorker
     Private Sub LyricsForm_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
         IsVisible = False
@@ -28,17 +28,17 @@
     Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
         LyricBox.Text = "Please wait. Downloading Lyrics..."
         If LyricProvider.SelectedIndex = 0 Then
-            Source = 0
+            Source = "ChartLyr"
         ElseIf LyricProvider.SelectedIndex = 1 Then
-            Source = 1
+            Source = "LyrDB"
         End If
         Downloader.RunWorkerAsync()
     End Sub
     Private Sub DownloadLyrics() Handles Downloader.DoWork
-        If Source = 0 Then
+        If Source = "ChartLyr" Then
             myChartLyrics = New ChartLyricsAPI(ArtistName, TrackName)
             AuxString = myChartLyrics.GetLyrics & vbNewLine & vbNewLine & "From " & myChartLyrics.GetWebURL
-        ElseIf Source = 1 Then
+        ElseIf Source = "LyrDB" Then
             mylyrDB = New LyrDB_Api()
             Dim aux As String
             aux = mylyrDB.FindLyrID(TrackName, ArtistName)

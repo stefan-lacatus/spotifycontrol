@@ -15,7 +15,9 @@
             If AlbumName = "Album Name Not Found" Then
                 AlbumName = MyLastFmApi.GetAlbumOfTrack
             End If
-            TrackName = TrackTitleLbl.Text & " (" & MyMetaDataApi.GetTrackLength & ")"
+            If MyMetaDataApi.GetTrackLength <> "" Then
+                TrackName = TrackName & " (" & MyMetaDataApi.GetTrackLength & ")"
+            End If
             Dim objwebClient As New Net.WebClient
             CoverURL = MyLastFmApi.GetAlbumArt
             Dim ImageStream As New IO.MemoryStream(objwebClient.DownloadData(CoverURL))
@@ -32,13 +34,15 @@
         If CoverURL <> vbNullString Then
             AlbumArtBox.Image = CoverArt
             SpotifyController.CurrentTrack.CoverURL = CoverURL
+        Else
+
         End If
         SpotifyController.CurrentTrack.AlbumName = AlbumName
         '  MsgBox(SpotifyController.CurrentTrack.TrackName & SpotifyController.CurrentTrack.ArtistName & SpotifyController.CurrentTrack.AlbumName)
         Me.Show()
         OpacityTimer.Enabled = True
         ' measure the text so we can resize the window to fit the text and to look nice
-        'TOTO: Doesn't work quite well, also we should make sure it doesn't go off-screan
+        'TOTO: Doesn't work quite well, also we should make sure it doesn't go off-screen
         Dim g As Graphics = Me.CreateGraphics
         Dim textSize1, textSize2, textSize3 As SizeF
         ' measure the text
@@ -82,11 +86,12 @@
             Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
             ' Activate the timer that will make the opacity vary
             increaseOpacity = True
-            TrackTitleLbl.Text = SpotifyController.CurrentTrack.TrackName
+            TrackName = SpotifyController.CurrentTrack.TrackName
             ArtistLbl.Text = SpotifyController.CurrentTrack.ArtistName
             Downloader.RunWorkerAsync()
+
         Catch
-        
+
         End Try
     End Sub
     Private Sub ResetControls()
@@ -103,6 +108,9 @@
         AlbumArtBox.Image = Nothing
     End Sub
     Private Sub OpacityTimer_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OpacityTimer.Tick
+        Debug.WriteLine(TrackTitleLbl.Text)
+        Debug.WriteLine(ArtistLbl.Text)
+        Debug.WriteLine(AlbumLbl.Text)
         If increaseOpacity = True Then
             If Me.Opacity < MaxOpacity / 100 Then
                 Me.Opacity = Me.Opacity + 5 / 100 ' increase the opacity by 5%
@@ -110,7 +118,7 @@
                 OpacityTimer.Enabled = False
                 ' the application will now stay visible for  sec
                 TimeVisibleTimer.Enabled = True
-             End If
+            End If
         Else
             If Me.Opacity > 0 Then
                 Me.Opacity = Me.Opacity - 5 / 100 ' decrease the opacity by 5%
@@ -128,17 +136,34 @@
         OpacityTimer.Enabled = True
     End Sub
 
-    Private Sub TrackInfo_MouseEnter(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.MouseEnter
+    Private Sub TrackInfo_MouseEnter() Handles MyBase.MouseEnter
         ' if the mouse enters the form it will get 90% of MaxOpacity and the timer will be stopped until the mouse leaves the form
         Me.Opacity = 0.9 * (MaxOpacity / 100)
         OpacityTimer.Enabled = False
         TimeVisibleTimer.Enabled = False
     End Sub
 
-    Private Sub TrackInfo_MouseLeave(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.MouseLeave
-        ' the application will remain visible 1s after the mouse leaves the form
-        TimeVisibleTimer.Interval = 1000
-        TimeVisibleTimer.Enabled = True
+    Private Sub TrackInfo_MouseLeave() Handles MyBase.MouseLeave
+        If Not Me.Region.IsVisible(Me.PointToClient(Me.MousePosition)) Then
+            ' the application will remain visible 1s after the mouse leaves the form
+            TimeVisibleTimer.Interval = 1000
+            TimeVisibleTimer.Enabled = True
+        End If
     End Sub
 
+    Private Sub TrackInfo_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        Tools.MakeAero(Me)
+        ' add a new handler to track the MouseLeave and MouseEnter events of all the controls inside the form
+        For Each ctrl In Controls
+            Dim aux As New Control
+            If TypeOf (ctrl) Is UserControl Then
+                aux = New UserControl
+            ElseIf TypeOf (ctrl) Is PictureBox Then
+                aux = New PictureBox
+            End If
+            aux = ctrl
+            AddHandler (aux.MouseLeave), AddressOf TrackInfo_MouseLeave
+            AddHandler (aux.MouseEnter), AddressOf TrackInfo_MouseEnter
+        Next
+    End Sub
 End Class

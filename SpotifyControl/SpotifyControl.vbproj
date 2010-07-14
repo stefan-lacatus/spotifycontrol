@@ -103,10 +103,10 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MetadataAPI.vb" />
-    <Compile Include="ScrollingMarquee.designer.vb">
-      <DependentUpon>ScrollingMarquee.vb</DependentUpon>
+    <Compile Include="LabelVer2.designer.vb">
+      <DependentUpon>LabelVer2.vb</DependentUpon>
     </Compile>
-    <Compile Include="ScrollingMarquee.vb">
+    <Compile Include="LabelVer2.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SettingManager.Designer.vb">
@@ -137,6 +137,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Tools.vb" />
     <Compile Include="TrackInfo.Designer.vb">
       <DependentUpon>TrackInfo.vb</DependentUpon>
     </Compile>
@@ -152,8 +153,8 @@
     <EmbeddedResource Include="LyricsForm.resx">
       <DependentUpon>LyricsForm.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScrollingMarquee.resx">
-      <DependentUpon>ScrollingMarquee.vb</DependentUpon>
+    <EmbeddedResource Include="LabelVer2.resx">
+      <DependentUpon>LabelVer2.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingManager.resx">
       <DependentUpon>SettingManager.vb</DependentUpon>

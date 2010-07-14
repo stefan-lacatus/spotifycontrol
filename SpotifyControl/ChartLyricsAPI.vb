@@ -7,18 +7,7 @@ Public Class ChartLyricsAPI
             Dim TrackUrl As String
             ' TrackUrl has the following syntax http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=ArtistName&song=TrackName
             TrackUrl = "http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=" & ArtistName & "&song=" & TrackName
-            Dim request As Net.HttpWebRequest
-            Dim response As Net.HttpWebResponse
-            request = Net.HttpWebRequest.Create(TrackUrl)
-            Threading.Thread.Sleep(1 * 1000)
-            request.Method = "GET"
-            request.UserAgent = "SpotifyControl"
-            request.Timeout = Threading.Timeout.Infinite
-            request.KeepAlive = False
-            request.ProtocolVersion = Net.HttpVersion.Version10
-            request.ContentType = "text/xml"
-            response = request.GetResponse
-            TrackXML.Load(response.GetResponseStream)
+            TrackXML.Load(Tools.DownloadFile(TrackUrl))
         Catch ex As Exception
             'MsgBox(ex.Message)
         End Try

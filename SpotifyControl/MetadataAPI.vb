@@ -7,19 +7,7 @@ Public Class MetadataAPI
             Dim TrackUrl As String
             ' TrackUrl has the following syntax http://ws.spotify.com/search/1/track?q=ArtistName&TrackName
             TrackUrl = "http://ws.spotify.com/search/1/track?q=" & ArtistName & " " & TrackName
-            Dim request As Net.HttpWebRequest
-            Dim response As Net.HttpWebResponse
-            request = Net.HttpWebRequest.Create(TrackUrl)
-            Threading.Thread.Sleep(1 * 1000)
-            request.Method = "GET"
-            request.UserAgent = "SpotifyControl"
-            request.Timeout = Threading.Timeout.Infinite
-            request.KeepAlive = False
-            request.ProtocolVersion = Net.HttpVersion.Version10
-            request.ContentType = "text/xml"
-            response = request.GetResponse
-            ' load the downloaded xml into our xml document
-            TrackXML.Load(response.GetResponseStream)
+            TrackXML.Load(Tools.DownloadFile(TrackUrl))
         Catch ex As Exception
             'MsgBox(ex.Message)
         End Try
@@ -60,7 +48,7 @@ Public Class MetadataAPI
             Seconds = TotalTime Mod 60
             Return Minutes & ":" & Seconds
         Catch ex As Exception
-            Return "0:00"
+            Return ""
         End Try
     End Function
 End Class

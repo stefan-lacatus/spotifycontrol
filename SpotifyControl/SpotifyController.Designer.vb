@@ -34,7 +34,7 @@ Partial Class SpotifyController
         Me.VolDownImg = New System.Windows.Forms.PictureBox()
         Me.PlayPauseImg = New System.Windows.Forms.PictureBox()
         Me.PrevImg = New System.Windows.Forms.PictureBox()
-        Me.NowPlayingBox = New SpotifyControl.ScrollingMarquee()
+        Me.NowPlayingBox = New SpotifyControl.LabelVer2()
         CType(Me.VolumeControl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LyricImg, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.CloseImg, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -161,12 +161,12 @@ Partial Class SpotifyController
         'NowPlayingBox
         '
         Me.NowPlayingBox.Font = New System.Drawing.Font("Trebuchet MS", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.NowPlayingBox.HaloColor = System.Drawing.Color.White
         Me.NowPlayingBox.HaloText = True
         Me.NowPlayingBox.Location = New System.Drawing.Point(231, 1)
         Me.NowPlayingBox.Name = "NowPlayingBox"
-        Me.NowPlayingBox.ScrollLeftToRight = SpotifyControl.ScrollingMarquee.Direction.Left
+        Me.NowPlayingBox.ScrollLeftToRight = SpotifyControl.LabelVer2.Direction.Left
         Me.NowPlayingBox.ScrollSpeed = 4
-        Me.NowPlayingBox.ShadowColor = System.Drawing.Color.Transparent
         Me.NowPlayingBox.Size = New System.Drawing.Size(168, 23)
         Me.NowPlayingBox.TabIndex = 17
         Me.NowPlayingBox.TimeBeforStart = 1500
@@ -219,7 +219,7 @@ Partial Class SpotifyController
     Friend WithEvents MuteImg As System.Windows.Forms.PictureBox
     Friend WithEvents CloseImg As System.Windows.Forms.PictureBox
     Friend WithEvents SettingImg As System.Windows.Forms.PictureBox
-    Friend WithEvents NowPlayingBox As SpotifyControl.ScrollingMarquee
+    Friend WithEvents NowPlayingBox As SpotifyControl.LabelVer2
     Friend WithEvents LyricImg As System.Windows.Forms.PictureBox
 
 End Class
