@@ -7,12 +7,7 @@ Public Class LastFmApi
         'this will get the XML of the track
         Dim XmlUrl As String
         XmlUrl = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&api_key=" & ApiKey & "&artist=" & ArtistName & "&track=" & TrackName
-        Debug.Print(XmlUrl)
-        Dim request As Net.WebRequest = Net.HttpWebRequest.Create(XmlUrl)
-        'request.Method = "REST"
-        request.ContentType = "text/xml"
-        TrackXML.Load(request.GetResponse.GetResponseStream)
-        '  Debug.Print(TrackXML.InnerText)
+        TrackXML.Load(Tools.DownloadFile(XmlUrl))
     End Sub
     Public Function GetAlbumOfTrack() As String
         ' find the album name in the XML
