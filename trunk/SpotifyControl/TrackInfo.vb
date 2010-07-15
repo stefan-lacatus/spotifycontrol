@@ -3,20 +3,21 @@
     Dim MaxOpacity, TimeVisible As Integer
     Private MyLastFmApi As LastFmApi
     Private MyMetaDataApi As MetadataAPI
-    Private AlbumName, TrackName, CoverURL As String
+    Private AlbumName, TrackName, CoverURL, ArtistName As String
     Private CoverArt As Image
     Dim WithEvents Downloader As New System.ComponentModel.BackgroundWorker
     Private Sub Download() Handles Downloader.DoWork
         Try
-            MyLastFmApi = New LastFmApi(ArtistLbl.Text, TrackTitleLbl.Text, "12bd97e8e4d2b71db9edc62d7a7b65cd")
-            MyMetaDataApi = New MetadataAPI(ArtistLbl.Text, TrackTitleLbl.Text)
+            MyLastFmApi = New LastFmApi(ArtistName, TrackName, "12bd97e8e4d2b71db9edc62d7a7b65cd")
+            MyMetaDataApi = New MetadataAPI(ArtistName, TrackName)
             AlbumName = MyMetaDataApi.GetAlbumName
             ' if the metadata API fails, try LastFM
             If AlbumName = "Album Name Not Found" Then
                 AlbumName = MyLastFmApi.GetAlbumOfTrack
             End If
-            If MyMetaDataApi.GetTrackLength <> "" Then
-                TrackName = TrackName & " (" & MyMetaDataApi.GetTrackLength & ")"
+            Dim trackLength As String = MyMetaDataApi.GetTrackLength
+            If trackLength <> "" Then
+                TrackName = TrackName & " (" & trackLength & ")"
             End If
             Dim objwebClient As New Net.WebClient
             CoverURL = MyLastFmApi.GetAlbumArt
@@ -28,14 +29,19 @@
         End Try
     End Sub
     Private Sub DownloadFinished() Handles Downloader.RunWorkerCompleted
-
         AlbumLbl.Text = AlbumName
         TrackTitleLbl.Text = TrackName
+        ArtistLbl.Text = ArtistName
         If CoverURL <> vbNullString Then
             AlbumArtBox.Image = CoverArt
             SpotifyController.CurrentTrack.CoverURL = CoverURL
+            ArtistLbl.Location = New Point(108, ArtistLbl.Location.Y)
+            TrackTitleLbl.Location = New Point(108, TrackTitleLbl.Location.Y)
+            AlbumLbl.Location = New Point(108, AlbumLbl.Location.Y)
         Else
-
+            ArtistLbl.Location = New Point(3, ArtistLbl.Location.Y)
+            TrackTitleLbl.Location = New Point(3, TrackTitleLbl.Location.Y)
+            AlbumLbl.Location = New Point(3, AlbumLbl.Location.Y)
         End If
         SpotifyController.CurrentTrack.AlbumName = AlbumName
         '  MsgBox(SpotifyController.CurrentTrack.TrackName & SpotifyController.CurrentTrack.ArtistName & SpotifyController.CurrentTrack.AlbumName)
@@ -70,26 +76,28 @@
         Me.Region = New Region(p)
         p.Dispose()
     End Sub
-    Public Sub LoadMe()
+    Public Sub LoadMe(ByVal cached As Boolean)
         Try
             TimeVisible = 4000
             MaxOpacity = 100
             TimeVisibleTimer.Interval = TimeVisible
-            ResetControls()
-            SpotifyController.CurrentTrack.TrackName = SpotifyController.MySpotify.GetTrackTitle
-            SpotifyController.CurrentTrack.ArtistName = SpotifyController.MySpotify.GetTrackArtist
-            SpotifyController.CurrentTrack.CoverURL = vbNullString
-            SpotifyController.CurrentTrack.AlbumName = vbNullString
-            ' set the opacity to 0. This will make the form invisible
-            Me.Opacity = 0
-            ' make the window borderless. Looks better this way
-            Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
+            ' set the opacity to 10%. This will make the form invisible
+            Me.Opacity = 10 / 100
             ' Activate the timer that will make the opacity vary
             increaseOpacity = True
-            TrackName = SpotifyController.CurrentTrack.TrackName
-            ArtistLbl.Text = SpotifyController.CurrentTrack.ArtistName
-            Downloader.RunWorkerAsync()
-
+            If (cached = False) Then
+                ResetControls()
+                SpotifyController.CurrentTrack.TrackName = SpotifyController.MySpotify.GetTrackTitle
+                SpotifyController.CurrentTrack.ArtistName = SpotifyController.MySpotify.GetTrackArtist
+                SpotifyController.CurrentTrack.CoverURL = vbNullString
+                SpotifyController.CurrentTrack.AlbumName = vbNullString
+                TrackName = SpotifyController.CurrentTrack.TrackName
+                ArtistName = SpotifyController.CurrentTrack.ArtistName
+                Downloader.RunWorkerAsync()
+            Else
+                Me.Show()
+                OpacityTimer.Enabled = True
+            End If
         Catch
 
         End Try
@@ -100,17 +108,16 @@
         CoverURL = vbNullString
         TrackName = vbNullString
         AlbumName = vbNullString
+        ArtistName = vbNullString
         TimeVisibleTimer.Enabled = False
         OpacityTimer.Enabled = False
         AlbumLbl.Text = "Album Not Found"
         ArtistLbl.Text = ""
         TrackTitleLbl.Text = ""
         AlbumArtBox.Image = Nothing
+        Downloader.CancelAsync()
     End Sub
     Private Sub OpacityTimer_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OpacityTimer.Tick
-        Debug.WriteLine(TrackTitleLbl.Text)
-        Debug.WriteLine(ArtistLbl.Text)
-        Debug.WriteLine(AlbumLbl.Text)
         If increaseOpacity = True Then
             If Me.Opacity < MaxOpacity / 100 Then
                 Me.Opacity = Me.Opacity + 5 / 100 ' increase the opacity by 5%
@@ -152,7 +159,10 @@
     End Sub
 
     Private Sub TrackInfo_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        ' apply an aero effect to the form
         Tools.MakeAero(Me)
+        ' make the window borderless. Looks better this way
+        Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
         ' add a new handler to track the MouseLeave and MouseEnter events of all the controls inside the form
         For Each ctrl In Controls
             Dim aux As New Control
@@ -165,5 +175,7 @@
             AddHandler (aux.MouseLeave), AddressOf TrackInfo_MouseLeave
             AddHandler (aux.MouseEnter), AddressOf TrackInfo_MouseEnter
         Next
+        ' make the downloader be able to restart
+        Downloader.WorkerSupportsCancellation = True
     End Sub
 End Class

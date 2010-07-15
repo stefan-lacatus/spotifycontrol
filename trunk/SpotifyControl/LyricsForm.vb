@@ -10,22 +10,21 @@
         Me.Hide()
         e.Cancel = True
     End Sub
-    Private Sub LyricsForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-
-        '   LoadMe()
-    End Sub
-    Public Sub LoadMe()
+    Private Sub LyricsForm_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.FixedToolWindow
-        Me.Show()
-        IsVisible = True
         LyricProvider.SelectedIndex = 0
         LyricProvider.DropDownStyle = ComboBoxStyle.DropDownList
+    End Sub
+    Public Sub LoadMe()
+        IsVisible = True
         ArtistName = SpotifyController.MySpotify.GetTrackArtist
         TrackName = SpotifyController.MySpotify.GetTrackTitle
         Me.Text = "Lyrics for  " & ArtistName & " - " & TrackName
+        Me.Show()
+        DwlBtn_Click()
     End Sub
 
-    Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
+    Private Sub DwlBtn_Click() Handles DwlBtn.Click
         LyricBox.Text = "Please wait. Downloading Lyrics..."
         If LyricProvider.SelectedIndex = 0 Then
             Source = "ChartLyr"
