@@ -1,10 +1,16 @@
 ﻿Imports System.Runtime.InteropServices
 
 Public Class SpotifyController
+    <DllImport("kernel32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> _
+    Public Shared Function SetProcessWorkingSetSize(ByVal handle As IntPtr, ByVal min As IntPtr, ByVal max As IntPtr) As Boolean
+    End Function
+    <DllImport("kernel32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> _
+    Public Shared Function GetCurrentProcess() As IntPtr
+    End Function
     Public MySpotify As New ControllerClass
     Public Shared CurrentTrack As New Track
     Dim LastVolume As Integer
-    Dim TrackChangeIndex As Integer
+    Dim TrackChange As Boolean
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
     ' used for possible workaround the 26-second problem
     Dim WithEvents ApplicationUpdate As New System.ComponentModel.BackgroundWorker
@@ -60,6 +66,8 @@ Public Class SpotifyController
         LastVolume = 10
         ' load the hotkey settings from file
         LoadSettings()
+        ' since the user rarely interacts with the app it will behave mostly like a minimized application
+        SetProcessWorkingSetSize(GetCurrentProcess(), -1, -1)
     End Sub
 
     Private Sub BringToTop() Handles BringTop.Pressed
@@ -137,10 +145,10 @@ Public Class SpotifyController
             MySpotify.LoadMe()
         End If
     End Sub
-    Private Sub TextBox1_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.DoubleClick
+    Private Sub NowPlayingBox_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.DoubleClick
         If MySpotify.SpotifyState <> "Closed" And NowPlayingBox.Text <> "Nothing Playing" Then
             Application.DoEvents()
-            TrackInfo.LoadMe()
+            TrackInfo.LoadMe(True)
         End If
     End Sub
 #Region "Move the window by dragging it with the mouse"
@@ -166,7 +174,7 @@ Public Class SpotifyController
     End Sub
 #End Region
     Private Sub TextBox1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.TextChanged
-        TrackChangeIndex = TrackChangeIndex + 1
+        TrackChange = True
         If NowPlayingBox.Text = "Nothing Playing" Then
             PlayPauseImg.Image = My.Resources.Play
             PlayPauseImg.Tag = "Play"
@@ -179,21 +187,19 @@ Public Class SpotifyController
             CurrentTrack.TrackName = MySpotify.GetTrackTitle
             PlayPauseImg.Image = My.Resources.Pause_PNG
             Application.DoEvents()
-            If TrackChangeIndex <> 1 Then
-                TrackInfo.LoadMe()
-            End If
+            TrackInfo.LoadMe(False)
             If LyricsForm.IsVisible = True Then
                 ' refresh the lyrics form
                 LyricsForm.LoadMe()
             End If
-        ElseIf MySpotify.SpotifyState = "Closed" Then
-            PlayPauseImg.Tag = "Pause"
-            PlayPauseImg.Image = My.Resources.Play
-            CurrentTrack.ArtistName = "Spotify Closed"
-            CurrentTrack.TrackName = "Spotify Closed"
-            CurrentTrack.AlbumName = "Spotify Closed"
-            CurrentTrack.CoverURL = vbNullString
-        End If
+            ElseIf MySpotify.SpotifyState = "Closed" Then
+                PlayPauseImg.Tag = "Pause"
+                PlayPauseImg.Image = My.Resources.Play
+                CurrentTrack.ArtistName = "Spotify Closed"
+                CurrentTrack.TrackName = "Spotify Closed"
+                CurrentTrack.AlbumName = "Spotify Closed"
+                CurrentTrack.CoverURL = vbNullString
+            End If
     End Sub
 
     Private Sub CloseImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CloseImg.Click

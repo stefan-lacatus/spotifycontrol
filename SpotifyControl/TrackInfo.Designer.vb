@@ -55,7 +55,6 @@ Partial Class TrackInfo
         Me.ArtistLbl.HaloText = True
         Me.ArtistLbl.Location = New System.Drawing.Point(108, 65)
         Me.ArtistLbl.Name = "ArtistLbl"
-        Me.ArtistLbl.Text = "ArtistLbl"
         Me.ArtistLbl.ScrollLeftToRight = SpotifyControl.LabelVer2.Direction.Right
         Me.ArtistLbl.Size = New System.Drawing.Size(566, 27)
         Me.ArtistLbl.TabIndex = 6
@@ -68,7 +67,6 @@ Partial Class TrackInfo
         Me.AlbumLbl.HaloText = True
         Me.AlbumLbl.Location = New System.Drawing.Point(108, 37)
         Me.AlbumLbl.Name = "AlbumLbl"
-        Me.AlbumLbl.Text = "AlbumLbl"
         Me.AlbumLbl.ScrollLeftToRight = SpotifyControl.LabelVer2.Direction.Right
         Me.AlbumLbl.Size = New System.Drawing.Size(566, 25)
         Me.AlbumLbl.TabIndex = 5
@@ -81,7 +79,6 @@ Partial Class TrackInfo
         Me.TrackTitleLbl.HaloText = True
         Me.TrackTitleLbl.Location = New System.Drawing.Point(108, 6)
         Me.TrackTitleLbl.Name = "TrackTitleLbl"
-        Me.TrackTitleLbl.Text = "TrackTitleLbl"
         Me.TrackTitleLbl.ScrollLeftToRight = SpotifyControl.LabelVer2.Direction.Right
         Me.TrackTitleLbl.Size = New System.Drawing.Size(566, 31)
         Me.TrackTitleLbl.TabIndex = 4

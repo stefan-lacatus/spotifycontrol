@@ -25,7 +25,7 @@ Partial Class LyricsForm
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(LyricsForm))
         Me.LyricProvider = New System.Windows.Forms.ComboBox()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.Button1 = New System.Windows.Forms.Button()
+        Me.DwlBtn = New System.Windows.Forms.Button()
         Me.LyricBox = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
@@ -46,14 +46,14 @@ Partial Class LyricsForm
         Me.Label1.TabIndex = 1
         Me.Label1.Text = "Get lyrics from"
         '
-        'Button1
+        'DwlBtn
         '
-        Me.Button1.Location = New System.Drawing.Point(206, 1)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(56, 21)
-        Me.Button1.TabIndex = 2
-        Me.Button1.Text = "Search"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.DwlBtn.Location = New System.Drawing.Point(206, 1)
+        Me.DwlBtn.Name = "DwlBtn"
+        Me.DwlBtn.Size = New System.Drawing.Size(56, 21)
+        Me.DwlBtn.TabIndex = 2
+        Me.DwlBtn.Text = "Search"
+        Me.DwlBtn.UseVisualStyleBackColor = True
         '
         'LyricBox
         '
@@ -70,7 +70,7 @@ Partial Class LyricsForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(267, 313)
         Me.Controls.Add(Me.LyricBox)
-        Me.Controls.Add(Me.Button1)
+        Me.Controls.Add(Me.DwlBtn)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.LyricProvider)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -82,6 +82,6 @@ Partial Class LyricsForm
     End Sub
     Friend WithEvents LyricProvider As System.Windows.Forms.ComboBox
     Friend WithEvents Label1 As System.Windows.Forms.Label
-    Friend WithEvents Button1 As System.Windows.Forms.Button
+    Friend WithEvents DwlBtn As System.Windows.Forms.Button
     Friend WithEvents LyricBox As System.Windows.Forms.TextBox
 End Class
