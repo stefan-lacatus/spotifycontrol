@@ -1,6 +1,4 @@
 ﻿Public Class LyricsForm
-    Dim myChartLyrics As ChartLyricsAPI
-    Dim mylyrDB As LyrDB_Api
     Dim ArtistName, TrackName, AuxString As String
     Public IsVisible As Boolean
     Dim Source As String
@@ -14,6 +12,7 @@
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.FixedToolWindow
         LyricProvider.SelectedIndex = 0
         LyricProvider.DropDownStyle = ComboBoxStyle.DropDownList
+        Downloader.WorkerSupportsCancellation = True
     End Sub
     Public Sub LoadMe()
         IsVisible = True
@@ -21,6 +20,7 @@
         TrackName = SpotifyController.MySpotify.GetTrackTitle
         Me.Text = "Lyrics for  " & ArtistName & " - " & TrackName
         Me.Show()
+        Downloader.CancelAsync()
         DwlBtn_Click()
     End Sub
 
@@ -31,17 +31,15 @@
         ElseIf LyricProvider.SelectedIndex = 1 Then
             Source = "LyrDB"
         End If
-        Downloader.RunWorkerAsync()
+        If Not Downloader.IsBusy Then
+            Downloader.RunWorkerAsync()
+        End If
     End Sub
     Private Sub DownloadLyrics() Handles Downloader.DoWork
         If Source = "ChartLyr" Then
-            myChartLyrics = New ChartLyricsAPI(ArtistName, TrackName)
-            AuxString = myChartLyrics.GetLyrics & vbNewLine & vbNewLine & "From " & myChartLyrics.GetWebURL
+            AuxString = ChartLyricsAPI.GetLyrics(ArtistName, TrackName)
         ElseIf Source = "LyrDB" Then
-            mylyrDB = New LyrDB_Api()
-            Dim aux As String
-            aux = mylyrDB.FindLyrID(TrackName, ArtistName)
-            AuxString = mylyrDB.FindLyr(aux)
+            AuxString = LyrDB_Api.FindLyr(TrackName, ArtistName)
         End If
     End Sub
     Private Sub FinishedDownload() Handles Downloader.RunWorkerCompleted

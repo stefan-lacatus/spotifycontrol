@@ -1,7 +1,7 @@
 ﻿' check here http://www.lyrdb.com/services/lws-tech.php for information about the requests 
-Public Class LyrDB_Api
+Public Module LyrDB_Api
     Dim request As New Net.WebClient
-    Public Function FindLyrID(ByVal TrackName As String, ByVal ArtistName As String) As String
+    Public Function FindLyr(ByVal TrackName As String, ByVal ArtistName As String) As String
         Dim MyUrl, stringResponse, LyrID As String
         ' the link will have the following syntax
         ' example: "http://webservices.lyrdb.com/lookup.php?q=ArtistName|TrackName&for=match&agent=agent"
@@ -13,10 +13,6 @@ Public Class LyrDB_Api
         Catch
             LyrID = "Not Found"
         End Try
-        Return LyrID
-    End Function
-    Public Function FindLyr(ByVal LyrID As String) As String
-        Dim myUrl, stringResponse As String
         ' the link will have the following syntax http://www.lyrdb.com/getlyr.php?q=LyrID
         myUrl = "http://www.lyrdb.com/getlyr.php?q=" & LyrID
         Try
@@ -26,4 +22,4 @@ Public Class LyrDB_Api
         End Try
         Return stringResponse
     End Function
-End Class
+End Module

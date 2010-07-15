@@ -1,23 +1,22 @@
 ﻿' More info here http://www.chartlyrics.com/api.aspx
 Imports System.Xml
-Public Class ChartLyricsAPI
+Public Module ChartLyricsAPI
     Dim TrackXML As New XmlDocument
-    Public Sub New(ByVal ArtistName As String, ByVal TrackName As String)
+    Public Function GetLyrics(ByVal ArtistName As String, ByVal TrackName As String) As String
         Try
-            Dim TrackUrl As String
-            ' TrackUrl has the following syntax http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=ArtistName&song=TrackName
-            TrackUrl = "http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=" & ArtistName & "&song=" & TrackName
-            TrackXML.Load(Tools.DownloadFile(TrackUrl))
-        Catch ex As Exception
-            'MsgBox(ex.Message)
-        End Try
-    End Sub
-    Public Function GetLyrics() As String
-        Try
+            Try
+                Dim TrackUrl As String
+                ' TrackUrl has the following syntax http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=ArtistName&song=TrackName
+                TrackUrl = "http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=" & ArtistName & "&song=" & TrackName
+                TrackXML.Load(Tools.DownloadFile(TrackUrl))
+            Catch ex As Exception
+                'MsgBox(ex.Message)
+            End Try
             Dim LyricXML As New XmlDocument
             Dim LyricURL, LyricID, LyricChkSum As String
             Dim Results As XmlNodeList
             Dim node As XmlNode
+            Dim returnValue As String
             LyricID = 0
             LyricChkSum = 0
             Results = TrackXML.GetElementsByTagName("LyricId")
@@ -42,6 +41,7 @@ Public Class ChartLyricsAPI
             request1.ContentType = "text/xml"
             response = request1.GetResponse
             LyricXML.Load(response.GetResponseStream)
+            returnValue = LyricXML.GetElementsByTagName("Lyric")(0).InnerText & vbNewLine & vbNewLine & "From " & GetWebURL()
             Return LyricXML.GetElementsByTagName("Lyric")(0).InnerText
         Catch ex As Exception
             ' MsgBox(ex.Message)
@@ -66,4 +66,4 @@ Public Class ChartLyricsAPI
             Return "Not Found"
         End Try
     End Function
-End Class
+End Module
