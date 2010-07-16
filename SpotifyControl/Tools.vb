@@ -21,6 +21,7 @@ Module Tools
     Friend Function DwmIsCompositionEnabled(ByRef enabled As Boolean) As Integer
     End Function
 #End Region
+    ' downloads a file using a simple HttpWebRequest/Response combination.
     Public Function DownloadFile(ByVal uri As String) As System.IO.Stream
         Dim request As Net.HttpWebRequest
         Dim response As Net.HttpWebResponse
@@ -31,7 +32,6 @@ Module Tools
         request.Timeout = Threading.Timeout.Infinite
         request.KeepAlive = False
         request.ProtocolVersion = Net.HttpVersion.Version10
-        request.ContentType = "text/xml"
         response = request.GetResponse
         Return response.GetResponseStream
     End Function
@@ -52,6 +52,7 @@ Module Tools
         End Select
         Return strVersion
     End Function
+    ' takes a form as parameter and will try to make the form Aero, returning if the operation succeeded or not.
     Public Function MakeAero(ByVal Form As Windows.Forms.Form) As Boolean
         If GetAeroSupport() = "No aero" Then
             Form.BackColor = Color.Gray
@@ -74,12 +75,10 @@ Module Tools
             Aux.hRgnBlur = vbNull
             DwmEnableBlurBehindWindow(Form.Handle, Aux)
             Return True
-            '  NowPlayingBox.HaloText = True
         Else
             Form.BackColor = Color.Gray
             Form.Opacity = 80 / 100
             Return False
-            'NowPlayingBox.HaloText = False
         End If
     End Function
 End Module

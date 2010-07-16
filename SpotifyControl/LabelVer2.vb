@@ -159,13 +159,13 @@ Public Class LabelVer2
         If _Marquee Then
             If _LeftToRight = Direction.Right Then
                 If startPosition > Me.Width Then
-                    startPosition = -szf.Width
+                    startPosition = -Me.Width
                 Else
                     startPosition += 1
                 End If
             ElseIf _LeftToRight = Direction.Left Then
                 If startPosition < -szf.Width Then
-                    startPosition = szf.Width
+                    startPosition = Me.Width
                 Else
                     startPosition -= 1
                 End If

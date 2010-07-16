@@ -138,6 +138,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Tools.vb" />
+    <Compile Include="TrackClass.vb" />
     <Compile Include="TrackInfo.Designer.vb">
       <DependentUpon>TrackInfo.vb</DependentUpon>
     </Compile>

@@ -15,10 +15,20 @@
             If AlbumName = "Album Name Not Found" Then
                 AlbumName = MyLastFmApi.GetAlbumOfTrack
             End If
-            Dim trackLength As String = MyMetaDataApi.GetTrackLength
-            If trackLength <> "" Then
-                TrackName = TrackName & " (" & trackLength & ")"
+            Dim trackLength As Integer = MyMetaDataApi.GetTrackLength
+            If trackLength <> 0 Then
+                ' convert seconds to minutes:seconds format
+                Dim seconds, minutes As Integer
+                Dim TrackSpan As New TimeSpan(0, 0, trackLength)
+                minutes = TrackSpan.Minutes
+                seconds = TrackSpan.Seconds
+                If seconds < 10 Then
+                    TrackName = TrackName & " (" & minutes & ":" & "0" & seconds & ")"
+                Else
+                    TrackName = TrackName & " (" & minutes & ":" & seconds & ")"
+                End If
             End If
+            SpotifyController.CurrentTrack.TrackLength = trackLength
             Dim objwebClient As New Net.WebClient
             CoverURL = MyLastFmApi.GetAlbumArt
             Dim ImageStream As New IO.MemoryStream(objwebClient.DownloadData(CoverURL))

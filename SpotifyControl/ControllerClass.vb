@@ -121,7 +121,6 @@ Public Class ControllerClass
             End If
             Return "Spotify Closed"
         End If
-
         Dim strTitle As String = lpText.Substring(0, intLength)
         strTitle = Mid(strTitle, 11)
         If strTitle.Length > 0 Then
@@ -148,47 +147,4 @@ Public Class ControllerClass
     End Function
 End Class
 
-Public Class Track
 
-    Private _TrackName As String
-    Public Property TrackName() As String
-        Get
-            Return _TrackName
-        End Get
-        Set(ByVal value As String)
-            _TrackName = value
-        End Set
-    End Property
-
-    Private _ArtistName As String
-    Public Property ArtistName() As String
-        Get
-            Return _ArtistName
-        End Get
-        Set(ByVal value As String)
-            _ArtistName = value
-        End Set
-    End Property
-
-    Private _CoverUrl As String
-    Public Property CoverURL() As String
-        Get
-            Return _CoverUrl
-        End Get
-        Set(ByVal value As String)
-            _CoverUrl = value
-        End Set
-    End Property
-
-    Private _AlbumName As String
-    Public Property AlbumName() As String
-        Get
-            Return _AlbumName
-        End Get
-        Set(ByVal value As String)
-            _AlbumName = value
-        End Set
-    End Property
-
-
-End Class

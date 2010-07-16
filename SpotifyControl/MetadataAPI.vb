@@ -40,15 +40,13 @@ Public Class MetadataAPI
         End Try
     End Function
     ' gets the track length(in Minutes:Seconds format)
-    Public Function GetTrackLength() As String
+    Public Function GetTrackLength() As Integer
         Try
-            Dim TotalTime, Seconds, Minutes As Integer
+            Dim TotalTime As Integer
             TotalTime = TrackXML.GetElementsByTagName("length")(0).InnerText
-            Minutes = Math.Truncate(TotalTime / 60)
-            Seconds = TotalTime Mod 60
-            Return Minutes & ":" & Seconds
+            Return TotalTime
         Catch ex As Exception
-            Return ""
+            Return 0
         End Try
     End Function
 End Class
