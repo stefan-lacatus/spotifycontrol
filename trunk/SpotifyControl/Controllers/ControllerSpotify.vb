@@ -1,6 +1,6 @@
 ﻿Imports System.Runtime.InteropServices
 
-Public Class ControllerClass
+Public Class ControllerSpotify : Implements IController
 #Region "Function Imports"
     <DllImport("user32.dll")> _
     Friend Shared Function PostMessage(ByVal hWnd As IntPtr, ByVal Msg As UInteger, ByVal wParam As IntPtr, ByVal lParam As IntPtr) As Integer
@@ -22,21 +22,63 @@ Public Class ControllerClass
     End Function
 #End Region
 
+    Public ReadOnly Property Name() As String Implements IController.Name
+        Get
+            Return "Spotify"
+        End Get
+    End Property
+    Public ReadOnly Property Author() As String Implements IController.Author
+        Get
+            Return "CyberWolf08"
+        End Get
+    End Property
 
-    Private SpotifyProcess As New Process
+    Private SpotifyProcess As Process
     Private SpotifyHandle As IntPtr = IntPtr.Zero
-    Private _SpotifyState As String = "Closed"
-    Public Property SpotifyState() As String
+
+    Public Event TrackStateChanged(ByVal Title As String, ByVal state As IController.StateType)
+
+    Public Property Active() As Boolean Implements IController.Active
+
+    Private _SpotifyState As IController.StateType = IController.StateType.Closed
+    Public Property SpotifyState() As IController.StateType Implements IController.State
         Get
             Return _SpotifyState
         End Get
-        Set(ByVal value As String)
-            _SpotifyState = value
+        Set(ByVal value As IController.StateType)
+            If value <> _SpotifyState Then
+                _SpotifyState = value
+                OnTrackStateChanged(EventArgs.Empty)
+            End If
         End Set
     End Property
+
+    Protected Overridable Sub OnTrackStateChanged(ByVal e As EventArgs)
+        RaiseEvent TrackStateChanged(TitleCache, _SpotifyState)
+    End Sub
+
+    Public ReadOnly Property TrackTitle() As String Implements IController.TrackTitle
+        Get
+            Return GetTrackTitle()
+        End Get
+    End Property
+
+    Public ReadOnly Property TrackArtist() As String Implements IController.TrackArtist
+        Get
+            Return GetTrackArtist()
+        End Get
+    End Property
+
+    Public ReadOnly Property TrackAlbum() As String Implements IController.TrackAlbum
+        Get
+            ' we don't know the album name. Retrun nothing.
+            Return ""
+        End Get
+    End Property
+
     Public Sub New()
         LoadMe()
-        If _SpotifyState = "Running" Then
+        If _SpotifyState And IController.StateType.Running Then
             ' check if the spotify handle if zero
             ' this checks if spotify is started but the main window is closed
             If SpotifyHandle = IntPtr.Zero Then
@@ -47,13 +89,14 @@ Public Class ControllerClass
     Public Sub LoadMe()
         Dim auxProcess() As Process = Process.GetProcessesByName("spotify")
         If auxProcess.Length > 0 Then
+            SpotifyProcess = New Process
             SpotifyProcess = auxProcess(0)
-            Me.SpotifyState = "Running"
             SpotifyHandle = SpotifyProcess.MainWindowHandle
+            Me.SpotifyState = IController.StateType.Paused
         End If
     End Sub
-    Public Sub Mute()
-        If Me.SpotifyState = "Running" Then
+    Public Sub Mute() Implements IController.Mute
+        If _SpotifyState And IController.StateType.Running Then
             ' this will press the ctrl key and the shift key then send a the KeyDown to the spotifyHandle
             keybd_event(Keys.ControlKey, &H1D, 0, 0)
             keybd_event(Keys.ShiftKey, &H1D, 0, 0)
@@ -65,23 +108,23 @@ Public Class ControllerClass
             keybd_event(Keys.ShiftKey, &H1D, &H2S, 0)
         End If
     End Sub
-    Public Sub PlayPause()
-        If Me.SpotifyState = "Running" Then
+    Public Sub PlayPause() Implements IController.PlayPause
+        If _SpotifyState And IController.StateType.Running Then
             PostMessage(SpotifyHandle, &H319, IntPtr.Zero, New IntPtr(&HE0000L))
         End If
     End Sub
-    Public Sub PlayPrev()
-        If Me.SpotifyState = "Running" Then
+    Public Sub PlayPrev() Implements IController.PlayPrev
+        If _SpotifyState And IController.StateType.Running Then
             PostMessage(SpotifyHandle, &H319, IntPtr.Zero, New IntPtr(&HC0000L))
         End If
     End Sub
-    Public Sub PlayNext()
-        If Me.SpotifyState = "Running" Then
+    Public Sub PlayNext() Implements IController.PlayNext
+        If _SpotifyState And IController.StateType.Running Then
             PostMessage(SpotifyHandle, &H319, IntPtr.Zero, New IntPtr(&HB0000L))
         End If
     End Sub
-    Public Sub VolumeUp()
-        If Me.SpotifyState = "Running" Then
+    Public Sub VolumeUp() Implements IController.VolumeUp
+        If _SpotifyState And IController.StateType.Running Then
             ' this will press the ctrl key then send a the KeyUP to the spotifyHandle
             keybd_event(Keys.ControlKey, &H1D, 0, 0)
             PostMessage(SpotifyHandle, &H100, Keys.Up, 0)
@@ -91,8 +134,8 @@ Public Class ControllerClass
             keybd_event(Keys.ControlKey, &H1D, &H2S, 0)
         End If
     End Sub
-    Public Sub VolumeDown()
-        If Me.SpotifyState = "Running" Then
+    Public Sub VolumeDown() Implements IController.VolumeDown
+        If _SpotifyState And IController.StateType.Running Then
             ' this will press the ctrl key then send a the KeyDown to the spotifyHandle
             keybd_event(Keys.ControlKey, &H1D, 0, 0)
             PostMessage(SpotifyHandle, &H100, Keys.Down, 0)
@@ -102,49 +145,77 @@ Public Class ControllerClass
             keybd_event(Keys.ControlKey, &H1D, &H2S, 0)
         End If
     End Sub
-    Public Sub BringToTop()
-        If Me.SpotifyState = "Running" Then
+    Public Sub BringToTop() Implements IController.BringToTop
+        If _SpotifyState And IController.StateType.Running Then
             ShowWindow(SpotifyHandle, 1)
             SetForegroundWindow(SpotifyHandle)
             SetFocus(SpotifyHandle)
         End If
     End Sub
+    Private TitleCache As String
     Public Function GetNowplaying() As String
         Dim lpText As String
         lpText = New String(Chr(0), 100)
         Dim intLength As Integer = GetWindowText(SpotifyHandle, lpText, lpText.Length)
         If (intLength <= 0) OrElse (intLength > lpText.Length) Then
+            TitleCache = "Spotify Closed"
             If SpotifyProcess IsNot Nothing Then
                 SpotifyProcess = Nothing
                 SpotifyHandle = Nothing
-                _SpotifyState = "Closed"
+                Me.SpotifyState = IController.StateType.Closed
             End If
-            Return "Spotify Closed"
+            Return TitleCache
         End If
         Dim strTitle As String = lpText.Substring(0, intLength)
         strTitle = Mid(strTitle, 11)
         If strTitle.Length > 0 Then
+            Me.SpotifyState = IController.StateType.Playing
+            If strTitle <> TitleCache Then
+                ' the song has changed
+                TitleCache = strTitle
+                RaiseEvent TrackStateChanged(TitleCache, _SpotifyState)
+            End If
             Return strTitle
         Else
-            Return "Nothing Playing"
+            Me.SpotifyState = IController.StateType.Paused
+            If (TitleCache <> "") Then
+                Return TitleCache
+            Else
+                Return "Nothing Playing"
+            End If
         End If
     End Function
 
-    Public Function GetTrackTitle() As String
+
+    Private Function GetTrackTitle() As String
         ' this function returns the track title of the NotPlaying Song
-        Dim ArtistTrack As String = GetNowplaying()
-        Dim Track As String
-        Track = ArtistTrack.Substring(InStr(ArtistTrack, " – ") + 2, ArtistTrack.Count - InStr(ArtistTrack, " – ") - 2)
-        Return Track
+        Try
+            Dim ArtistTrack As String = GetNowplaying()
+            Dim Track As String
+            Track = ArtistTrack.Substring(InStr(ArtistTrack, " – ") + 2, ArtistTrack.Count - InStr(ArtistTrack, " – ") - 2)
+            Return Track
+        Catch ex As System.ArgumentOutOfRangeException
+            Return ""
+        Catch ex As Exception
+            Return ""
+        End Try
+
     End Function
 
-    Public Function GetTrackArtist() As String
+    Private Function GetTrackArtist() As String
         ' this function retuns the artist of the NowPlaying Song
-        Dim ArtistTrack As String = GetNowplaying()
-        Dim Artist As String
-        Artist = ArtistTrack.Substring(0, InStr(ArtistTrack, " – ") - 1)
-        Return Artist
+        Try
+            Dim ArtistTrack As String = GetNowplaying()
+            Dim Artist As String
+            Artist = ArtistTrack.Substring(0, InStr(ArtistTrack, " – ") - 1)
+            Return Artist
+        Catch ex As System.ArgumentOutOfRangeException
+            Return ""
+        Catch ex As Exception
+            Return ""
+        End Try
     End Function
+
 End Class
 
 

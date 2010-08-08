@@ -83,26 +83,27 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationEvents.vb" />
     <Compile Include="AutoUpdate.vb" />
-    <Compile Include="HTTPServer.vb" />
     <Compile Include="CaptureKey.Designer.vb">
       <DependentUpon>CaptureKey.vb</DependentUpon>
     </Compile>
     <Compile Include="CaptureKey.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ChartLyricsAPI.vb" />
-    <Compile Include="ControllerClass.vb" />
+    <Compile Include="APIs\ChartLyricsAPI.vb" />
+    <Compile Include="Controllers\ControllerSpotify.vb" />
     <Compile Include="HotKeyManager.vb" />
-    <Compile Include="LastFmApi.vb" />
-    <Compile Include="LyrDB Api.vb" />
+    <Compile Include="APIs\LastFmApi.vb" />
+    <Compile Include="APIs\LyrDB Api.vb" />
+    <Compile Include="IController.vb" />
     <Compile Include="LyricsForm.Designer.vb">
       <DependentUpon>LyricsForm.vb</DependentUpon>
     </Compile>
     <Compile Include="LyricsForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MetadataAPI.vb" />
+    <Compile Include="APIs\MetadataAPI.vb" />
     <Compile Include="LabelVer2.designer.vb">
       <DependentUpon>LabelVer2.vb</DependentUpon>
     </Compile>
@@ -115,11 +116,11 @@
     <Compile Include="SettingManager.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SpotifyController.vb">
+    <Compile Include="MainForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SpotifyController.Designer.vb">
-      <DependentUpon>SpotifyController.vb</DependentUpon>
+    <Compile Include="MainForm.Designer.vb">
+      <DependentUpon>MainForm.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -145,6 +146,7 @@
     <Compile Include="TrackInfo.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="WebServer\HTTPServer.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CaptureKey.resx">
@@ -161,8 +163,8 @@
       <DependentUpon>SettingManager.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SpotifyController.resx">
-      <DependentUpon>SpotifyController.vb</DependentUpon>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -213,6 +215,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\icon_lyrics.png" />
+    <Content Include="WebServer\Html\index.html" />
+    <Content Include="WebServer\Html\js\jquery.js" />
+    <Content Include="WebServer\Html\test.html" />
     <Content Include="WMPws.ico" />
   </ItemGroup>
   <ItemGroup>

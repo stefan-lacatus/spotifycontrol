@@ -95,7 +95,7 @@
         cHTTPServer.HandledRequestList(5) = New String("/volup")
         cHTTPServer.HandledRequestList(6) = New String("/mute")
         If PassBox.Text <> vbNullString Then
-            If Password <> vbNullString Then
+            If Password <> vbNullString And (Not System.IO.File.Exists(Application.StartupPath & "/html/test.html")) Then
                 My.Computer.FileSystem.RenameFile(Application.StartupPath & "/html/" & getMD5Hash(Password) & ".html", getMD5Hash(PassBox.Text) & ".html")
             Else
                 My.Computer.FileSystem.RenameFile(Application.StartupPath & "/html/test.html", getMD5Hash(PassBox.Text) & ".html")
@@ -127,33 +127,33 @@
                 Threading.Thread.Sleep(300)
                 Dim Response As String = "Track Name ||| Artist Name ||| Album Name ||| AlbumArt"
                 Try
-                    Response = SpotifyController.CurrentTrack.TrackName & "|||" & SpotifyController.CurrentTrack.ArtistName & _
-                        "|||" & SpotifyController.CurrentTrack.AlbumName & "|||" & SpotifyController.CurrentTrack.CoverURL
+                    Response = MainForm.CurrentTrack.TrackName & "|||" & MainForm.CurrentTrack.ArtistName & _
+                        "|||" & MainForm.CurrentTrack.AlbumName & "|||" & MainForm.CurrentTrack.CoverURL
                 Catch
                 End Try
                 cHTTPServer.SendHTTPResponse(sender, Data, Response)
             Case "/next"
-                SpotifyController.MySpotify.PlayNext()
+                MainForm.MySpotify.PlayNext()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case "/prev"
-                SpotifyController.MySpotify.PlayPrev()
+                MainForm.MySpotify.PlayPrev()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case "/playpause"
-                SpotifyController.MySpotify.PlayPause()
+                MainForm.MySpotify.PlayPause()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case "/mute"
-                SpotifyController.MySpotify.Mute()
+                MainForm.MySpotify.Mute()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case "/voldown"
-                SpotifyController.MySpotify.VolumeDown()
+                MainForm.MySpotify.VolumeDown()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case "/volup"
-                SpotifyController.MySpotify.VolumeUp()
+                MainForm.MySpotify.VolumeUp()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case Else

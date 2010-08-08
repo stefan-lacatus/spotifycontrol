@@ -16,8 +16,8 @@
     End Sub
     Public Sub LoadMe()
         IsVisible = True
-        ArtistName = SpotifyController.MySpotify.GetTrackArtist
-        TrackName = SpotifyController.MySpotify.GetTrackTitle
+        ArtistName = MainForm.CurrentTrack.ArtistName
+        TrackName = MainForm.CurrentTrack.TrackName
         Me.Text = "Lyrics for  " & ArtistName & " - " & TrackName
         Me.Show()
         Downloader.CancelAsync()
