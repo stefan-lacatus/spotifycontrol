@@ -28,14 +28,14 @@
                     TrackName = TrackName & " (" & minutes & ":" & seconds & ")"
                 End If
             End If
-            SpotifyController.CurrentTrack.TrackLength = trackLength
+            MainForm.CurrentTrack.TrackLength = trackLength
             Dim objwebClient As New Net.WebClient
             CoverURL = MyLastFmApi.GetAlbumArt
             Dim ImageStream As New IO.MemoryStream(objwebClient.DownloadData(CoverURL))
             CoverArt = Image.FromStream(ImageStream)
         Catch
-            TrackName = SpotifyController.MySpotify.GetTrackTitle
-            AlbumName = SpotifyController.MySpotify.GetTrackArtist
+            TrackName = MainForm.CurrentTrack.TrackName
+            AlbumName = MainForm.CurrentTrack.ArtistName
         End Try
     End Sub
     Private Sub DownloadFinished() Handles Downloader.RunWorkerCompleted
@@ -44,7 +44,7 @@
         ArtistLbl.Text = ArtistName
         If CoverURL <> vbNullString Then
             AlbumArtBox.Image = CoverArt
-            SpotifyController.CurrentTrack.CoverURL = CoverURL
+            MainForm.CurrentTrack.CoverURL = CoverURL
             ArtistLbl.Location = New Point(108, ArtistLbl.Location.Y)
             TrackTitleLbl.Location = New Point(108, TrackTitleLbl.Location.Y)
             AlbumLbl.Location = New Point(108, AlbumLbl.Location.Y)
@@ -53,7 +53,7 @@
             TrackTitleLbl.Location = New Point(3, TrackTitleLbl.Location.Y)
             AlbumLbl.Location = New Point(3, AlbumLbl.Location.Y)
         End If
-        SpotifyController.CurrentTrack.AlbumName = AlbumName
+        MainForm.CurrentTrack.AlbumName = AlbumName
         '  MsgBox(SpotifyController.CurrentTrack.TrackName & SpotifyController.CurrentTrack.ArtistName & SpotifyController.CurrentTrack.AlbumName)
         Me.Show()
         OpacityTimer.Enabled = True
@@ -97,12 +97,12 @@
             increaseOpacity = True
             If (cached = False) Then
                 ResetControls()
-                SpotifyController.CurrentTrack.TrackName = SpotifyController.MySpotify.GetTrackTitle
-                SpotifyController.CurrentTrack.ArtistName = SpotifyController.MySpotify.GetTrackArtist
-                SpotifyController.CurrentTrack.CoverURL = vbNullString
-                SpotifyController.CurrentTrack.AlbumName = vbNullString
-                TrackName = SpotifyController.CurrentTrack.TrackName
-                ArtistName = SpotifyController.CurrentTrack.ArtistName
+                MainForm.CurrentTrack.TrackName = MainForm.CurrentTrack.TrackName
+                MainForm.CurrentTrack.ArtistName = MainForm.CurrentTrack.ArtistName
+                MainForm.CurrentTrack.CoverURL = vbNullString
+                MainForm.CurrentTrack.AlbumName = vbNullString
+                TrackName = MainForm.CurrentTrack.TrackName
+                ArtistName = MainForm.CurrentTrack.ArtistName
                 Downloader.RunWorkerAsync()
             Else
                 Me.Show()
@@ -160,8 +160,8 @@
         TimeVisibleTimer.Enabled = False
     End Sub
 
-    Private Sub TrackInfo_MouseLeave() Handles MyBase.MouseLeave
-        If Not Me.Region.IsVisible(Me.PointToClient(Me.MousePosition)) Then
+    Private Sub TrackInfo_MouseLeave(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.MouseLeave
+        If Not Me.Region.IsVisible(Me.PointToClient(MousePosition)) Then
             ' the application will remain visible 1s after the mouse leaves the form
             TimeVisibleTimer.Interval = 1000
             TimeVisibleTimer.Enabled = True

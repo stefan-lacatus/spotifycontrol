@@ -1,16 +1,15 @@
 ﻿Imports System.Runtime.InteropServices
 
-Public Class SpotifyController
+Public Class MainForm
     <DllImport("kernel32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> _
     Public Shared Function SetProcessWorkingSetSize(ByVal handle As IntPtr, ByVal min As IntPtr, ByVal max As IntPtr) As Boolean
     End Function
     <DllImport("kernel32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> _
     Public Shared Function GetCurrentProcess() As IntPtr
     End Function
-    Public MySpotify As New ControllerClass
+    Public MySpotify As New ControllerSpotify
     Public Shared CurrentTrack As New Track
     Dim LastVolume As Integer
-    Dim TrackChange As Boolean
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
     ' used for possible workaround the 26-second problem
     Dim WithEvents ApplicationUpdate As New System.ComponentModel.BackgroundWorker
@@ -61,6 +60,7 @@ Public Class SpotifyController
         ' if on Win7 or Vista give aero feel to the form
         Tools.MakeAero(Me)
         NowPlayingBox.Text = MySpotify.GetNowplaying
+        PlayPauseImg.Image = My.Resources.Play
         ' TODO: Find a way to get the current volume and not feed this values with shit
         VolumeControl.Value = 10
         LastVolume = 10
@@ -68,6 +68,7 @@ Public Class SpotifyController
         LoadSettings()
         ' since the user rarely interacts with the app it will behave mostly like a minimized application
         SetProcessWorkingSetSize(GetCurrentProcess(), -1, -1)
+        AddHandler MySpotify.TrackStateChanged, AddressOf TrackStateChanged
     End Sub
 
     Private Sub BringToTop() Handles BringTop.Pressed
@@ -86,13 +87,11 @@ Public Class SpotifyController
     Private Sub PlayNextBtn_Click() Handles NextImg.Click, NextS.Pressed
         MySpotify.PlayNext()
         ' Me.Text = MySpotify.GetNowplaying
-        NowPlayingBox.Text = MySpotify.GetNowplaying
     End Sub
 
     Private Sub PlayPrevBtn_Click() Handles PrevImg.Click, PrevS.Pressed
         MySpotify.PlayPrev()
         '  Me.Text = MySpotify.GetNowplaying
-        NowPlayingBox.Text = MySpotify.GetNowplaying
     End Sub
 
     Private Sub MuteBtn_Click() Handles MuteImg.Click, Mute.Pressed
@@ -137,16 +136,15 @@ Public Class SpotifyController
     End Sub
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SongCheck.Tick
-        NowPlayingBox.Text = MySpotify.GetNowplaying
+        MySpotify.GetNowplaying()
         'if spotify has been closed then wait for it to be opened again
         '   Debug.Print(MySpotify.SpotifyState)
-        'MsgBox(CurrentTrack.TrackName & CurrentTrack.ArtistName & CurrentTrack.AlbumName)
-        If MySpotify.SpotifyState = "Closed" Then
+        If MySpotify.SpotifyState = IController.StateType.Closed Then
             MySpotify.LoadMe()
         End If
     End Sub
     Private Sub NowPlayingBox_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.DoubleClick
-        If MySpotify.SpotifyState <> "Closed" And NowPlayingBox.Text <> "Nothing Playing" Then
+        If (MySpotify.SpotifyState And IController.StateType.Running) And NowPlayingBox.Text <> "Nothing Playing" Then
             Application.DoEvents()
             TrackInfo.LoadMe(True)
         End If
@@ -173,18 +171,19 @@ Public Class SpotifyController
         y = 0
     End Sub
 #End Region
-    Private Sub TextBox1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.TextChanged
-        TrackChange = True
-        If NowPlayingBox.Text = "Nothing Playing" Then
+    Private Sub TrackStateChanged(ByVal Title As String, ByVal state As IController.StateType)
+        NowPlayingBox.Text = Title
+        If state = IController.StateType.Paused Then
             PlayPauseImg.Image = My.Resources.Play
             PlayPauseImg.Tag = "Play"
-            CurrentTrack.ArtistName = "Nothing Playing"
-            CurrentTrack.TrackName = "Nothing Playing"
-            CurrentTrack.AlbumName = "Nothing Playing"
-            CurrentTrack.CoverURL = vbNullString
-        ElseIf MySpotify.SpotifyState <> "Closed" And NowPlayingBox.Text <> vbNullString Then
-            CurrentTrack.ArtistName = MySpotify.GetTrackArtist
-            CurrentTrack.TrackName = MySpotify.GetTrackTitle
+            If Title = "Spotify Closed" Then NowPlayingBox.Text = "Nothing Playing"
+            'CurrentTrack.ArtistName = "Nothing Playing"
+            ' CurrentTrack.TrackName = "Nothing Playing"
+            ' CurrentTrack.AlbumName = "Nothing Playing"
+            'CurrentTrack.CoverURL = vbNullString
+        ElseIf state And IController.StateType.Running And Title <> "Nothing Playing" Then
+            CurrentTrack.ArtistName = MySpotify.TrackArtist
+            CurrentTrack.TrackName = MySpotify.TrackTitle
             PlayPauseImg.Image = My.Resources.Pause_PNG
             Application.DoEvents()
             TrackInfo.LoadMe(False)
@@ -192,14 +191,14 @@ Public Class SpotifyController
                 ' refresh the lyrics form
                 LyricsForm.LoadMe()
             End If
-            ElseIf MySpotify.SpotifyState = "Closed" Then
-                PlayPauseImg.Tag = "Pause"
-                PlayPauseImg.Image = My.Resources.Play
-                CurrentTrack.ArtistName = "Spotify Closed"
-                CurrentTrack.TrackName = "Spotify Closed"
-                CurrentTrack.AlbumName = "Spotify Closed"
-                CurrentTrack.CoverURL = vbNullString
-            End If
+        ElseIf state = IController.StateType.Closed Then
+            PlayPauseImg.Tag = "Pause"
+            PlayPauseImg.Image = My.Resources.Play
+            CurrentTrack.ArtistName = "Spotify Closed"
+            CurrentTrack.TrackName = "Spotify Closed"
+            CurrentTrack.AlbumName = "Spotify Closed"
+            CurrentTrack.CoverURL = vbNullString
+        End If
     End Sub
 
     Private Sub CloseImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CloseImg.Click
@@ -267,7 +266,7 @@ Public Class SpotifyController
         End Try
     End Sub
     Private Sub LyricImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LyricImg.Click
-        If MySpotify.SpotifyState <> "Closed" And MySpotify.SpotifyState <> "Hidden" And NowPlayingBox.Text <> vbNullString And NowPlayingBox.Text <> "Nothing Playing" Then
+        If (MySpotify.SpotifyState And IController.StateType.Running) And (NowPlayingBox.Text <> "Nothing Playing") Then
             LyricsForm.LoadMe()
         End If
     End Sub
@@ -296,7 +295,7 @@ NotInheritable Class Shortcut : Inherits NativeWindow
         ElseIf M.Msg = &H31E Then
             ' the aero state has been changed
             ' repaint the main and the info window window
-            Tools.MakeAero(SpotifyController)
+            Tools.MakeAero(MainForm)
             Tools.MakeAero(TrackInfo)
         End If
         MyBase.WndProc(M)

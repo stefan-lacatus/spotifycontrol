@@ -28,7 +28,5 @@ C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyC
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Debug\SpotifyControl.application
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Debug\SpotifyControl.LyricsForm.resources
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Debug\SpotifyControl.LabelVer2.resources
-C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Debug\GenerateResource.read.1.tlog
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Debug\ResGen.read.1.tlog
-C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Debug\GenerateResource.write.1.tlog
 C:\Users\CyberWolf\Documents\Visual Studio 2010\Projects\SpotifyControl\SpotifyControl\obj\x86\Debug\ResGen.write.1.tlog

@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class SpotifyController
+Partial Class MainForm
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -58,12 +58,13 @@ Partial Class SpotifyController
         'SongCheck
         '
         Me.SongCheck.Enabled = True
-        Me.SongCheck.Interval = 2000
+        Me.SongCheck.Interval = 700
         '
         'LyricImg
         '
+        Me.LyricImg.Anchor = System.Windows.Forms.AnchorStyles.Right
         Me.LyricImg.Image = Global.SpotifyControl.My.Resources.Resources.icon_lyrics
-        Me.LyricImg.Location = New System.Drawing.Point(400, 1)
+        Me.LyricImg.Location = New System.Drawing.Point(402, 1)
         Me.LyricImg.Name = "LyricImg"
         Me.LyricImg.Size = New System.Drawing.Size(23, 28)
         Me.LyricImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
@@ -72,9 +73,9 @@ Partial Class SpotifyController
         '
         'CloseImg
         '
-        Me.CloseImg.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.CloseImg.Anchor = System.Windows.Forms.AnchorStyles.Right
         Me.CloseImg.Image = Global.SpotifyControl.My.Resources.Resources.Capture
-        Me.CloseImg.Location = New System.Drawing.Point(450, 6)
+        Me.CloseImg.Location = New System.Drawing.Point(452, 6)
         Me.CloseImg.Name = "CloseImg"
         Me.CloseImg.Size = New System.Drawing.Size(31, 19)
         Me.CloseImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
@@ -83,9 +84,10 @@ Partial Class SpotifyController
         '
         'SettingImg
         '
+        Me.SettingImg.Anchor = System.Windows.Forms.AnchorStyles.Right
         Me.SettingImg.BackColor = System.Drawing.Color.Transparent
         Me.SettingImg.Image = Global.SpotifyControl.My.Resources.Resources._527830478
-        Me.SettingImg.Location = New System.Drawing.Point(420, 2)
+        Me.SettingImg.Location = New System.Drawing.Point(422, 2)
         Me.SettingImg.Name = "SettingImg"
         Me.SettingImg.Size = New System.Drawing.Size(32, 26)
         Me.SettingImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
@@ -160,10 +162,11 @@ Partial Class SpotifyController
         '
         'NowPlayingBox
         '
+        Me.NowPlayingBox.Anchor = System.Windows.Forms.AnchorStyles.Top
         Me.NowPlayingBox.Font = New System.Drawing.Font("Trebuchet MS", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.NowPlayingBox.HaloColor = System.Drawing.Color.White
         Me.NowPlayingBox.HaloText = True
-        Me.NowPlayingBox.Location = New System.Drawing.Point(231, 1)
+        Me.NowPlayingBox.Location = New System.Drawing.Point(232, 1)
         Me.NowPlayingBox.Name = "NowPlayingBox"
         Me.NowPlayingBox.ScrollLeftToRight = SpotifyControl.LabelVer2.Direction.Left
         Me.NowPlayingBox.ScrollSpeed = 4
@@ -176,7 +179,7 @@ Partial Class SpotifyController
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Window
-        Me.ClientSize = New System.Drawing.Size(484, 31)
+        Me.ClientSize = New System.Drawing.Size(486, 31)
         Me.Controls.Add(Me.LyricImg)
         Me.Controls.Add(Me.NowPlayingBox)
         Me.Controls.Add(Me.CloseImg)
