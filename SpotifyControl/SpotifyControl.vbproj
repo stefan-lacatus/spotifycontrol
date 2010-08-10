@@ -92,6 +92,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="APIs\ChartLyricsAPI.vb" />
+    <Compile Include="Controllers\ControllerAIMP2.vb" />
     <Compile Include="Controllers\ControllerSpotify.vb" />
     <Compile Include="HotKeyManager.vb" />
     <Compile Include="APIs\LastFmApi.vb" />

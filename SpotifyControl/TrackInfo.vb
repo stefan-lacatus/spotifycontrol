@@ -35,7 +35,14 @@
             CoverArt = Image.FromStream(ImageStream)
         Catch
             TrackName = MainForm.CurrentTrack.TrackName
-            AlbumName = MainForm.CurrentTrack.ArtistName
+            If AlbumName = "" Or AlbumName = "Album Name Not Found" Then
+                If MainForm.CurrentTrack.AlbumName <> "" Then
+                    AlbumName = MainForm.CurrentTrack.AlbumName
+                Else
+                    AlbumName = MainForm.CurrentTrack.ArtistName
+                End If
+            End If
+
         End Try
     End Sub
     Private Sub DownloadFinished() Handles Downloader.RunWorkerCompleted
@@ -97,12 +104,10 @@
             increaseOpacity = True
             If (cached = False) Then
                 ResetControls()
-                MainForm.CurrentTrack.TrackName = MainForm.CurrentTrack.TrackName
-                MainForm.CurrentTrack.ArtistName = MainForm.CurrentTrack.ArtistName
                 MainForm.CurrentTrack.CoverURL = vbNullString
-                MainForm.CurrentTrack.AlbumName = vbNullString
                 TrackName = MainForm.CurrentTrack.TrackName
                 ArtistName = MainForm.CurrentTrack.ArtistName
+                AlbumName = MainForm.CurrentTrack.AlbumName
                 Downloader.RunWorkerAsync()
             Else
                 Me.Show()

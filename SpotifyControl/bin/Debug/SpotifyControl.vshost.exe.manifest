@@ -4,7 +4,7 @@
   <description asmv2:iconFile="WMPws.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="SpotifyControl" version="0.0.4.5" language="neutral" processorArchitecture="x86" />
+    <assemblyIdentity name="SpotifyControl" version="0.0.6.0" language="neutral" processorArchitecture="x86" />
     <commandLine file="SpotifyControl.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -57,17 +57,44 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SpotifyControl.exe" size="444928">
-      <assemblyIdentity name="SpotifyControl" version="0.0.4.5" language="neutral" processorArchitecture="x86" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SpotifyControl.exe" size="452096">
+      <assemblyIdentity name="SpotifyControl" version="0.0.6.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>UjEURuDhj8VrAukWMaFS3jppg44=</dsig:DigestValue>
+        <dsig:DigestValue>Zj7txlQXYZFiRunK9c6SjoA26JY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
+  <file name="WebServer\Html\index.html" size="637">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>ctiA2opE+VdO2Ja9WxRyogelSKE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="WebServer\Html\js\jquery.js" size="57254">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>Pcn3wmQu//RILmjJ2d+HS/mPW8s=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="WebServer\Html\test.html" size="1739">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>NIlec5qL+fPLDQIcuqJ38a6YZZc=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="WMPws.ico" size="117944">
     <hash>
       <dsig:Transforms>

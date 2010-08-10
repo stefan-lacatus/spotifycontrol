@@ -7,7 +7,7 @@ Public Class MainForm
     <DllImport("kernel32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> _
     Public Shared Function GetCurrentProcess() As IntPtr
     End Function
-    Public MySpotify As New ControllerSpotify
+    Public CurrentController As IController
     Public Shared CurrentTrack As New Track
     Dim LastVolume As Integer
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
@@ -52,30 +52,32 @@ Public Class MainForm
         p.Dispose()
         ' declare some tooltips to associate to the controls on the main window
         Dim CloseToolTip, PlayPauseToolTip, PrevToolTip, NextToolTip, LyricToolTip As New Windows.Forms.ToolTip
-        CloseToolTip.SetToolTip(CloseImg, "Close SpotifyControl")
+        CloseToolTip.SetToolTip(CloseImg, "Close MediaControl")
         PlayPauseToolTip.SetToolTip(PlayPauseImg, "Play/Pause the current song")
         PrevToolTip.SetToolTip(PrevImg, "Plays the previous song")
         NextToolTip.SetToolTip(NextImg, "Plays the next song")
         LyricToolTip.SetToolTip(LyricImg, "Find the lyrics for the current song")
         ' if on Win7 or Vista give aero feel to the form
         Tools.MakeAero(Me)
-        NowPlayingBox.Text = MySpotify.GetNowplaying
+        CurrentController = New ControllerSpotify
+        AddHandler CurrentController.TrackStateChanged, AddressOf TrackStateChanged
         PlayPauseImg.Image = My.Resources.Play
+        NowPlayingBox.Text = CurrentController.GetNowplaying
         ' TODO: Find a way to get the current volume and not feed this values with shit
-        VolumeControl.Value = 10
         LastVolume = 10
+        VolumeControl.Value = 10
         ' load the hotkey settings from file
         LoadSettings()
         ' since the user rarely interacts with the app it will behave mostly like a minimized application
         SetProcessWorkingSetSize(GetCurrentProcess(), -1, -1)
-        AddHandler MySpotify.TrackStateChanged, AddressOf TrackStateChanged
+
     End Sub
 
     Private Sub BringToTop() Handles BringTop.Pressed
-        MySpotify.BringToTop()
+        CurrentController.BringToTop()
     End Sub
     Private Sub playpause() Handles Play.Pressed, PlayPauseImg.Click
-        MySpotify.PlayPause()
+        CurrentController.PlayPause()
         If PlayPauseImg.Tag = "Pause" Then
             PlayPauseImg.Image = My.Resources.Play
             PlayPauseImg.Tag = "Play"
@@ -85,33 +87,33 @@ Public Class MainForm
         End If
     End Sub
     Private Sub PlayNextBtn_Click() Handles NextImg.Click, NextS.Pressed
-        MySpotify.PlayNext()
-        ' Me.Text = MySpotify.GetNowplaying
+        CurrentController.PlayNext()
+        ' Me.Text = CurrentController.GetNowplaying
     End Sub
 
     Private Sub PlayPrevBtn_Click() Handles PrevImg.Click, PrevS.Pressed
-        MySpotify.PlayPrev()
-        '  Me.Text = MySpotify.GetNowplaying
+        CurrentController.PlayPrev()
+        '  Me.Text = CurrentController.GetNowplaying
     End Sub
 
     Private Sub MuteBtn_Click() Handles MuteImg.Click, Mute.Pressed
-        MySpotify.Mute()
+        CurrentController.Mute()
         If LastVolume > 0 Then
             LastVolume = 0
             VolumeControl.Value = 0
         Else
-            LastVolume = 10
-            VolumeControl.Value = 10
+            LastVolume = 100
+            VolumeControl.Value = 100
         End If
     End Sub
 
     Private Sub VolumeControl_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VolumeControl.Scroll
-        While VolumeControl.Value <> LastVolume
+           While VolumeControl.Value <> LastVolume
             If VolumeControl.Value < LastVolume Then
                 LastVolume = LastVolume - 1
-                MySpotify.VolumeDown()
+                CurrentController.VolumeDown()
             Else
-                MySpotify.VolumeUp()
+                CurrentController.VolumeUp()
                 LastVolume = LastVolume + 1
             End If
         End While
@@ -120,7 +122,7 @@ Public Class MainForm
     Private Sub VolUpBtn_Click() Handles VolUpImg.Click, VolUp.Pressed
         ' only if we will not go too high with the lastVolume
         If LastVolume < 10 Then
-            MySpotify.VolumeUp()
+            CurrentController.VolumeUp()
             LastVolume = LastVolume + 1
             VolumeControl.Value = LastVolume
         End If
@@ -129,22 +131,22 @@ Public Class MainForm
     Private Sub VolDownBtn_Click() Handles VolDownImg.Click, VolDown.Pressed
         ' make sure we are now to low with the volume
         If LastVolume > 0 Then
-            MySpotify.VolumeDown()
+            CurrentController.VolumeDown()
             LastVolume = LastVolume - 1
             VolumeControl.Value = LastVolume
         End If
     End Sub
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SongCheck.Tick
-        MySpotify.GetNowplaying()
+        CurrentController.GetNowplaying()
         'if spotify has been closed then wait for it to be opened again
-        '   Debug.Print(MySpotify.SpotifyState)
-        If MySpotify.SpotifyState = IController.StateType.Closed Then
-            MySpotify.LoadMe()
+        '   Debug.Print(CurrentController.SpotifyState)
+        If CurrentController.State = IController.StateType.Closed Then
+            CurrentController.LoadMe()
         End If
     End Sub
     Private Sub NowPlayingBox_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.DoubleClick
-        If (MySpotify.SpotifyState And IController.StateType.Running) And NowPlayingBox.Text <> "Nothing Playing" Then
+        If (CurrentController.State And IController.StateType.Running) And NowPlayingBox.Text <> "Nothing Playing" Then
             Application.DoEvents()
             TrackInfo.LoadMe(True)
         End If
@@ -176,14 +178,15 @@ Public Class MainForm
         If state = IController.StateType.Paused Then
             PlayPauseImg.Image = My.Resources.Play
             PlayPauseImg.Tag = "Play"
-            If Title = "Spotify Closed" Then NowPlayingBox.Text = "Nothing Playing"
+            If Title = CurrentController.Name & " Closed" Then NowPlayingBox.Text = "Nothing Playing"
             'CurrentTrack.ArtistName = "Nothing Playing"
             ' CurrentTrack.TrackName = "Nothing Playing"
             ' CurrentTrack.AlbumName = "Nothing Playing"
             'CurrentTrack.CoverURL = vbNullString
         ElseIf state And IController.StateType.Running And Title <> "Nothing Playing" Then
-            CurrentTrack.ArtistName = MySpotify.TrackArtist
-            CurrentTrack.TrackName = MySpotify.TrackTitle
+            CurrentTrack.ArtistName = CurrentController.TrackArtist
+            CurrentTrack.TrackName = CurrentController.TrackTitle
+            CurrentTrack.AlbumName = CurrentController.TrackAlbum
             PlayPauseImg.Image = My.Resources.Pause_PNG
             Application.DoEvents()
             TrackInfo.LoadMe(False)
@@ -266,7 +269,7 @@ Public Class MainForm
         End Try
     End Sub
     Private Sub LyricImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LyricImg.Click
-        If (MySpotify.SpotifyState And IController.StateType.Running) And (NowPlayingBox.Text <> "Nothing Playing") Then
+        If (CurrentController.State And IController.StateType.Running) And (NowPlayingBox.Text <> "Nothing Playing") Then
             LyricsForm.LoadMe()
         End If
     End Sub
