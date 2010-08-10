@@ -12,6 +12,7 @@
     ReadOnly Property TrackTitle() As String
     ReadOnly Property TrackArtist() As String
     ReadOnly Property TrackAlbum() As String
+    Sub LoadMe()
     Sub PlayPause()
     Sub PlayNext()
     Sub PlayPrev()
@@ -19,4 +20,6 @@
     Sub VolumeDown()
     Sub BringToTop()
     Sub Mute()
+    Function GetNowplaying() As String
+    Event TrackStateChanged(ByVal Title As String, ByVal state As StateType)
 End Interface

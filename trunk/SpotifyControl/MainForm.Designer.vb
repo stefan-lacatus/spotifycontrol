@@ -49,11 +49,13 @@ Partial Class MainForm
         '
         'VolumeControl
         '
+        Me.VolumeControl.LargeChange = 20
         Me.VolumeControl.Location = New System.Drawing.Point(132, 6)
         Me.VolumeControl.Name = "VolumeControl"
         Me.VolumeControl.Size = New System.Drawing.Size(72, 45)
         Me.VolumeControl.TabIndex = 4
         Me.VolumeControl.TickStyle = System.Windows.Forms.TickStyle.None
+        Me.VolumeControl.Value = 10
         '
         'SongCheck
         '
@@ -174,7 +176,7 @@ Partial Class MainForm
         Me.NowPlayingBox.TabIndex = 17
         Me.NowPlayingBox.TimeBeforStart = 1500
         '
-        'SpotifyController
+        'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -192,7 +194,7 @@ Partial Class MainForm
         Me.Controls.Add(Me.PrevImg)
         Me.Controls.Add(Me.VolumeControl)
         Me.DoubleBuffered = True
-        Me.Name = "SpotifyController"
+        Me.Name = "MainForm"
         Me.ShowInTaskbar = False
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual

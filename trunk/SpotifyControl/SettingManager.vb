@@ -133,27 +133,27 @@
                 End Try
                 cHTTPServer.SendHTTPResponse(sender, Data, Response)
             Case "/next"
-                MainForm.MySpotify.PlayNext()
+                MainForm.CurrentController.PlayNext()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case "/prev"
-                MainForm.MySpotify.PlayPrev()
+                MainForm.CurrentController.PlayPrev()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case "/playpause"
-                MainForm.MySpotify.PlayPause()
+                MainForm.CurrentController.PlayPause()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case "/mute"
-                MainForm.MySpotify.Mute()
+                MainForm.CurrentController.Mute()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case "/voldown"
-                MainForm.MySpotify.VolumeDown()
+                MainForm.CurrentController.VolumeDown()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case "/volup"
-                MainForm.MySpotify.VolumeUp()
+                MainForm.CurrentController.VolumeUp()
                 Threading.Thread.Sleep(300)
                 cHTTPServer.SendHTTPResponse(sender, Data, "OK")
             Case Else

@@ -36,7 +36,7 @@ Public Class ControllerSpotify : Implements IController
     Private SpotifyProcess As Process
     Private SpotifyHandle As IntPtr = IntPtr.Zero
 
-    Public Event TrackStateChanged(ByVal Title As String, ByVal state As IController.StateType)
+    Public Event TrackStateChanged(ByVal Title As String, ByVal state As IController.StateType) Implements IController.TrackStateChanged
 
     Public Property Active() As Boolean Implements IController.Active
 
@@ -86,7 +86,7 @@ Public Class ControllerSpotify : Implements IController
             End If
         End If
     End Sub
-    Public Sub LoadMe()
+    Public Sub LoadMe() Implements IController.LoadMe
         Dim auxProcess() As Process = Process.GetProcessesByName("spotify")
         If auxProcess.Length > 0 Then
             SpotifyProcess = New Process
@@ -153,7 +153,7 @@ Public Class ControllerSpotify : Implements IController
         End If
     End Sub
     Private TitleCache As String
-    Public Function GetNowplaying() As String
+    Public Function GetNowplaying() As String Implements IController.GetNowplaying
         Dim lpText As String
         lpText = New String(Chr(0), 100)
         Dim intLength As Integer = GetWindowText(SpotifyHandle, lpText, lpText.Length)
