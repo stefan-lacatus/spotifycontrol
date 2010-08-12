@@ -59,7 +59,7 @@ Public Class MainForm
         LyricToolTip.SetToolTip(LyricImg, "Find the lyrics for the current song")
         ' if on Win7 or Vista give aero feel to the form
         Tools.MakeAero(Me)
-        CurrentController = New ControllerSpotify
+        CurrentController = New ControllerWinamp
         AddHandler CurrentController.TrackStateChanged, AddressOf TrackStateChanged
         PlayPauseImg.Image = My.Resources.Play
         NowPlayingBox.Text = CurrentController.GetNowplaying
@@ -79,10 +79,10 @@ Public Class MainForm
     Private Sub playpause() Handles Play.Pressed, PlayPauseImg.Click
         CurrentController.PlayPause()
         If PlayPauseImg.Tag = "Pause" Then
-            PlayPauseImg.Image = My.Resources.Play
+            PlayPauseImg.Image = My.Resources.Pause_PNG
             PlayPauseImg.Tag = "Play"
         Else
-            PlayPauseImg.Image = My.Resources.Pause_PNG
+            PlayPauseImg.Image = My.Resources.Play
             PlayPauseImg.Tag = "Pause"
         End If
     End Sub
@@ -102,8 +102,8 @@ Public Class MainForm
             LastVolume = 0
             VolumeControl.Value = 0
         Else
-            LastVolume = 100
-            VolumeControl.Value = 100
+            LastVolume = 10
+            VolumeControl.Value = 10
         End If
     End Sub
 
@@ -138,7 +138,11 @@ Public Class MainForm
     End Sub
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SongCheck.Tick
-        CurrentController.GetNowplaying()
+        Try
+            CurrentController.GetNowplaying()
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
         'if spotify has been closed then wait for it to be opened again
         '   Debug.Print(CurrentController.SpotifyState)
         If CurrentController.State = IController.StateType.Closed Then
@@ -176,8 +180,10 @@ Public Class MainForm
     Private Sub TrackStateChanged(ByVal Title As String, ByVal state As IController.StateType)
         NowPlayingBox.Text = Title
         If state = IController.StateType.Paused Then
-            PlayPauseImg.Image = My.Resources.Play
-            PlayPauseImg.Tag = "Play"
+            If PlayPauseImg.Tag <> "Play" Then
+                PlayPauseImg.Image = My.Resources.Play
+                PlayPauseImg.Tag = "Play"
+            End If
             If Title = CurrentController.Name & " Closed" Then NowPlayingBox.Text = "Nothing Playing"
             'CurrentTrack.ArtistName = "Nothing Playing"
             ' CurrentTrack.TrackName = "Nothing Playing"
@@ -187,21 +193,25 @@ Public Class MainForm
             CurrentTrack.ArtistName = CurrentController.TrackArtist
             CurrentTrack.TrackName = CurrentController.TrackTitle
             CurrentTrack.AlbumName = CurrentController.TrackAlbum
-            PlayPauseImg.Image = My.Resources.Pause_PNG
+            If PlayPauseImg.Tag <> "Pause" Then
+                PlayPauseImg.Image = My.Resources.Pause_PNG
+                PlayPauseImg.Tag = "Pause"
+            End If
+
             Application.DoEvents()
             TrackInfo.LoadMe(False)
             If LyricsForm.IsVisible = True Then
                 ' refresh the lyrics form
                 LyricsForm.LoadMe()
             End If
-        ElseIf state = IController.StateType.Closed Then
-            PlayPauseImg.Tag = "Pause"
-            PlayPauseImg.Image = My.Resources.Play
-            CurrentTrack.ArtistName = "Spotify Closed"
-            CurrentTrack.TrackName = "Spotify Closed"
-            CurrentTrack.AlbumName = "Spotify Closed"
-            CurrentTrack.CoverURL = vbNullString
-        End If
+            ElseIf state = IController.StateType.Closed Then
+                PlayPauseImg.Tag = "Pause"
+                PlayPauseImg.Image = My.Resources.Play
+                CurrentTrack.ArtistName = "Spotify Closed"
+                CurrentTrack.TrackName = "Spotify Closed"
+                CurrentTrack.AlbumName = "Spotify Closed"
+                CurrentTrack.CoverURL = vbNullString
+            End If
     End Sub
 
     Private Sub CloseImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CloseImg.Click

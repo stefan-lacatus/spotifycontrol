@@ -9,12 +9,6 @@ Public Class ControllerAIMP2 : Implements IController, IDisposable
     <DllImport("user32.dll")> _
     Friend Shared Function ShowWindow(ByVal hWnd As IntPtr, ByVal nCmdShow As Integer) As Boolean
     End Function
-    <DllImport("user32", CharSet:=CharSet.Auto, SetLastError:=True)> _
-    Friend Shared Function GetWindowText(ByVal hWnd As IntPtr, <Out(), MarshalAs(UnmanagedType.LPTStr)> ByVal lpString As String, ByVal nMaxCount As Integer) As Integer
-    End Function
-    <DllImport("user32.dll", SetLastError:=True)> _
-    Private Shared Function keybd_event(ByVal bVk As Byte, ByVal bScan As Byte, ByVal dwFlags As Integer, ByVal dwExtraInfo As Integer) As Boolean
-    End Function
     <DllImport("user32.dll", SetLastError:=True, CharSet:=CharSet.Auto)> _
     Private Shared Function FindWindow(ByVal lpClassName As String, ByVal lpWindowName As String) As IntPtr
     End Function
