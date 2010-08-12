@@ -94,6 +94,7 @@
     <Compile Include="APIs\ChartLyricsAPI.vb" />
     <Compile Include="Controllers\ControllerAIMP2.vb" />
     <Compile Include="Controllers\ControllerSpotify.vb" />
+    <Compile Include="Controllers\ControllerWinamp.vb" />
     <Compile Include="HotKeyManager.vb" />
     <Compile Include="APIs\LastFmApi.vb" />
     <Compile Include="APIs\LyrDB Api.vb" />
