@@ -22,9 +22,7 @@ Partial Class MainForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.components = New System.ComponentModel.Container()
         Me.VolumeControl = New System.Windows.Forms.TrackBar()
-        Me.SongCheck = New System.Windows.Forms.Timer(Me.components)
         Me.LyricImg = New System.Windows.Forms.PictureBox()
         Me.CloseImg = New System.Windows.Forms.PictureBox()
         Me.SettingImg = New System.Windows.Forms.PictureBox()
@@ -35,6 +33,7 @@ Partial Class MainForm
         Me.PlayPauseImg = New System.Windows.Forms.PictureBox()
         Me.PrevImg = New System.Windows.Forms.PictureBox()
         Me.NowPlayingBox = New SpotifyControl.LabelVer2()
+        Me.ControllerDropDown = New System.Windows.Forms.ComboBox()
         CType(Me.VolumeControl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LyricImg, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.CloseImg, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -57,16 +56,11 @@ Partial Class MainForm
         Me.VolumeControl.TickStyle = System.Windows.Forms.TickStyle.None
         Me.VolumeControl.Value = 10
         '
-        'SongCheck
-        '
-        Me.SongCheck.Enabled = True
-        Me.SongCheck.Interval = 700
-        '
         'LyricImg
         '
         Me.LyricImg.Anchor = System.Windows.Forms.AnchorStyles.Right
         Me.LyricImg.Image = Global.SpotifyControl.My.Resources.Resources.icon_lyrics
-        Me.LyricImg.Location = New System.Drawing.Point(402, 1)
+        Me.LyricImg.Location = New System.Drawing.Point(482, 1)
         Me.LyricImg.Name = "LyricImg"
         Me.LyricImg.Size = New System.Drawing.Size(23, 28)
         Me.LyricImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
@@ -77,7 +71,7 @@ Partial Class MainForm
         '
         Me.CloseImg.Anchor = System.Windows.Forms.AnchorStyles.Right
         Me.CloseImg.Image = Global.SpotifyControl.My.Resources.Resources.Capture
-        Me.CloseImg.Location = New System.Drawing.Point(452, 6)
+        Me.CloseImg.Location = New System.Drawing.Point(532, 6)
         Me.CloseImg.Name = "CloseImg"
         Me.CloseImg.Size = New System.Drawing.Size(31, 19)
         Me.CloseImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
@@ -89,7 +83,7 @@ Partial Class MainForm
         Me.SettingImg.Anchor = System.Windows.Forms.AnchorStyles.Right
         Me.SettingImg.BackColor = System.Drawing.Color.Transparent
         Me.SettingImg.Image = Global.SpotifyControl.My.Resources.Resources._527830478
-        Me.SettingImg.Location = New System.Drawing.Point(422, 2)
+        Me.SettingImg.Location = New System.Drawing.Point(502, 2)
         Me.SettingImg.Name = "SettingImg"
         Me.SettingImg.Size = New System.Drawing.Size(32, 26)
         Me.SettingImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
@@ -168,7 +162,7 @@ Partial Class MainForm
         Me.NowPlayingBox.Font = New System.Drawing.Font("Trebuchet MS", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.NowPlayingBox.HaloColor = System.Drawing.Color.White
         Me.NowPlayingBox.HaloText = True
-        Me.NowPlayingBox.Location = New System.Drawing.Point(232, 1)
+        Me.NowPlayingBox.Location = New System.Drawing.Point(231, 2)
         Me.NowPlayingBox.Name = "NowPlayingBox"
         Me.NowPlayingBox.ScrollLeftToRight = SpotifyControl.LabelVer2.Direction.Left
         Me.NowPlayingBox.ScrollSpeed = 4
@@ -176,12 +170,22 @@ Partial Class MainForm
         Me.NowPlayingBox.TabIndex = 17
         Me.NowPlayingBox.TimeBeforStart = 1500
         '
+        'ControllerDropDown
+        '
+        Me.ControllerDropDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.ControllerDropDown.FormattingEnabled = True
+        Me.ControllerDropDown.Location = New System.Drawing.Point(406, 3)
+        Me.ControllerDropDown.Name = "ControllerDropDown"
+        Me.ControllerDropDown.Size = New System.Drawing.Size(70, 21)
+        Me.ControllerDropDown.TabIndex = 19
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Window
-        Me.ClientSize = New System.Drawing.Size(486, 31)
+        Me.ClientSize = New System.Drawing.Size(566, 31)
+        Me.Controls.Add(Me.ControllerDropDown)
         Me.Controls.Add(Me.LyricImg)
         Me.Controls.Add(Me.NowPlayingBox)
         Me.Controls.Add(Me.CloseImg)
@@ -215,7 +219,6 @@ Partial Class MainForm
 
     End Sub
     Friend WithEvents VolumeControl As System.Windows.Forms.TrackBar
-    Friend WithEvents SongCheck As System.Windows.Forms.Timer
     Friend WithEvents PlayPauseImg As System.Windows.Forms.PictureBox
     Friend WithEvents PrevImg As System.Windows.Forms.PictureBox
     Friend WithEvents NextImg As System.Windows.Forms.PictureBox
@@ -226,5 +229,6 @@ Partial Class MainForm
     Friend WithEvents SettingImg As System.Windows.Forms.PictureBox
     Friend WithEvents NowPlayingBox As SpotifyControl.LabelVer2
     Friend WithEvents LyricImg As System.Windows.Forms.PictureBox
+    Friend WithEvents ControllerDropDown As System.Windows.Forms.ComboBox
 
 End Class

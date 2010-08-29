@@ -80,18 +80,7 @@
         Dim y As Integer = working_area.Top + working_area.Height - Me.Height
         Me.Location = New Point(x, y)
         ' add some round edges to the form
-        Dim p As New Drawing2D.GraphicsPath()
-        p.StartFigure()
-        p.AddArc(New Rectangle(0, 0, 20, 20), 180, 90)
-        p.AddLine(20, 0, Me.Width - 20, 0)
-        p.AddArc(New Rectangle(Me.Width - 20, 0, 20, 20), -90, 90)
-        p.AddLine(Me.Width, 20, Me.Width, Me.Height - 20)
-        p.AddArc(New Rectangle(Me.Width - 20, Me.Height - 20, 20, 20), 0, 90)
-        p.AddLine(Me.Width - 20, Me.Height, 20, Me.Height)
-        p.AddArc(New Rectangle(0, Me.Height - 20, 20, 20), 90, 90)
-        p.CloseFigure()
-        Me.Region = New Region(p)
-        p.Dispose()
+        Tools.MakeRound(Me)
     End Sub
     Public Sub LoadMe(ByVal cached As Boolean)
         Try

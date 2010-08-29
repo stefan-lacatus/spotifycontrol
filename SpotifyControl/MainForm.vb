@@ -1,13 +1,14 @@
 ﻿Imports System.Runtime.InteropServices
 
 Public Class MainForm
+
     <DllImport("kernel32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> _
     Public Shared Function SetProcessWorkingSetSize(ByVal handle As IntPtr, ByVal min As IntPtr, ByVal max As IntPtr) As Boolean
     End Function
     <DllImport("kernel32.dll", CharSet:=CharSet.Auto, SetLastError:=True)> _
     Public Shared Function GetCurrentProcess() As IntPtr
     End Function
-    Public CurrentController As IController
+    Public CurrentController, ControllerArray(2) As IController
     Public Shared CurrentTrack As New Track
     Dim LastVolume As Integer
     Dim WithEvents Play, NextS, PrevS, BringTop, Mute, VolUp, VolDown As New Shortcut
@@ -37,19 +38,7 @@ Public Class MainForm
         TrackInfo.Hide()
         ' make the borders disappear
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
-        ' add some round edges to the form
-        Dim p As New Drawing2D.GraphicsPath()
-        p.StartFigure()
-        p.AddArc(New Rectangle(0, 0, 20, 20), 180, 90)
-        p.AddLine(20, 0, Me.Width - 20, 0)
-        p.AddArc(New Rectangle(Me.Width - 20, 0, 20, 20), -90, 90)
-        p.AddLine(Me.Width, 20, Me.Width, Me.Height - 20)
-        p.AddArc(New Rectangle(Me.Width - 20, Me.Height - 20, 20, 20), 0, 90)
-        p.AddLine(Me.Width - 20, Me.Height, 20, Me.Height)
-        p.AddArc(New Rectangle(0, Me.Height - 20, 20, 20), 90, 90)
-        p.CloseFigure()
-        Me.Region = New Region(p)
-        p.Dispose()
+        Tools.MakeRound(Me)
         ' declare some tooltips to associate to the controls on the main window
         Dim CloseToolTip, PlayPauseToolTip, PrevToolTip, NextToolTip, LyricToolTip As New Windows.Forms.ToolTip
         CloseToolTip.SetToolTip(CloseImg, "Close MediaControl")
@@ -59,10 +48,10 @@ Public Class MainForm
         LyricToolTip.SetToolTip(LyricImg, "Find the lyrics for the current song")
         ' if on Win7 or Vista give aero feel to the form
         Tools.MakeAero(Me)
-        CurrentController = New ControllerWinamp
+        InitControllers()
         AddHandler CurrentController.TrackStateChanged, AddressOf TrackStateChanged
         PlayPauseImg.Image = My.Resources.Play
-        NowPlayingBox.Text = CurrentController.GetNowplaying
+        NowPlayingBox.Text = CurrentController.GetNowplaying(False)
         ' TODO: Find a way to get the current volume and not feed this values with shit
         LastVolume = 10
         VolumeControl.Value = 10
@@ -70,7 +59,64 @@ Public Class MainForm
         LoadSettings()
         ' since the user rarely interacts with the app it will behave mostly like a minimized application
         SetProcessWorkingSetSize(GetCurrentProcess(), -1, -1)
+        Dim a As New Timer
+        a.Interval = 500
+        a.Start()
+        AddHandler a.Tick, AddressOf RefreshControllers
+    End Sub
 
+    Private Sub InitControllers()
+        ' init each element of the array with a new controller
+        ControllerArray(0) = New ControllerSpotify
+        ControllerArray(1) = New ControllerAIMP2
+        ControllerArray(2) = New ControllerWinamp
+        CurrentController = ControllerArray(1)
+        ' add the controller name to the dropdown list
+        For Each controller As IController In ControllerArray
+            ControllerDropDown.Items.Add(controller.Name)
+        Next
+        RefreshControllers()
+        ControllerDropDown.SelectedItem = CurrentController.Name
+    End Sub
+    Private Sub RefreshControllers()
+        ' see if the controller is actually running and get the one that is currently running/playing to be the active one
+        For Each controller As IController In ControllerArray
+            If controller.Name <> CurrentController.Name Then
+                If controller.State = IController.StateType.Playing Then
+                    If CurrentController.State = IController.StateType.Playing Then
+                        CurrentController.PlayPause()
+                        CurrentController = controller
+                        SyncControllers()
+                        Exit Sub
+                    Else
+                        CurrentController = controller
+                        SyncControllers()
+                        Exit Sub
+                    End If
+                End If
+                If (controller.State And IController.StateType.Running) And CurrentController.State = IController.StateType.Closed Then
+                    CurrentController = controller
+                    SyncControllers()
+                    Exit Sub
+                End If
+            End If
+        Next
+    End Sub
+
+    Private Sub ControllerDropDown_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ControllerDropDown.SelectedIndexChanged
+        For Each controller As IController In ControllerArray
+            If controller.Name = ControllerDropDown.SelectedItem.ToString Then
+                CurrentController = controller
+                SyncControllers()
+                Exit Sub
+            End If
+        Next
+    End Sub
+
+    Private Sub SyncControllers()
+        ControllerDropDown.SelectedItem = CurrentController.Name
+        AddHandler CurrentController.TrackStateChanged, AddressOf TrackStateChanged
+        CurrentController.GetNowplaying(True)
     End Sub
 
     Private Sub BringToTop() Handles BringTop.Pressed
@@ -108,7 +154,7 @@ Public Class MainForm
     End Sub
 
     Private Sub VolumeControl_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VolumeControl.Scroll
-           While VolumeControl.Value <> LastVolume
+        While VolumeControl.Value <> LastVolume
             If VolumeControl.Value < LastVolume Then
                 LastVolume = LastVolume - 1
                 CurrentController.VolumeDown()
@@ -137,18 +183,6 @@ Public Class MainForm
         End If
     End Sub
 
-    Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SongCheck.Tick
-        Try
-            CurrentController.GetNowplaying()
-        Catch ex As Exception
-            MsgBox(ex.Message)
-        End Try
-        'if spotify has been closed then wait for it to be opened again
-        '   Debug.Print(CurrentController.SpotifyState)
-        If CurrentController.State = IController.StateType.Closed Then
-            CurrentController.LoadMe()
-        End If
-    End Sub
     Private Sub NowPlayingBox_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles NowPlayingBox.DoubleClick
         If (CurrentController.State And IController.StateType.Running) And NowPlayingBox.Text <> "Nothing Playing" Then
             Application.DoEvents()
@@ -178,13 +212,13 @@ Public Class MainForm
     End Sub
 #End Region
     Private Sub TrackStateChanged(ByVal Title As String, ByVal state As IController.StateType)
+        RefreshControllers()
         NowPlayingBox.Text = Title
         If state = IController.StateType.Paused Then
-            If PlayPauseImg.Tag <> "Play" Then
-                PlayPauseImg.Image = My.Resources.Play
-                PlayPauseImg.Tag = "Play"
-            End If
-            If Title = CurrentController.Name & " Closed" Then NowPlayingBox.Text = "Nothing Playing"
+            ' If PlayPauseImg.Tag <> "Play" Then
+            PlayPauseImg.Image = My.Resources.Play
+            PlayPauseImg.Tag = "Play"
+            'End If
             'CurrentTrack.ArtistName = "Nothing Playing"
             ' CurrentTrack.TrackName = "Nothing Playing"
             ' CurrentTrack.AlbumName = "Nothing Playing"
@@ -204,14 +238,15 @@ Public Class MainForm
                 ' refresh the lyrics form
                 LyricsForm.LoadMe()
             End If
-            ElseIf state = IController.StateType.Closed Then
-                PlayPauseImg.Tag = "Pause"
-                PlayPauseImg.Image = My.Resources.Play
-                CurrentTrack.ArtistName = "Spotify Closed"
-                CurrentTrack.TrackName = "Spotify Closed"
-                CurrentTrack.AlbumName = "Spotify Closed"
-                CurrentTrack.CoverURL = vbNullString
-            End If
+        ElseIf state = IController.StateType.Closed Then
+            NowPlayingBox.Text = CurrentController.Name & " Closed"
+            PlayPauseImg.Tag = "Pause"
+            PlayPauseImg.Image = My.Resources.Play
+            CurrentTrack.ArtistName = "Spotify Closed"
+            CurrentTrack.TrackName = "Spotify Closed"
+            CurrentTrack.AlbumName = "Spotify Closed"
+            CurrentTrack.CoverURL = vbNullString
+        End If
     End Sub
 
     Private Sub CloseImg_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CloseImg.Click
@@ -283,6 +318,7 @@ Public Class MainForm
             LyricsForm.LoadMe()
         End If
     End Sub
+
 End Class
 NotInheritable Class Shortcut : Inherits NativeWindow
     Private Declare Auto Function RegisterHotKey Lib "user32" (ByVal Handle As IntPtr, ByVal ID As Integer, ByVal Modifier As Integer, ByVal Key As Integer) As Integer

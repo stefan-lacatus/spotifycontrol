@@ -20,6 +20,6 @@
     Sub VolumeDown()
     Sub BringToTop()
     Sub Mute()
-    Function GetNowplaying() As String
+    Function GetNowplaying(ByVal forced As Boolean) As String
     Event TrackStateChanged(ByVal Title As String, ByVal state As StateType)
 End Interface

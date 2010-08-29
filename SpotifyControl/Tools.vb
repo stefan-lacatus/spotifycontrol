@@ -81,4 +81,20 @@ Module Tools
             Return False
         End If
     End Function
+
+    Public Sub MakeRound(ByRef Form As Windows.Forms.Form)
+        ' add some round edges to the form
+        Dim p As New Drawing2D.GraphicsPath()
+        p.StartFigure()
+        p.AddArc(New Rectangle(0, 0, 20, 20), 180, 90)
+        p.AddLine(20, 0, Form.Width - 20, 0)
+        p.AddArc(New Rectangle(Form.Width - 20, 0, 20, 20), -90, 90)
+        p.AddLine(Form.Width, 20, Form.Width, Form.Height - 20)
+        p.AddArc(New Rectangle(Form.Width - 20, Form.Height - 20, 20, 20), 0, 90)
+        p.AddLine(Form.Width - 20, Form.Height, 20, Form.Height)
+        p.AddArc(New Rectangle(0, Form.Height - 20, 20, 20), 90, 90)
+        p.CloseFigure()
+        Form.Region = New Region(p)
+        p.Dispose()
+    End Sub
 End Module

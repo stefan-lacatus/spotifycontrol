@@ -50,6 +50,7 @@ Public Class ControllerAIMP2 : Implements IController, IDisposable
     Const AIMP2_RemoteFileSize = 2048
     Const FILE_MAP_READ As Int32 = &H4
     Const VolumeStep = 10
+    Const RefreshRate = 1000
 #End Region
 
 #Region "Structures"
@@ -90,6 +91,8 @@ Public Class ControllerAIMP2 : Implements IController, IDisposable
     Public Event TrackStateChanged(ByVal Title As String, ByVal state As IController.StateType) Implements IController.TrackStateChanged
     ' the initial volume value
     Dim Volume As Integer = 100
+    Private refreshTimer As Timer
+
 #Region "Properties"
 
     Public ReadOnly Property Name() As String Implements IController.Name
@@ -142,6 +145,10 @@ Public Class ControllerAIMP2 : Implements IController, IDisposable
 #End Region
     Public Sub New()
         LoadMe()
+        refreshTimer = New Timer
+        refreshTimer.Interval = RefreshRate
+        AddHandler refreshTimer.Tick, AddressOf RefreshController
+        refreshTimer.Start()
     End Sub
     Public Sub Dispose() Implements IDisposable.Dispose
         UnmapViewOfFile(InfoPtr)
@@ -160,24 +167,37 @@ Public Class ControllerAIMP2 : Implements IController, IDisposable
         End If
     End Sub
     Protected Overridable Sub OnTrackStateChanged(ByVal e As EventArgs)
-        RaiseEvent TrackStateChanged(GetNowplaying, _State)
+        RaiseEvent TrackStateChanged(GetNowplaying(False), _State)
+    End Sub
+    Private Sub RefreshController()
+        'if winamp  has been closed then wait for it to be opened again
+        If Me.State = IController.StateType.Closed Then
+            LoadMe()
+        End If
+        ' Try
+        GetNowplaying(False)
+        ' Catch ex As Exception
+        'MsgBox(ex.Message)
+        '  End Try
+        '   Debug.Print(CurrentController.SpotifyState)
+
     End Sub
     Public Sub PlayPause() Implements IController.PlayPause
         If _State And IController.StateType.Running Then
             SendMessage(AimpRemoteHwnd, WM_AIMP_COMMAND, WM_AIMP_CALLFUNC, AIMP_PAUSE)
-            GetNowplaying()
+            GetNowplaying(False)
         End If
     End Sub
     Public Sub PlayPrev() Implements IController.PlayPrev
         If _State And IController.StateType.Running Then
             SendMessage(AimpRemoteHwnd, WM_AIMP_COMMAND, WM_AIMP_CALLFUNC, AIMP_PREV)
-            GetNowplaying()
+            GetNowplaying(False)
         End If
     End Sub
     Public Sub PlayNext() Implements IController.PlayNext
         If _State And IController.StateType.Running Then
             SendMessage(AimpRemoteHwnd, WM_AIMP_COMMAND, WM_AIMP_CALLFUNC, AIMP_NEXT)
-            GetNowplaying()
+            GetNowplaying(False)
         End If
     End Sub
     Public Sub VolumeUp() Implements IController.VolumeUp
@@ -202,7 +222,12 @@ Public Class ControllerAIMP2 : Implements IController, IDisposable
         End If
     End Sub
     Private TitleCache As String
-    Public Function GetNowplaying() As String Implements IController.GetNowplaying
+    Public Function GetNowplaying(ByVal forced As Boolean) As String Implements IController.GetNowplaying
+        If forced = True Then
+            ' must return something
+            RaiseEvent TrackStateChanged(AInfo.sArtist & " - " & AInfo.sTitle, Me.State)
+            Return TitleCache
+        End If
         'check if the player is closed
         If Me.State = IController.StateType.Closed Then Return "AIMP2 Closed"
         ' check whether the player was closed

@@ -2,7 +2,7 @@
 Imports System.Runtime.ConstrainedExecution
 Imports System.ComponentModel
 
-Public Class ControllerWinamp : Implements IController, IDisposable
+Public Class ControllerWinamp : Implements IController
 #Region "Function Imports"
     <DllImport("user32.dll")> _
     Friend Shared Function SetFocus(ByVal hWnd As IntPtr)
@@ -56,6 +56,8 @@ Public Class ControllerWinamp : Implements IController, IDisposable
 #End Region
 
 #Region "Constants"
+
+#Region "winamp Constants"
     Private Const WM_COMMAND = &H111
     Private Const WM_USER = &H400
     Private Const WM_WA_IPC = WM_USER
@@ -69,10 +71,7 @@ Public Class ControllerWinamp : Implements IController, IDisposable
     Private Const IPC_GET_EXTENDED_FILE_INFO_HOOKABLE = 296
     Private Const GWL_WNDPROC = -4
     Private Const WA_SETVOLUME = 122
-    Private Const VolumeStep = 25.5
-    Private Const METASIZE = 128
     Private Const MaxDataLength = 10000
-
     ' IPC command we can send to winamp
     Protected Enum IPCCommand
         GetVersion = 0
@@ -89,6 +88,11 @@ Public Class ControllerWinamp : Implements IController, IDisposable
         PrevTrack = 40198
         NextTrack = 40048
     End Enum
+#End Region
+    Private Const VolumeStep = 25.5
+    Private Const RefreshRate = 1000
+
+
 #Region "Memory Management Constants"
     Friend Const MEM_COMMIT As Integer = &H1000
     Friend Const MEM_RELEASE As Integer = &H8000
@@ -100,6 +104,7 @@ Public Class ControllerWinamp : Implements IController, IDisposable
 #End Region
 
 #End Region
+
 #Region "Structures"
     ' Information about a song.
     Private Class Song
@@ -124,6 +129,7 @@ Public Class ControllerWinamp : Implements IController, IDisposable
     ' the initial volume value
     Dim Volume As Integer = 255
     Private CurrentSong As Song
+    Private refreshTimer As Timer
 
 #Region "Properties"
 
@@ -154,8 +160,6 @@ Public Class ControllerWinamp : Implements IController, IDisposable
         End Set
     End Property
 
-
-
     Public ReadOnly Property TrackTitle() As String Implements IController.TrackTitle
         Get
             Return CurrentSong.Title
@@ -174,42 +178,62 @@ Public Class ControllerWinamp : Implements IController, IDisposable
         End Get
     End Property
 #End Region
+
     Public Sub New()
         LoadMe()
-    End Sub
-    Public Sub Dispose() Implements IDisposable.Dispose
-
+        refreshTimer = New Timer
+        refreshTimer.Interval = RefreshRate
+        AddHandler refreshTimer.Tick, AddressOf RefreshController
+        refreshTimer.Start()
     End Sub
     Public Sub LoadMe() Implements IController.LoadMe
         Dim auxProcess() As Process = Process.GetProcessesByName("winamp")
         If auxProcess.Length > 0 Then
+            ' fix an extremely strange bug where GetProcessByName returns a different process
+            If auxProcess(0).MainWindowTitle = "Notifier" Then
+                auxProcess = Process.GetProcessesByName("winamp")
+            End If
             WinampProcess = New Process
             WinampProcess = auxProcess(0)
-            '  ControllerWinamp = FindWindow(
             WinampHandle = WinampProcess.MainWindowHandle
             Me.State = IController.StateType.Running
             CurrentSong = New Song()
         End If
     End Sub
+
+    Private Sub RefreshController()
+        'if winamp  has been closed then wait for it to be opened again
+        If Me.State = IController.StateType.Closed Then
+            LoadMe()
+        End If
+        ' Try
+        GetNowplaying(False)
+        ' Catch ex As Exception
+        'MsgBox(ex.Message)
+        '  End Try
+        '   Debug.Print(CurrentController.SpotifyState)
+
+    End Sub
+
     Protected Overridable Sub OnTrackStateChanged(ByVal e As EventArgs)
-        RaiseEvent TrackStateChanged(TitleCache, _State)
+        RaiseEvent TrackStateChanged(GetNowplaying(False), _State)
     End Sub
     Public Sub PlayPause() Implements IController.PlayPause
         If _State And IController.StateType.Running Then
             SendCommand(Command.PlayPause)
-            GetNowplaying()
+            GetNowplaying(False)
         End If
     End Sub
     Public Sub PlayPrev() Implements IController.PlayPrev
         If _State And IController.StateType.Running Then
             SendCommand(Command.PrevTrack)
-            GetNowplaying()
+            GetNowplaying(False)
         End If
     End Sub
     Public Sub PlayNext() Implements IController.PlayNext
         If _State And IController.StateType.Running Then
             SendCommand(Command.NextTrack)
-            GetNowplaying()
+            GetNowplaying(False)
         End If
     End Sub
     Public Sub VolumeUp() Implements IController.VolumeUp
@@ -238,9 +262,19 @@ Public Class ControllerWinamp : Implements IController, IDisposable
         End If
     End Sub
     Private TitleCache As String
-    Public Function GetNowplaying() As String Implements IController.GetNowplaying
+    Public Function GetNowplaying(ByVal forced As Boolean) As String Implements IController.GetNowplaying
+        If forced = True Then
+            ' must return something
+            RaiseEvent TrackStateChanged(TitleCache, Me.State)
+            Return TitleCache
+        End If
         ' if winamp is closed than simply exit the function
-        If Me.State = IController.StateType.Closed Then Exit Function
+        If Me.State = IController.StateType.Closed Then Return "Winamp Closed"
+        If WinampProcess.HasExited And Me.State <> IController.StateType.Closed Then
+            Me.State = IController.StateType.Closed
+            Return "Winamp Closed"
+        End If
+
         Dim Status As Integer = SendMessage(WinampHandle, WM_USER, 0, IPCCommand.GetStatus)
 
         Select Case Status
@@ -252,10 +286,36 @@ Public Class ControllerWinamp : Implements IController, IDisposable
                 Me.State = IController.StateType.Running
         End Select
 
+        ' get the song title from the WindowText and also check if the song has changed
+        Dim lpText As String
+        lpText = New String(Chr(0), 100)
+        Dim intLength As Integer = GetWindowText(WinampHandle, lpText, lpText.Length)
+        Dim strTitle As String = lpText.Substring(0, intLength)
+        If strTitle <> TitleCache Then
+            ' the song has changed
+            TitleCache = strTitle
+
+            ' raise the TrackStateChanged event, and check if GetMetadata() succeeded or not
+            If GetMetadata() = 1 Then
+                RaiseEvent TrackStateChanged(CurrentSong.Title & " - " & CurrentSong.Artist, Me.State)
+            Else
+                RaiseEvent TrackStateChanged(TitleCache, Me.State)
+                Try
+                    CurrentSong.Title = strTitle.Substring(InStr(strTitle, " – ") + 2, strTitle.Count - InStr(strTitle, " – ") - 2)
+                    CurrentSong.Artist = strTitle.Substring(0, InStr(strTitle, " – ") - 1)
+                Catch ex As Exception
+                    Debug.WriteLine("Error: " & ex.Message)
+                    Return strTitle
+                End Try
+            End If
+
+        End If
+        Return CurrentSong.Title & " - " & CurrentSong.Artist
+    End Function
+    Private Function GetMetadata() As Integer
         Dim xstruct As New WinampExtendedFileInfo()
         Dim encoding As New System.Text.UTF8Encoding()
         Dim playlistFile, metaData, data, extendedFileInfo As IntPtr
-
         ' send messages to inform winamp of a readmemory
         Dim tmp As Integer = SendMessage(WinampHandle, WM_WA_IPC, 0, IPC_GETLISTPOS)
         Dim ptr As IntPtr = SendMessage(WinampHandle, WM_WA_IPC, tmp, IPC_GETPLAYLISTFILE)
@@ -266,7 +326,6 @@ Public Class ControllerWinamp : Implements IController, IDisposable
         metaData = AllocWinamp(MaxDataLength)
         data = AllocWinamp(MaxDataLength)
 
-        	
         ' allocate the memory in winamp's space
         Dim aux As IntPtr = Marshal.OffsetOf(GetType(WinampExtendedFileInfo), "MaxReturnValueLength")
         extendedFileInfo = AllocWinamp(CUInt(Marshal.SizeOf(GetType(WinampExtendedFileInfo))))
@@ -289,35 +348,12 @@ Public Class ControllerWinamp : Implements IController, IDisposable
         FreeWinamp(metaData)
         FreeWinamp(data)
         FreeWinamp(extendedFileInfo)
-        ' if the song has changed raise the TrackStateChanged event
-        If CurrentSong.Title & " - " & CurrentSong.Artist <> TitleCache Then
-            ' the song has changed
-            TitleCache = CurrentSong.Title & " - " & CurrentSong.Artist
-            RaiseEvent TrackStateChanged(TitleCache, Me.State)
+        If CurrentSong.Title <> "" And CurrentSong.Artist <> "" Then
+            ' get metadata succeeded 
+            Return 1
+        Else : Return 0
         End If
-        ' if the metadata is empty, get info from the window tile
-        If CurrentSong.Artist = "" Or CurrentSong.Title = "" Then
-            Dim lpText As String
-            lpText = New String(Chr(0), 100)
-            Dim intLength As Integer = GetWindowText(WinampHandle, lpText, lpText.Length)
-            Dim strTitle As String = lpText.Substring(0, intLength)
-            If strTitle <> TitleCache Then
-                ' the song has changed
-                TitleCache = strTitle
-                RaiseEvent TrackStateChanged(TitleCache, Me.State)
-            End If
-            Return strTitle
-            Try
-                CurrentSong.Title = strTitle.Substring(InStr(strTitle, " – ") + 2, strTitle.Count - InStr(strTitle, " – ") - 2)
-                CurrentSong.Artist = strTitle.Substring(0, InStr(strTitle, " – ") - 1)
-            Catch ex As Exception
-                Debug.WriteLine("Error: " & ex.Message)
-                Return "No info available"
-            End Try
-        End If
-        Return CurrentSong.Title & " - " & CurrentSong.Artist
     End Function
-
     'sets the volume to the vol value(0->100)
     Private Sub SetVolume(ByVal Vol As Integer)
         If _State And IController.StateType.Running Then
