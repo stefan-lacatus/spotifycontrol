@@ -35,6 +35,8 @@ Public Class ControllerSpotify : Implements IController
 
     Private SpotifyProcess As Process
     Private SpotifyHandle As IntPtr = IntPtr.Zero
+    Private refreshTimer As Timer
+    Private Const RefreshRate = 1000
 
     Public Event TrackStateChanged(ByVal Title As String, ByVal state As IController.StateType) Implements IController.TrackStateChanged
 
@@ -78,13 +80,10 @@ Public Class ControllerSpotify : Implements IController
 
     Public Sub New()
         LoadMe()
-        If _SpotifyState And IController.StateType.Running Then
-            ' check if the spotify handle if zero
-            ' this checks if spotify is started but the main window is closed
-            If SpotifyHandle = IntPtr.Zero Then
-                _SpotifyState = "Hidden"
-            End If
-        End If
+        refreshTimer = New Timer
+        refreshTimer.Interval = RefreshRate
+        AddHandler refreshTimer.Tick, AddressOf RefreshController
+        refreshTimer.Start()
     End Sub
     Public Sub LoadMe() Implements IController.LoadMe
         Dim auxProcess() As Process = Process.GetProcessesByName("spotify")
@@ -94,6 +93,19 @@ Public Class ControllerSpotify : Implements IController
             SpotifyHandle = SpotifyProcess.MainWindowHandle
             Me.SpotifyState = IController.StateType.Paused
         End If
+    End Sub
+    Private Sub RefreshController()
+        'if winamp  has been closed then wait for it to be opened again
+        If Me.SpotifyState = IController.StateType.Closed Then
+            LoadMe()
+        End If
+        ' Try
+        GetNowplaying(False)
+        ' Catch ex As Exception
+        'MsgBox(ex.Message)
+        '  End Try
+        '   Debug.Print(CurrentController.SpotifyState)
+
     End Sub
     Public Sub Mute() Implements IController.Mute
         If _SpotifyState And IController.StateType.Running Then
@@ -153,7 +165,12 @@ Public Class ControllerSpotify : Implements IController
         End If
     End Sub
     Private TitleCache As String
-    Public Function GetNowplaying() As String Implements IController.GetNowplaying
+    Public Function GetNowplaying(ByVal forced As Boolean) As String Implements IController.GetNowplaying
+        If forced = True Then
+            ' must return something
+            RaiseEvent TrackStateChanged(TitleCache, _SpotifyState)
+            Return TitleCache
+        End If
         Dim lpText As String
         lpText = New String(Chr(0), 100)
         Dim intLength As Integer = GetWindowText(SpotifyHandle, lpText, lpText.Length)
@@ -178,11 +195,10 @@ Public Class ControllerSpotify : Implements IController
             Return strTitle
         Else
             Me.SpotifyState = IController.StateType.Paused
-            If (TitleCache <> "") Then
-                Return TitleCache
-            Else
-                Return "Nothing Playing"
+            If (TitleCache = "") Then
+                TitleCache = "Nothing Playing"
             End If
+            Return TitleCache
         End If
     End Function
 
@@ -190,7 +206,7 @@ Public Class ControllerSpotify : Implements IController
     Private Function GetTrackTitle() As String
         ' this function returns the track title of the NotPlaying Song
         Try
-            Dim ArtistTrack As String = GetNowplaying()
+            Dim ArtistTrack As String = GetNowplaying(False)
             Dim Track As String
             Track = ArtistTrack.Substring(InStr(ArtistTrack, " – ") + 2, ArtistTrack.Count - InStr(ArtistTrack, " – ") - 2)
             Return Track
@@ -205,7 +221,7 @@ Public Class ControllerSpotify : Implements IController
     Private Function GetTrackArtist() As String
         ' this function retuns the artist of the NowPlaying Song
         Try
-            Dim ArtistTrack As String = GetNowplaying()
+            Dim ArtistTrack As String = GetNowplaying(False)
             Dim Artist As String
             Artist = ArtistTrack.Substring(0, InStr(ArtistTrack, " – ") - 1)
             Return Artist
