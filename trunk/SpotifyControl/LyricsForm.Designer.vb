@@ -27,12 +27,13 @@ Partial Class LyricsForm
         Me.Label1 = New System.Windows.Forms.Label()
         Me.DwlBtn = New System.Windows.Forms.Button()
         Me.LyricBox = New System.Windows.Forms.TextBox()
+        Me.OnTopChkBox = New System.Windows.Forms.CheckBox()
         Me.SuspendLayout()
         '
         'LyricProvider
         '
         Me.LyricProvider.Items.AddRange(New Object() {"chartlyrics.com", "lyrdb.com"})
-        Me.LyricProvider.Location = New System.Drawing.Point(79, 1)
+        Me.LyricProvider.Location = New System.Drawing.Point(72, 1)
         Me.LyricProvider.Name = "LyricProvider"
         Me.LyricProvider.Size = New System.Drawing.Size(121, 21)
         Me.LyricProvider.TabIndex = 0
@@ -48,7 +49,7 @@ Partial Class LyricsForm
         '
         'DwlBtn
         '
-        Me.DwlBtn.Location = New System.Drawing.Point(206, 1)
+        Me.DwlBtn.Location = New System.Drawing.Point(199, 1)
         Me.DwlBtn.Name = "DwlBtn"
         Me.DwlBtn.Size = New System.Drawing.Size(56, 21)
         Me.DwlBtn.TabIndex = 2
@@ -61,14 +62,25 @@ Partial Class LyricsForm
         Me.LyricBox.Multiline = True
         Me.LyricBox.Name = "LyricBox"
         Me.LyricBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.LyricBox.Size = New System.Drawing.Size(259, 281)
+        Me.LyricBox.Size = New System.Drawing.Size(252, 281)
         Me.LyricBox.TabIndex = 3
+        '
+        'OnTopChkBox
+        '
+        Me.OnTopChkBox.AutoSize = True
+        Me.OnTopChkBox.Location = New System.Drawing.Point(52, 315)
+        Me.OnTopChkBox.Name = "OnTopChkBox"
+        Me.OnTopChkBox.Size = New System.Drawing.Size(141, 17)
+        Me.OnTopChkBox.TabIndex = 4
+        Me.OnTopChkBox.Text = "On top of other windows"
+        Me.OnTopChkBox.UseVisualStyleBackColor = True
         '
         'LyricsForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(267, 313)
+        Me.ClientSize = New System.Drawing.Size(258, 332)
+        Me.Controls.Add(Me.OnTopChkBox)
         Me.Controls.Add(Me.LyricBox)
         Me.Controls.Add(Me.DwlBtn)
         Me.Controls.Add(Me.Label1)
@@ -84,4 +96,5 @@ Partial Class LyricsForm
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents DwlBtn As System.Windows.Forms.Button
     Friend WithEvents LyricBox As System.Windows.Forms.TextBox
+    Friend WithEvents OnTopChkBox As System.Windows.Forms.CheckBox
 End Class

@@ -23,16 +23,18 @@
                 minutes = TrackSpan.Minutes
                 seconds = TrackSpan.Seconds
                 If seconds < 10 Then
-                    TrackName = TrackName & " (" & minutes & ":" & "0" & seconds & ")"
+                    TrackName = String.Format("{0} ({1}:0{2})", TrackName, minutes, seconds)
                 Else
-                    TrackName = TrackName & " (" & minutes & ":" & seconds & ")"
+                    TrackName = String.Format("{0} ({1}:{2})", TrackName, minutes, seconds)
                 End If
             End If
             MainForm.CurrentTrack.TrackLength = trackLength
-            Dim objwebClient As New Net.WebClient
-            CoverURL = MyLastFmApi.GetAlbumArt
-            Dim ImageStream As New IO.MemoryStream(objwebClient.DownloadData(CoverURL))
-            CoverArt = Image.FromStream(ImageStream)
+            Using objwebClient As New Net.WebClient()
+                CoverURL = MyLastFmApi.GetAlbumArt
+                Dim ImageStream As New IO.MemoryStream(objwebClient.DownloadData(CoverURL))
+                CoverArt = Image.FromStream(ImageStream)
+                ImageStream.Dispose()
+            End Using
         Catch
             TrackName = MainForm.CurrentTrack.TrackName
             If AlbumName = "" Or AlbumName = "Album Name Not Found" Then
@@ -102,8 +104,8 @@
                 Me.Show()
                 OpacityTimer.Enabled = True
             End If
-        Catch
-
+        Catch ex As Exception
+            Debug.WriteLine(ex.Message)
         End Try
     End Sub
     Private Sub ResetControls()

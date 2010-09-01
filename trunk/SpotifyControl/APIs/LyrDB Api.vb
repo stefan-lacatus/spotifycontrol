@@ -5,7 +5,7 @@ Public Module LyrDB_Api
         Dim MyUrl, stringResponse, LyrID As String
         ' the link will have the following syntax
         ' example: "http://webservices.lyrdb.com/lookup.php?q=ArtistName|TrackName&for=match&agent=agent"
-        MyUrl = "http://webservices.lyrdb.com/lookup.php?q=" & ArtistName & "|" & TrackName & "&for=match&agent=SpotifyControl"
+        MyUrl = String.Format("http://webservices.lyrdb.com/lookup.php?q={0}|{1}&for=match&agent=SpotifyControl", ArtistName, TrackName)
         Try
             stringResponse = request.DownloadString(MyUrl)
             'request.Dispose()

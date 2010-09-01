@@ -8,7 +8,7 @@ Public Class CaptureKey
     <DllImport("user32.dll")> _
     Public Shared Function GetAsyncKeyState(ByVal vKey As Int32) As Short
     End Function
-    Private Sub TextBox1_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles TextBox1.KeyDown
+    Private Sub TextBox1_KeyDown(ByVal sender As Object, ByVal e As KeyEventArgs) Handles TextBox1.KeyDown
         ' get the modifiers. This can be Alt, Ctrl or Shift.
         ' WinKey is handled separately
         If e.Alt = True Then
@@ -35,7 +35,7 @@ Public Class CaptureKey
         End If
     End Sub
 
-    Private Sub TextBox1_KeyUp(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles TextBox1.KeyUp
+    Private Sub TextBox1_KeyUp(ByVal sender As Object, ByVal e As KeyEventArgs) Handles TextBox1.KeyUp
         ' get the full key combination : the modifier key and the normal key
         If Not (e.KeyCode = Keys.Alt Or e.KeyCode = Keys.ControlKey Or e.KeyCode = Keys.ShiftKey) Then
             TextBox1.Text = TextBox1.Text + e.KeyCode.ToString

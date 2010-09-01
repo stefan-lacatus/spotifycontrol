@@ -23,9 +23,8 @@ Module Tools
 #End Region
     ' downloads a file using a simple HttpWebRequest/Response combination.
     Public Function DownloadFile(ByVal uri As String) As System.IO.Stream
-        Dim request As Net.HttpWebRequest
+        Dim request As Net.HttpWebRequest = Net.HttpWebRequest.Create(uri)
         Dim response As Net.HttpWebResponse
-        request = Net.HttpWebRequest.Create(uri)
         Threading.Thread.Sleep(1000)
         request.Method = "GET"
         request.UserAgent = "SpotifyControl"
@@ -69,10 +68,8 @@ Module Tools
             Form.BackColor = Color.Black
             Form.Opacity = 1
             ' make the entire form glassy and blurry
-            Dim Aux As DWM_BLURBEHIND
-            Aux.dwFlags = DwmBlurBehindDwFlags.DWM_BB_ENABLE
-            Aux.fEnable = True
-            Aux.hRgnBlur = vbNull
+            Dim Aux As DWM_BLURBEHIND = New DWM_BLURBEHIND() With _
+                                        {.dwFlags = DwmBlurBehindDwFlags.DWM_BB_ENABLE, .fEnable = True, .hRgnBlur = vbNull}
             DwmEnableBlurBehindWindow(Form.Handle, Aux)
             Return True
         Else

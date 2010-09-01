@@ -331,7 +331,7 @@ NotInheritable Class Shortcut : Inherits NativeWindow
     Sub Register(ByVal ID As Integer, ByVal Modifier As Modifier, ByVal Key As Keys)
         Dim result As Integer = RegisterHotKey(Handle, ID, Modifier, Key)
         If result = 0 Then
-            MsgBox("Cannot Register " & Modifier.ToString & "+" & Key.ToString & ". Already used by other application.")
+            MsgBox(String.Format("Cannot Register {0}+{1}. Already used by other application.", Modifier, Key))
         End If
     End Sub
     Sub Unregister(ByVal ID As Integer)
