@@ -7,10 +7,10 @@ Public Module ChartLyricsAPI
             Try
                 Dim TrackUrl As String
                 ' TrackUrl has the following syntax http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=ArtistName&song=TrackName
-                TrackUrl = "http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=" & ArtistName & "&song=" & TrackName
+                TrackUrl = String.Format("http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist={0}&song={1}", ArtistName, TrackName)
                 TrackXML.Load(Tools.DownloadFile(TrackUrl))
             Catch ex As Exception
-                'MsgBox(ex.Message)
+                Debug.WriteLine(ex.Message)
             End Try
             Dim LyricXML As New XmlDocument
             Dim LyricURL, LyricID, LyricChkSum As String
@@ -28,7 +28,7 @@ Public Module ChartLyricsAPI
                     Exit For
                 End If
             Next
-            LyricURL = "http://api.chartlyrics.com/apiv1.asmx/GetLyric?lyricId=" & LyricID & "&lyricCheckSum=" & LyricChkSum
+            LyricURL = String.Format("http://api.chartlyrics.com/apiv1.asmx/GetLyric?lyricId={0}&lyricCheckSum={1}", LyricID, LyricChkSum)
             Dim request1 As Net.HttpWebRequest
             Dim response As Net.HttpWebResponse
             request1 = Net.HttpWebRequest.Create(LyricURL)

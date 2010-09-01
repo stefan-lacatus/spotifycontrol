@@ -171,8 +171,7 @@ Public Class ControllerSpotify : Implements IController
             RaiseEvent TrackStateChanged(TitleCache, _SpotifyState)
             Return TitleCache
         End If
-        Dim lpText As String
-        lpText = New String(Chr(0), 100)
+        Dim lpText As String = New String(Chr(0), 100)
         Dim intLength As Integer = GetWindowText(SpotifyHandle, lpText, lpText.Length)
         If (intLength <= 0) OrElse (intLength > lpText.Length) Then
             TitleCache = "Spotify Closed"

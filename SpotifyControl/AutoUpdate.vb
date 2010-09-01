@@ -17,6 +17,7 @@ Public Class AutoUpdate
             ' since it is not needed anymore
             System.IO.File.Delete(Application.StartupPath & "\autoupdate.exe")
         Catch ex As Exception
+            Debug.WriteLine(ex.Message)
         End Try
         ' Verify if was called by the autoupdate
         If InStr(Microsoft.VisualBasic.Command(), Key) > 0 Then
@@ -25,6 +26,7 @@ Public Class AutoUpdate
                 ' since it is not needed anymore
                 System.IO.File.Delete(Application.StartupPath & "\autoupdate.exe")
             Catch ex As Exception
+                Debug.WriteLine(ex.Message)
             End Try
             ' return false means that no update is needed
             Return False
@@ -38,6 +40,7 @@ Public Class AutoUpdate
             Dim file As New System.IO.StreamReader(myWebClient.OpenRead(RemoteUri & sfile))
             Dim Contents As String = file.ReadToEnd()
             file.Close()
+            myWebClient.Dispose()
             ' if something was read
             If Contents <> "" Then
                 ' Break the contents 
@@ -54,9 +57,8 @@ Public Class AutoUpdate
                     ' update program
                     ' x(1) is the files that need to be 
                     ' updated separated by "?"
-                    Dim arg As String = Application.ExecutablePath & "|" & _
-                                RemoteUri & "|" & x(1) & "|" & Key & "|" & _
-                                Microsoft.VisualBasic.Command()
+                    Dim arg As String = String.Format("{0}|{1}|{2}|{3}|{4}", Application.ExecutablePath, RemoteUri, _
+                                                      x(1), Key, Microsoft.VisualBasic.Command())
                     ' Download the auto update program to the application 
                     ' path, so you always have the last version runing
                     My.Computer.Network.DownloadFile(RemotePath & "autoupdate.exe", _

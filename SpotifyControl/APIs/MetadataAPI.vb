@@ -9,7 +9,7 @@ Public Class MetadataAPI
             TrackUrl = "http://ws.spotify.com/search/1/track?q=" & ArtistName & " " & TrackName
             TrackXML.Load(Tools.DownloadFile(TrackUrl))
         Catch ex As Exception
-            'MsgBox(ex.Message)
+            Debug.WriteLine(ex.Message)
         End Try
     End Sub
     ' gets the artist spotify URI

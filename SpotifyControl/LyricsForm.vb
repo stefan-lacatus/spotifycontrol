@@ -18,7 +18,7 @@
         IsVisible = True
         ArtistName = MainForm.CurrentTrack.ArtistName
         TrackName = MainForm.CurrentTrack.TrackName
-        Me.Text = "Lyrics for  " & ArtistName & " - " & TrackName
+        Me.Text = String.Format("Lyrics for  {0} - {1}", ArtistName, TrackName)
         Me.Show()
         Downloader.CancelAsync()
         DwlBtn_Click()
@@ -44,5 +44,10 @@
     End Sub
     Private Sub FinishedDownload() Handles Downloader.RunWorkerCompleted
         LyricBox.Text = AuxString
+    End Sub
+
+    Private Sub OnTopChkBox_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OnTopChkBox.CheckedChanged
+        ' set the lyrics box to be on top or not
+        Me.TopMost = OnTopChkBox.Checked
     End Sub
 End Class

@@ -59,7 +59,8 @@ Public Class BaseServer
                 AddHandler client.ClientClose, AddressOf OnClientDisconnect
                 RaiseEvent StatusUpdate("New connection found: waiting for log-in")
             Loop Until False
-        Catch
+        Catch ex As Exception
+            Debug.WriteLine(ex.Message)
         End Try
     End Sub
 
@@ -119,11 +120,11 @@ Public Class UserConnection
     Public Sub SendData(ByVal Data As String)
         ' Synclock ensure that no other threads try to use the stream at the same time.
         SyncLock client.GetStream
-            Dim writer As New IO.StreamWriter(client.GetStream)
-            writer.Write(Data)
-
-            ' Make sure all data is sent now.
-            writer.Flush()
+            Using writer As New IO.StreamWriter(client.GetStream)
+                writer.Write(Data)
+                ' Make sure all data is sent now.
+                writer.Flush()
+            End Using
         End SyncLock
     End Sub
 
@@ -132,20 +133,20 @@ Public Class UserConnection
         Dim NWStream As NetworkStream = client.GetStream
         Dim bytesToSend(client.SendBufferSize) As Byte
         Dim FI As New FileInfo(sFilename)
-        Dim FileSTR As New FileStream(sFilename, FileMode.Open, FileAccess.Read)
-        Dim FileReader As New BinaryReader(FileSTR)
-        Dim numBytesRead As Integer
-        Dim Ipos As Integer
-
-        Do Until Ipos >= FI.Length
-            numBytesRead = FileSTR.Read(bytesToSend, 0, bytesToSend.Length)
-            NWStream.Write(bytesToSend, 0, numBytesRead)
-            Ipos = Ipos + numBytesRead
+        Using FileSTR As New FileStream(sFilename, FileMode.Open, FileAccess.Read)
+            Dim FileReader As New BinaryReader(FileSTR)
+            Dim numBytesRead As Integer
+            Dim Ipos As Integer
+            Do Until Ipos >= FI.Length
+                numBytesRead = FileSTR.Read(bytesToSend, 0, bytesToSend.Length)
+                NWStream.Write(bytesToSend, 0, numBytesRead)
+                Ipos = Ipos + numBytesRead
+                NWStream.Flush()
+            Loop
             NWStream.Flush()
-        Loop
-        NWStream.Flush()
-        FileSTR.Close()
-        FileReader.Close()
+            FileSTR.Close()
+            FileReader.Close()
+        End Using
     End Sub
 
     ' This is the callback function for TcpClient.GetStream.Begin. It begins an 
@@ -177,7 +178,8 @@ Public Class UserConnection
                 client.GetStream.BeginRead(readBuffer, 0, READ_BUFFER_SIZE, AddressOf StreamReceiver, Nothing)
             End SyncLock
 
-        Catch e As Exception
+        Catch ex As Exception
+            Debug.WriteLine(ex.Message)
         End Try
     End Sub
 

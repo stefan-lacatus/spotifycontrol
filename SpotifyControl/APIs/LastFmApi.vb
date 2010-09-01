@@ -5,8 +5,8 @@ Public Class LastFmApi
     Public TrackXML As New XmlDocument
     Public Sub New(ByVal ArtistName As String, ByVal TrackName As String, ByVal ApiKey As String)
         'this will get the XML of the track
-        Dim XmlUrl As String
-        XmlUrl = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&api_key=" & ApiKey & "&artist=" & ArtistName & "&track=" & TrackName
+        Dim XmlUrl As String = String.Format("http://ws.audioscrobbler.com/2.0/?method=track.getinfo&api_key={0}&artist={1}&track={2}", _
+                                             ApiKey, ArtistName, TrackName)
         TrackXML.Load(Tools.DownloadFile(XmlUrl))
     End Sub
     Public Function GetAlbumOfTrack() As String
