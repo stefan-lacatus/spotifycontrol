@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lfm status="ok">
+<track>
+    <id>101839976</id>
+    <name>Skinny Love</name>
+    <mbid></mbid>
+    <url>http://www.last.fm/music/Bon+Iver/_/Skinny+Love</url>
+    <duration>237000</duration>
+    <streamable fulltrack="0">0</streamable>    
+        <listeners>229521</listeners>
+    <playcount>2929907</playcount>
+        <artist>
+        <name>Bon Iver</name>
+        <mbid></mbid>
+        <url>http://www.last.fm/music/Bon+Iver</url>
+    </artist>
+        <album position="3">
+        <artist>Bon Iver</artist>
+        <title>For Emma, Forever Ago</title>
+        <mbid>f2d4a53b-0612-48e2-a09c-02489ae27a51</mbid>
+        <url>http://www.last.fm/music/Bon+Iver/For+Emma%2C+Forever+Ago</url>        
+        <image size="small">http://userserve-ak.last.fm/serve/64s/10366619.jpg</image>
+        <image size="medium">http://userserve-ak.last.fm/serve/126/10366619.jpg</image>
+        <image size="large">http://userserve-ak.last.fm/serve/174s/10366619.jpg</image>
+        <image size="extralarge">http://userserve-ak.last.fm/serve/300x300/10366619.jpg</image>
+    </album>
+        <toptags>
+        <tag>
+	  <name>folk</name>
+	  <url>http://www.last.fm/tag/folk</url>
+	</tag>
+        <tag>
+	  <name>indie</name>
+	  <url>http://www.last.fm/tag/indie</url>
+	</tag>
+        <tag>
+	  <name>beautiful</name>
+	  <url>http://www.last.fm/tag/beautiful</url>
+	</tag>
+        <tag>
+	  <name>singer-songwriter</name>
+	  <url>http://www.last.fm/tag/singer-songwriter</url>
+	</tag>
+        <tag>
+	  <name>acoustic</name>
+	  <url>http://www.last.fm/tag/acoustic</url>
+	</tag>
+      </toptags>
+    </track></lfm>

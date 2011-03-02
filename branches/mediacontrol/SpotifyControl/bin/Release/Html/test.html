@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>SpotifyWebControl</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+var state;
+function PrevSongSpotify()
+{
+$.get("/prev");
+GetNowPlaying();
+}
+function NextSongSpotify()
+{
+$.get("/next");
+GetNowPlaying();
+}
+function MuteSpotify()
+{
+$.get("/mute");
+}
+function VolumeUpSpotify()
+{
+$.get("/volup");
+}
+function VolumeDownSpotify()
+{
+$.get("/voldown");
+}
+function PlayPauseSpotify()
+{
+$.get("/playpause");
+GetNowPlaying();
+}
+
+function GetNowPlaying()
+{$.get("/getnowplaying", 
+   function(data){
+    state=data;
+	if(data!='Nothing Playing' || data!='SpotifyClosed')
+	{
+	var array = data.split("|||");
+	//if (lines.length == 2)
+	//{
+		$('.TrackName').text(array[0]);
+		$('.ArtistName').text(array[1]);
+		$('.AlbumName').text(array[2]);
+	//	alert("<img src=" + array[3] + "&quot;class=&quot;AlbumArt&quot;><!-- Albumart --> </img>"
+		$('.AlbumArt').html("<img src='" + array[3] + "' class='AlbumArt'</img>");
+	//}
+	}
+	});
+}
+$(document).ready(function() {
+setInterval('GetNowPlaying()', 10000);
+GetNowPlaying();
+});
+</script>
+</head>
+<body>
+<p class="TrackName"><!-- Track --></p>
+<p class="ArtistName"><!-- Artist --></p>
+<p class="AlbumName"><!-- Album --></p>
+<p class="AlbumArt"><!-- Album --></p>
+
+<INPUT TYPE=BUTTON onclick="PrevSongSpotify()" Value="Previous">
+<INPUT TYPE=BUTTON onclick="PlayPauseSpotify()" Value="Play/Pause">
+<INPUT TYPE=BUTTON onclick="NextSongSpotify()" Value="Next">
+<INPUT TYPE=BUTTON onclick="MuteSpotify()" Value="Mute">
+<INPUT TYPE=BUTTON onclick="VolumeUpSpotify()" Value="VolumeUp">
+<INPUT TYPE=BUTTON onclick="VolumeDownSpotify()" Value="VolumeDown">
+</body>
+</html>

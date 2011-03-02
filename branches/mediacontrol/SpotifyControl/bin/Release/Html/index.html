@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>SpotifyWebControl</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+function CheckPassword()
+{
+$.get(document.getElementById('Password').value, 
+   function(data){
+   var array = data.split("|||");
+   //alert(array.length);
+     if(array.length==2) document.location=array[1];
+	});
+$(document).ajaxError(function(event, request, setting)
+{alert('Wrong Password'); }); 
+}
+</script>
+</head>
+<form>
+Password: <INPUT type="text" ID="Password" Name=" Password" size="12"/>
+<input type="BUTTON" value="ok" onclick="CheckPassword()"/>
+</form>
+
+
+
+
